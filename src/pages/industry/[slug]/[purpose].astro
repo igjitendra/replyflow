@@ -1,0 +1,114 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import TemplateCard from '../../../components/TemplateCard.astro';
+import FilterBar from '../../../components/FilterBar.astro';
+
+import { getCollection, type CollectionEntry } from 'astro:content';
+import industriesData from '../../../data/industries.json';
+
+interface Props {
+  industry: typeof industriesData[0];
+  purpose: string;
+  templates: CollectionEntry<'templates'>[];
+}
+
+export async function getStaticPaths() {
+
+  const allTemplates = await getCollection('templates', ({ data }) => !data.draft);
+  const paths: any[] = [];
+
+  industriesData.forEach((ind) => {
+    const indTemplates = allTemplates.filter((t) => t.data.industry === ind.slug);
+    const uniquePurposes = Array.from(new Set(indTemplates.map((t) => t.data.purpose)));
+
+    uniquePurposes.forEach((purp) => {
+      const filtered = indTemplates.filter((t) => t.data.purpose === purp);
+      paths.push({
+        params: { slug: ind.slug, purpose: purp },
+        props: { industry: ind, purpose: purp, templates: filtered },
+      });
+    });
+  });
+
+  return paths;
+}
+
+const { industry, purpose, templates } = Astro.props;
+const formattedPurpose = purpose.replace(/-/g, ' ');
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/industry/${industry.slug}/${purpose}`;
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: siteOrigin,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: industry.name,
+      item: `${siteOrigin}/industry/${industry.slug}`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: formattedPurpose,
+      item: pageUrl,
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={`${industry.name} ${formattedPurpose} Message Templates — ReplyFlow`}
+  description={`Find ready-to-use ${formattedPurpose} message templates for ${industry.name}. Pre-formatted WhatsApp, SMS & Email copy in Hindi, English & Hinglish.`}
+  keywords={`${industry.name} ${formattedPurpose}, ${industry.name} message templates, whatsapp ${formattedPurpose} copy`}
+  canonicalUrl={pageUrl}
+  jsonLd={breadcrumbJsonLd}
+>
+
+  <div class="space-y-8 pb-12">
+    <!-- Breadcrumbs -->
+    <Breadcrumbs
+      items={[
+        { label: 'Industries', href: '/' },
+        { label: industry.name, href: `/industry/${industry.slug}` },
+        { label: formattedPurpose },
+      ]}
+    />
+
+    <!-- Header Banner -->
+    <div class="relative overflow-hidden rounded-[2rem] border border-border/70 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/30 dark:from-slate-800/90 dark:via-slate-800/70 dark:to-slate-900/80 p-7 sm:p-9 shadow-sm">
+      <div class="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl"></div>
+      <div class="relative flex items-center gap-5">
+        <div class="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl border border-blue-100 bg-white text-4xl shadow-sm dark:border-slate-600 dark:bg-slate-700">{industry.emoji}</div>
+        <div class="space-y-1.5">
+          <p class="text-sm font-bold uppercase tracking-wider text-primary">{industry.name}</p>
+          <h1 class="text-2xl sm:text-4xl font-black tracking-tight text-text dark:text-white capitalize">
+            {formattedPurpose}
+          </h1>
+          <p class="text-sm sm:text-base text-text-muted dark:text-slate-400">
+            <span class="font-bold text-text dark:text-slate-200">{templates.length}</span> template{templates.length === 1 ? '' : 's'} matching this purpose
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FilterBar -->
+    <FilterBar />
+
+    <!-- Templates Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+      {templates.map((template) => (
+        <TemplateCard template={template} />
+      ))}
+    </div>
+  </div>
+</BaseLayout>

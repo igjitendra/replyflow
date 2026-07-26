@@ -1,0 +1,354 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import TemplateCard from '../../components/TemplateCard.astro';
+import FilterBar from '../../components/FilterBar.astro';
+
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { SUPER_CATEGORIES, getSuperCategoryForPurpose } from '../../utils/categoryGrouping';
+
+interface Props {
+  industry: { slug: string; name: string; emoji: string; description?: string };
+  templates: CollectionEntry<'templates'>[];
+}
+
+export async function getStaticPaths() {
+  const allTemplates = await getCollection('templates', ({ data }) => !data.draft);
+  const industryEntries = await getCollection('industries');
+
+  return industryEntries.map((entry) => {
+    const ind = { ...entry.data, slug: entry.slug };
+    const industryTemplates = allTemplates.filter(
+      (t) => t.data.industry === ind.slug
+    );
+    return {
+      params: { slug: ind.slug },
+      props: { industry: ind, templates: industryTemplates },
+    };
+  });
+}
+
+const { industry, templates } = Astro.props;
+
+// Unique purposes in this industry
+const purposes = Array.from(new Set(templates.map((t) => t.data.purpose)));
+
+// Categories are editable from Admin. Legacy templates fall back to automatic grouping.
+const categoryEntries = await getCollection('template-categories');
+const categoryMap = new Map(categoryEntries.map((entry) => [entry.slug, entry.data]));
+const categoryCounts = new Map<string, number>();
+templates.forEach((template) => {
+  const categoryId = template.data.category || getSuperCategoryForPurpose(template.data.purpose).id;
+  categoryCounts.set(categoryId, (categoryCounts.get(categoryId) || 0) + 1);
+});
+const activeSuperCategories = Array.from(categoryCounts.entries()).map(([id, count]) => {
+  const editable = categoryMap.get(id);
+  const legacy = SUPER_CATEGORIES.find((item) => item.id === id);
+  return { id, name: editable?.name || legacy?.name || id.replace(/-/g, ' '), emoji: editable?.emoji || legacy?.emoji || '📂', count };
+});
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/industry/${industry.slug}`;
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: siteOrigin,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: industry.name,
+      item: pageUrl,
+    },
+  ],
+};
+
+const collectionJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `${industry.name} Business Message Templates`,
+  url: pageUrl,
+  description: `Collection of high-converting WhatsApp, SMS & Email message copy templates for ${industry.name}.`,
+};
+---
+
+<BaseLayout
+  title={`${industry.name} Business Message Templates (WhatsApp, SMS, Email) — ReplyFlow`}
+  description={`Browse ready-to-use WhatsApp, SMS, Email & DM message templates for ${industry.name}. Pre-formatted copy for follow-ups, offers & reminders in Hindi, English & Hinglish.`}
+  keywords={`${industry.name} message templates, ${industry.name} whatsapp scripts, ${industry.name} customer follow up, ${industry.name} sms templates`}
+  canonicalUrl={pageUrl}
+  jsonLd={[breadcrumbJsonLd, collectionJsonLd]}
+>
+
+  <div class="space-y-8 pb-12">
+    <!-- Breadcrumbs -->
+    <Breadcrumbs items={[{ label: 'Industries', href: '/' }, { label: industry.name }]} />
+
+    <!-- Industry Header Banner -->
+    <div class="relative overflow-hidden rounded-[2rem] border border-border/70 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/30 dark:from-slate-800/90 dark:via-slate-800/70 dark:to-slate-900/80 p-7 sm:p-9 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div class="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl"></div>
+      <div class="relative flex items-center gap-5">
+        <div class="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl border border-blue-100 bg-white text-4xl shadow-sm dark:border-slate-600 dark:bg-slate-700">
+          {industry.emoji}
+        </div>
+        <div class="space-y-1.5">
+          <h1 class="text-2xl sm:text-4xl font-black tracking-tight text-text dark:text-white">
+            {industry.name} <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Templates</span>
+          </h1>
+          <p class="text-sm sm:text-base text-text-muted dark:text-slate-400">
+            <span id="active-template-count" class="font-bold text-text dark:text-slate-200">{templates.length}</span> ready-to-use template{templates.length === 1 ? '' : 's'} for WhatsApp, SMS &amp; Email
+          </p>
+        </div>
+      </div>
+
+      {industry.slug === 'real-estate' && (
+        <a
+          href="/industry/real-estate/flows"
+          class="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs shadow-md transition-all flex items-center gap-2"
+        >
+          <span>⚡ View WhatsApp Automation Flows (CTA Funnels) →</span>
+        </a>
+      )}
+
+      {industry.slug === 'clinic' && (
+        <a
+          href="/industry/clinic/flows"
+          class="px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold text-xs shadow-md transition-all flex items-center gap-2"
+        >
+          <span>⚡ View Clinic WhatsApp Automation Flows →</span>
+        </a>
+      )}
+
+      {industry.slug === 'salon' && (
+        <a
+          href="/industry/salon/flows"
+          class="px-5 py-3 rounded-2xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white font-bold text-xs shadow-md transition-all flex items-center gap-2"
+        >
+          <span>⚡ View Salon WhatsApp Automation Flows →</span>
+        </a>
+      )}
+
+      {industry.slug === 'restaurant' && (
+        <a
+          href="/industry/restaurant/flows"
+          class="px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs shadow-md transition-all flex items-center gap-2"
+        >
+          <span>⚡ View Restaurant WhatsApp Automation Flows →</span>
+        </a>
+      )}
+    </div>
+
+    <!-- Category & Purpose Filter Bar -->
+    {purposes.length > 0 && (
+      <div class="bg-white dark:bg-slate-800/80 border border-border dark:border-slate-700/80 rounded-3xl p-5 sm:p-6 space-y-4 shadow-sm">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h3 class="text-xs font-bold text-text-muted dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
+            <span>🎯 Filter Category</span>
+          </h3>
+          {purposes.length > 5 && (
+            <button
+              type="button"
+              id="toggle-subcategories-btn"
+              class="text-xs font-bold text-primary dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
+            >
+              <span id="subcat-btn-text">See All Sub-Categories ({purposes.length})</span>
+              <svg id="subcat-btn-icon" class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+          )}
+        </div>
+
+        <!-- 5 Core Super-Categories Pills -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            data-filter-cat="all"
+            class="cat-filter-btn px-4 py-2 rounded-2xl text-xs font-extrabold bg-primary text-white shadow-sm transition-all cursor-pointer"
+          >
+            All Templates ({templates.length})
+          </button>
+
+          {activeSuperCategories.map((sc) => (
+            <button
+              type="button"
+              data-filter-cat={sc.id}
+              class="cat-filter-btn px-3.5 py-2 rounded-2xl text-xs font-bold bg-surface dark:bg-slate-700/60 text-text dark:text-slate-200 border border-border dark:border-slate-700 hover:border-primary transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>{sc.emoji}</span>
+              <span>{sc.name}</span>
+              <span class="px-1.5 py-0.5 rounded-full text-[10px] bg-slate-200 dark:bg-slate-600 text-text dark:text-slate-300">
+                {sc.count}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <!-- Sub-Categories Granular Expandable Drawer -->
+        {purposes.length > 0 && (
+          <div id="subcategories-drawer" class="hidden pt-3 border-t border-border dark:border-slate-700/60 space-y-2">
+            <span class="text-[11px] font-semibold text-text-muted dark:text-slate-400 block">
+              Granular Specific Topics:
+            </span>
+            <div class="flex items-center gap-2 flex-wrap max-h-48 overflow-y-auto pr-2">
+              {purposes.map((p) => (
+                <button
+                  type="button"
+                  data-filter-purpose={p}
+                  class="purpose-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all capitalize cursor-pointer"
+                >
+                  {p.replace(/-/g, ' ')}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    )}
+
+    <!-- FilterBar -->
+    <FilterBar />
+
+    <!-- Templates Grid -->
+    {templates.length > 0 ? (
+      <div id="industry-templates-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+        {templates.map((template) => {
+          const superCat = { id: template.data.category || getSuperCategoryForPurpose(template.data.purpose).id };
+          return (
+            <div
+              class="industry-template-item"
+              data-purpose={template.data.purpose}
+              data-supercat={superCat.id}
+              data-channel={template.data.channel}
+              data-tone={template.data.tone}
+              data-language={template.data.language}
+            >
+              <TemplateCard template={template} />
+            </div>
+          );
+        })}
+      </div>
+    ) : (
+      <div class="text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-border dark:border-slate-700 space-y-3">
+        <p class="text-4xl">📝</p>
+        <h3 class="text-lg font-bold text-text dark:text-white">
+          More {industry.name} templates coming soon!
+        </h3>
+        <p class="text-xs text-text-muted dark:text-slate-400">
+          We are constantly adding fresh templates to this industry collection.
+        </p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  function setupIndustryFiltering() {
+    const items = document.querySelectorAll<HTMLElement>('.industry-template-item');
+    const catBtns = document.querySelectorAll<HTMLButtonElement>('.cat-filter-btn');
+    const purposeBtns = document.querySelectorAll<HTMLButtonElement>('.purpose-filter-btn');
+    const countBadge = document.getElementById('active-template-count');
+
+    const toggleSubcatBtn = document.getElementById('toggle-subcategories-btn');
+    const subcatDrawer = document.getElementById('subcategories-drawer');
+    const subcatBtnText = document.getElementById('subcat-btn-text');
+    const subcatBtnIcon = document.getElementById('subcat-btn-icon');
+
+    // Toggle Sub-Categories Drawer
+    if (toggleSubcatBtn && subcatDrawer) {
+      toggleSubcatBtn.addEventListener('click', () => {
+        const isHidden = subcatDrawer.classList.contains('hidden');
+        if (isHidden) {
+          subcatDrawer.classList.remove('hidden');
+          if (subcatBtnText) subcatBtnText.textContent = 'Hide Sub-Categories';
+          if (subcatBtnIcon) subcatBtnIcon.classList.add('rotate-180');
+        } else {
+          subcatDrawer.classList.add('hidden');
+          if (subcatBtnText) subcatBtnText.textContent = `See All Sub-Categories (${purposeBtns.length})`;
+          if (subcatBtnIcon) subcatBtnIcon.classList.remove('rotate-180');
+        }
+      });
+    }
+
+    let activeSuperCat = 'all';
+    let activePurpose = '';
+
+    const applyFilters = () => {
+      let visibleCount = 0;
+
+      items.forEach((item) => {
+        const supercat = item.getAttribute('data-supercat') || '';
+        const purpose = item.getAttribute('data-purpose') || '';
+
+        const matchesCat = activeSuperCat === 'all' || supercat === activeSuperCat;
+        const matchesPurpose = !activePurpose || purpose === activePurpose;
+
+        if (matchesCat && matchesPurpose) {
+          item.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+
+      if (countBadge) {
+        countBadge.textContent = visibleCount.toString();
+      }
+    };
+
+    // Handle Super-Category Button Clicks
+    catBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activeSuperCat = btn.getAttribute('data-filter-cat') || 'all';
+        activePurpose = ''; // reset specific purpose filter
+
+        catBtns.forEach((b) => {
+          b.classList.remove('bg-primary', 'text-white', 'shadow-sm');
+          b.classList.add('bg-surface', 'dark:bg-slate-700/60', 'text-text', 'dark:text-slate-200');
+        });
+
+        btn.classList.remove('bg-surface', 'dark:bg-slate-700/60', 'text-text', 'dark:text-slate-200');
+        btn.classList.add('bg-primary', 'text-white', 'shadow-sm');
+
+        // Reset purpose button styles
+        purposeBtns.forEach((pb) => {
+          pb.classList.remove('bg-primary', 'text-white');
+          pb.classList.add('bg-slate-100', 'dark:bg-slate-700', 'text-slate-700', 'dark:text-slate-300');
+        });
+
+        applyFilters();
+      });
+    });
+
+    // Handle Sub-Category Purpose Button Clicks
+    purposeBtns.forEach((pBtn) => {
+      pBtn.addEventListener('click', () => {
+        const targetPurpose = pBtn.getAttribute('data-filter-purpose') || '';
+        if (activePurpose === targetPurpose) {
+          activePurpose = '';
+          pBtn.classList.remove('bg-primary', 'text-white');
+          pBtn.classList.add('bg-slate-100', 'dark:bg-slate-700', 'text-slate-700', 'dark:text-slate-300');
+        } else {
+          activePurpose = targetPurpose;
+          purposeBtns.forEach((pb) => {
+            pb.classList.remove('bg-primary', 'text-white');
+            pb.classList.add('bg-slate-100', 'dark:bg-slate-700', 'text-slate-700', 'dark:text-slate-300');
+          });
+          pBtn.classList.remove('bg-slate-100', 'dark:bg-slate-700', 'text-slate-700', 'dark:text-slate-300');
+          pBtn.classList.add('bg-primary', 'text-white');
+        }
+        applyFilters();
+      });
+    });
+  }
+
+  setupIndustryFiltering();
+  document.addEventListener('astro:page-load', setupIndustryFiltering);
+</script>
+

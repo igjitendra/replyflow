@@ -1,0 +1,244 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import TemplateCard from '../../../components/TemplateCard.astro';
+import FilterBar from '../../../components/FilterBar.astro';
+
+import { getCollection } from 'astro:content';
+import industriesData from '../../../data/industries.json';
+
+const SLUG = 'restaurant';
+const HAS_FLOWS = true;
+
+const industry = industriesData.find((i) => i.slug === SLUG) || {
+  slug: SLUG,
+  name: 'Restaurant & Cafe',
+  emoji: '🍽️',
+};
+
+const allTemplates = await getCollection('templates', ({ data }) => !data.draft);
+const templates = allTemplates.filter((t) => t.data.industry === SLUG);
+const purposes = Array.from(new Set(templates.map((t) => t.data.purpose))).sort();
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/industry/${SLUG}`;
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: siteOrigin },
+    { '@type': 'ListItem', position: 2, name: industry.name, item: pageUrl },
+  ],
+};
+
+const collectionJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `${industry.name} Business Message Templates`,
+  url: pageUrl,
+  description: `Collection of high-converting WhatsApp, SMS & Email message copy templates for ${industry.name}.`,
+};
+---
+
+<BaseLayout
+  title={`${industry.name} Business Message Templates (WhatsApp, SMS, Email) — ReplyFlow`}
+  description={`Browse ready-to-use WhatsApp, SMS, Email & DM message templates for ${industry.name}. Pre-formatted copy for follow-ups, offers & reminders in Hindi, English & Hinglish.`}
+  keywords={`${industry.name} message templates, ${industry.name} whatsapp scripts, ${industry.name} customer follow up, ${industry.name} sms templates`}
+  canonicalUrl={pageUrl}
+  jsonLd={[breadcrumbJsonLd, collectionJsonLd]}
+>
+  <div class="space-y-8 pb-16">
+    <Breadcrumbs items={[{ label: 'Industries', href: '/' }, { label: industry.name }]} />
+
+    <!-- Premium header banner -->
+    <div class="relative overflow-hidden rounded-[2rem] border border-border/70 dark:border-slate-700/70 bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/30 dark:from-slate-800/90 dark:via-slate-800/70 dark:to-slate-900/80 p-6 shadow-sm sm:p-9">
+      <div class="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl"></div>
+      <div class="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center gap-4">
+          <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-blue-100 bg-white text-4xl shadow-sm dark:border-slate-600 dark:bg-slate-700 sm:h-20 sm:w-20">
+            {industry.emoji}
+          </div>
+          <div class="space-y-1">
+            <h1 class="text-2xl font-black tracking-tight text-text dark:text-white sm:text-4xl">
+              {industry.name} <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Templates</span>
+            </h1>
+            <p class="text-sm text-text-muted dark:text-slate-400">
+              <span id="active-template-count">{templates.length}</span> ready-to-use templates · WhatsApp, SMS, Email &amp; DM
+            </p>
+          </div>
+        </div>
+        {HAS_FLOWS && (
+          <a
+            href={`/industry/${SLUG}/flows`}
+            class="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-3 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:from-indigo-700 hover:to-violet-700"
+          >
+            ⚡ WhatsApp Automation Flows →
+          </a>
+        )}
+      </div>
+    </div>
+
+    {templates.length > 0 ? (
+      <Fragment>
+        <!-- Search + filters -->
+        <div class="space-y-4">
+          <form id="industry-search-form" role="search" class="flex items-center gap-2">
+            <div class="relative flex-1">
+              <span class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </span>
+              <input
+                id="industry-search"
+                type="text"
+                autocomplete="off"
+                placeholder={`Search ${industry.name} templates...`}
+                class="w-full rounded-2xl border-2 border-border bg-white py-3 pl-12 pr-4 text-sm text-text placeholder-text-muted transition-all focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 sm:text-base"
+              />
+            </div>
+            <button type="submit" class="shrink-0 rounded-2xl bg-primary px-5 py-3 text-sm font-bold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-primary-dark">
+              Search
+            </button>
+          </form>
+
+          {purposes.length > 0 && (
+            <div class="rounded-2xl border border-border bg-white p-2 dark:border-slate-700/80 dark:bg-slate-800">
+              <button type="button" id="toggle-purposes-btn" class="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-text transition-colors hover:bg-surface dark:text-slate-200 dark:hover:bg-slate-700/50">
+                <span class="flex items-center gap-2">
+                  <svg class="h-4 w-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+                  Filter by category
+                  <span class="rounded-full bg-blue-50 px-2 py-0.5 text-xs text-primary dark:bg-slate-700 dark:text-blue-300">{purposes.length}</span>
+                </span>
+                <svg id="toggle-purposes-icon" class="h-4 w-4 text-text-muted transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <div id="purposes-drawer" class="hidden flex-wrap gap-2 p-2 pt-3">
+                <button type="button" data-purpose="" class="purpose-chip rounded-xl bg-primary px-3 py-1.5 text-xs font-semibold capitalize text-white shadow-sm">
+                  All ({templates.length})
+                </button>
+                {purposes.map((p) => (
+                  <button type="button" data-purpose={p} class="purpose-chip rounded-xl border border-border bg-surface px-3 py-1.5 text-xs font-semibold capitalize text-text transition-colors hover:border-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                    {p.replace(/-/g, ' ')}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <FilterBar />
+        </div>
+
+        <!-- Templates grid -->
+        <div id="templates-grid" class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          {templates.map((template) => (
+            <div
+              class="template-item"
+              data-purpose={template.data.purpose}
+              data-channel={template.data.channel}
+              data-tone={template.data.tone}
+              data-language={template.data.language}
+              data-search={`${template.data.title} ${template.data.purpose} ${(template.data.tags || []).join(' ')} ${template.data.preview_snippet || ''}`.toLowerCase()}
+            >
+              <TemplateCard template={template} />
+            </div>
+          ))}
+        </div>
+
+        <!-- No results -->
+        <div id="no-results" class="hidden rounded-3xl border border-border bg-white py-14 text-center dark:border-slate-700 dark:bg-slate-800">
+          <p class="text-4xl">🔍</p>
+          <h3 class="mt-3 text-lg font-bold text-text dark:text-white">No matching templates</h3>
+          <p class="text-sm text-text-muted dark:text-slate-400">Try a different keyword or reset the filters.</p>
+        </div>
+      </Fragment>
+    ) : (
+      <div class="space-y-3 rounded-3xl border border-border bg-white py-14 text-center dark:border-slate-700 dark:bg-slate-800">
+        <p class="text-4xl">📝</p>
+        <h3 class="text-lg font-bold text-text dark:text-white">More {industry.name} templates coming soon!</h3>
+        <p class="text-sm text-text-muted dark:text-slate-400">We are constantly adding fresh templates to this collection.</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  function initIndustryPage() {
+    const grid = document.getElementById('templates-grid');
+    if (!grid) return;
+    const items = Array.from(grid.querySelectorAll('.template-item'));
+    const searchInput = document.getElementById('industry-search') as HTMLInputElement | null;
+    const searchForm = document.getElementById('industry-search-form');
+    const countEl = document.getElementById('active-template-count');
+    const noResults = document.getElementById('no-results');
+    const purposeBtns = Array.from(document.querySelectorAll('.purpose-chip'));
+
+    const state = { q: '', purpose: '', channel: '', tone: '', language: '' };
+    const activeCls = ['bg-primary', 'text-white', 'shadow-sm'];
+    const inactiveCls = ['bg-surface', 'dark:bg-slate-800', 'text-text', 'dark:text-slate-200', 'border', 'border-border', 'dark:border-slate-700'];
+
+    function apply() {
+      let visible = 0;
+      items.forEach((el) => {
+        const s = el.getAttribute('data-search') || '';
+        const ok =
+          (!state.q || s.includes(state.q)) &&
+          (!state.purpose || el.getAttribute('data-purpose') === state.purpose) &&
+          (!state.channel || el.getAttribute('data-channel') === state.channel) &&
+          (!state.tone || el.getAttribute('data-tone') === state.tone) &&
+          (!state.language || el.getAttribute('data-language') === state.language);
+        el.classList.toggle('hidden', !ok);
+        if (ok) visible++;
+      });
+      if (countEl) countEl.textContent = String(visible);
+      if (noResults) noResults.classList.toggle('hidden', visible !== 0);
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        state.q = searchInput.value.trim().toLowerCase();
+        apply();
+      });
+    }
+    if (searchForm) {
+      searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        state.q = (searchInput ? searchInput.value : '').trim().toLowerCase();
+        apply();
+      });
+    }
+
+    purposeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.purpose = btn.getAttribute('data-purpose') || '';
+        purposeBtns.forEach((b) => {
+          const isActive = b === btn;
+          activeCls.forEach((c) => b.classList.toggle(c, isActive));
+          inactiveCls.forEach((c) => b.classList.toggle(c, !isActive));
+        });
+        apply();
+      });
+    });
+
+    document.addEventListener('replyflow:filter', (e) => {
+      const d = (e as CustomEvent).detail || {};
+      state.channel = d.channel || '';
+      state.tone = d.tone || '';
+      state.language = d.language || '';
+      apply();
+    });
+
+    const toggleBtn = document.getElementById('toggle-purposes-btn');
+    const drawer = document.getElementById('purposes-drawer');
+    const icon = document.getElementById('toggle-purposes-icon');
+    if (toggleBtn && drawer) {
+      toggleBtn.addEventListener('click', () => {
+        const isHidden = drawer.classList.contains('hidden');
+        drawer.classList.toggle('hidden', !isHidden);
+        drawer.classList.toggle('flex', isHidden);
+        if (icon) icon.classList.toggle('rotate-180', isHidden);
+      });
+    }
+  }
+
+  initIndustryPage();
+  document.addEventListener('astro:page-load', initIndustryPage);
+</script>

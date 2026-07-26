@@ -1,0 +1,161 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  canonicalUrl?: string;
+  jsonLd?: object | object[];
+  robots?: string;
+}
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+
+const {
+  title = 'ReplyFlow — Business Message Templates for WhatsApp, SMS & Email',
+  description = 'Find, customize & copy high-converting business message templates for WhatsApp, SMS, Email, Instagram DMs & Google Reviews in seconds. 100% free, zero login required.',
+  keywords = 'business message templates, whatsapp message templates, sms templates, email copy, customer follow up messages, hinglish business templates, sales script copy',
+  image = '/og-image.svg',
+  type = 'website',
+  canonicalUrl = Astro.url ? new URL(Astro.url.pathname, siteOrigin).href : siteOrigin,
+  jsonLd,
+  robots = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+} = Astro.props;
+
+const siteName = 'ReplyFlow';
+const fullImageUrl = new URL(image, Astro.site || siteOrigin).href;
+
+// Default Organization & WebSite JSON-LD Structured Data
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${siteOrigin}/#organization`,
+  name: siteName,
+  url: siteOrigin,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${siteOrigin}/favicon.svg`,
+  },
+  description: 'Free multi-channel business message template directory and AI writer for local businesses, freelancers, agencies and sales teams.',
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${siteOrigin}/#website`,
+  name: siteName,
+  url: siteOrigin,
+  description: description,
+  publisher: {
+    '@id': `${siteOrigin}/#organization`,
+  },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${siteOrigin}/search?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const mergedJsonLd = jsonLd
+  ? Array.isArray(jsonLd)
+    ? [organizationSchema, websiteSchema, ...jsonLd]
+    : [organizationSchema, websiteSchema, jsonLd]
+  : [organizationSchema, websiteSchema];
+---
+
+<!DOCTYPE html>
+<html lang="en" class="light">
+  <head>
+    <meta charset="UTF-8" />
+<meta name="google-site-verification" content="f67kRUX_GMsQRqJhnGQ2Q8WhMagKcLf16MMEl15h4oA" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#2563EB" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="ReplyFlow" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="ReplyFlow" />
+    <meta name="robots" content={robots} />
+    <meta name="googlebot" content={robots} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="en" href={canonicalUrl} />
+    <link rel="alternate" hreflang="x-default" href={canonicalUrl} />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <link rel="alternate" type="application/rss+xml" title="ReplyFlow Blog RSS" href="/rss.xml" />
+    <link rel="search" type="application/opensearchdescription+xml" title="ReplyFlow" href="/opensearch.xml" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={fullImageUrl} />
+    <meta property="og:image:alt" content={`${siteName} — business message templates`} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Cards -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalUrl} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={fullImageUrl} />
+    <meta property="twitter:image:alt" content={`${siteName} — business message templates`} />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(mergedJsonLd)} />
+
+    <!-- Google Fonts Preconnect & Stylesheet -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&family=Syne:wght@500;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Dark Mode FOUC Prevention & System Auto Theme Detection Script -->
+    <script is:inline>
+      (function () {
+        const theme = localStorage.getItem('rf_theme') || 'system';
+        const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="bg-white dark:bg-slate-950 text-text dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+    <!-- Pro-Level Responsive Header -->
+    <Header />
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <slot />
+    </main>
+
+    <!-- Pro-Level Multi-Column Footer -->
+    <Footer />
+
+    <!-- Service Worker Registration for PWA Offline Access -->
+    <script is:inline>
+      if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>
+

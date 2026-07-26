@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+const lastUpdated = 'July 24, 2026';
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/disclaimer`;
+
+const disclaimerJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Disclaimer & Regulatory Compliance — ReplyFlow',
+  url: pageUrl,
+  description: 'ReplyFlow Disclaimer: Guidance on business message template usage, AI generation, and channel policy compliance.',
+};
+---
+
+<BaseLayout
+  title="Disclaimer & Regulatory Compliance — ReplyFlow"
+  description="ReplyFlow Disclaimer: Guidance on business message template usage, AI generation, and channel policy compliance."
+  canonicalUrl={pageUrl}
+  jsonLd={disclaimerJsonLd}
+>
+
+  <div class="max-w-4xl mx-auto space-y-8 pb-16">
+    <Breadcrumbs items={[{ label: 'Disclaimer' }]} />
+
+    <!-- Page Header -->
+    <div class="bg-white dark:bg-slate-800 border border-border dark:border-slate-700/80 rounded-3xl p-6 sm:p-10 shadow-sm space-y-3">
+      <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-50 dark:bg-slate-700 text-primary">
+        Regulatory & Compliance
+      </span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-text dark:text-white tracking-tight">
+        Disclaimer & Compliance
+      </h1>
+      <p class="text-xs text-text-muted dark:text-slate-400 font-medium">
+        Last Updated: {lastUpdated}
+      </p>
+    </div>
+
+    <!-- Content Sections -->
+    <div class="bg-white dark:bg-slate-800/80 border border-border dark:border-slate-700/80 rounded-3xl p-6 sm:p-10 shadow-sm space-y-8 text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
+      
+      <!-- Section 1 -->
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-text dark:text-white border-b border-border dark:border-slate-700 pb-2">
+          1. Template Usage Disclaimer
+        </h2>
+        <p>
+          The message templates provided on ReplyFlow are intended for informational, educational, and reference purposes only. While our templates are written based on copywriting best practices, ReplyFlow does not guarantee specific conversion rates, sales results, or customer response rates.
+        </p>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-text dark:text-white border-b border-border dark:border-slate-700 pb-2">
+          2. AI-Generated Content Disclaimer
+        </h2>
+        <p>
+          Messages generated or rewritten using our AI features at <a href="/ai" class="text-primary hover:underline font-semibold">/ai</a> are produced automatically by third-party AI models (Google Gemini, OpenAI, or Anthropic). Users should review and verify AI-generated text for accuracy, tone, and factual precision before transmitting it to clients.
+        </p>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="space-y-[12px]">
+        <h2 class="text-lg font-bold text-text dark:text-white border-b border-border dark:border-slate-700 pb-2">
+          3. WhatsApp & SMS Channel Compliance
+        </h2>
+        <p>
+          For WhatsApp Business API messages, official WhatsApp template approval is managed directly through Meta/WhatsApp Business Manager. Templates marked as "WhatsApp Verified" conform to standard Meta message categories but still require submission to your WhatsApp BSP for official approval.
+        </p>
+        <p>
+          For SMS in India, promotional and transactional templates must be registered on DLT portals (such as Jio DLT, Airtel DLT, Vodafone DLT) per TRAI regulations.
+        </p>
+      </section>
+
+      <!-- Section 4 -->
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-text dark:text-white border-b border-border dark:border-slate-700 pb-2">
+          4. Trademark Disclaimer
+        </h2>
+        <p>
+          WhatsApp, Instagram, Meta, Messenger, Google, and other brand names or logos mentioned on ReplyFlow are trademarks of their respective owners. ReplyFlow is an independent business message template library and is not affiliated with, endorsed by, or sponsored by Meta, Google, or any third-party communication provider.
+        </p>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>

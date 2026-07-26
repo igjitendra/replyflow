@@ -1,0 +1,39 @@
+---
+interface Props {
+  tone: 'friendly' | 'professional' | 'luxury' | string;
+  size?: 'sm' | 'md';
+}
+
+const { tone, size = 'md' } = Astro.props;
+
+const toneStyles: Record<string, { label: string; bg: string; text: string }> = {
+  friendly: {
+    label: 'Friendly',
+    bg: 'bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800',
+    text: 'text-teal-700 dark:text-teal-300',
+  },
+  professional: {
+    label: 'Professional',
+    bg: 'bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700',
+    text: 'text-slate-700 dark:text-slate-300',
+  },
+  luxury: {
+    label: 'Luxury',
+    bg: 'bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700',
+    text: 'text-amber-800 dark:text-amber-300',
+  },
+};
+
+const style = toneStyles[tone.toLowerCase()] || {
+  label: tone,
+  bg: 'bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700',
+  text: 'text-gray-700 dark:text-slate-300',
+};
+
+const sizeClasses = size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-0.5 text-xs font-medium';
+---
+
+<span class={`inline-flex items-center gap-1 rounded-md ${style.bg} ${style.text} ${sizeClasses}`}>
+  <span class="w-1.5 h-1.5 rounded-full bg-current opacity-70"></span>
+  {style.label}
+</span>

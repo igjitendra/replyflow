@@ -1,0 +1,190 @@
+backend:
+  name: github
+  repo: igjitendra/replyflow
+  branch: main
+  base_url: https://api.sveltia-cms.app
+  site_domain: replyflow.procsctools.in
+
+local_backend: true
+media_folder: public/uploads
+public_folder: /uploads
+publish_mode: simple
+show_preview_links: true
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: "-"
+
+collections:
+  - name: industries
+    label: Industries
+    label_singular: Industry
+    folder: src/content/industries
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: "{{fields.slug}}"
+    identifier_field: name
+    summary: "{{emoji}} {{name}} — /industry/{{slug}}"
+    fields:
+      - { label: Name, name: name, widget: string }
+      - { label: Slug, name: slug, widget: string, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Use lowercase letters, numbers and hyphens only'] }
+      - { label: Emoji, name: emoji, widget: string, default: "📁" }
+      - { label: Description, name: description, widget: text, required: false }
+      - { label: Featured on homepage, name: featured, widget: boolean, default: false }
+      - { label: Sort order, name: order, widget: number, value_type: int, default: 99 }
+
+  - name: template_categories
+    label: Template Categories
+    label_singular: Template Category
+    folder: src/content/template-categories
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: "{{fields.slug}}"
+    identifier_field: name
+    fields:
+      - { label: Name, name: name, widget: string }
+      - { label: Slug, name: slug, widget: string, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Use lowercase letters, numbers and hyphens only'] }
+      - { label: Emoji, name: emoji, widget: string, default: "📂" }
+      - { label: Description, name: description, widget: text, required: false }
+      - { label: Sort order, name: order, widget: number, value_type: int, default: 99 }
+
+  - name: templates
+    label: Message Templates
+    label_singular: Message Template
+    folder: src/content/templates
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: "{{fields.id}}"
+    identifier_field: title
+    summary: "{{title}} · {{industry}} · {{channel}}"
+    sortable_fields: [title, industry, channel, published_at]
+    view_filters:
+      - { label: Drafts, field: draft, pattern: true }
+      - { label: Published, field: draft, pattern: false }
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: URL Slug / Template ID, name: id, widget: string, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Use lowercase letters, numbers and hyphens only'], hint: 'Final URL: /template/your-slug' }
+      - label: Industry
+        name: industry
+        widget: relation
+        collection: industries
+        search_fields: [name, slug]
+        value_field: slug
+        display_fields: [emoji, name]
+      - label: Category
+        name: category
+        widget: relation
+        collection: template_categories
+        search_fields: [name, slug]
+        value_field: slug
+        display_fields: [emoji, name]
+        required: false
+      - label: Channel
+        name: channel
+        widget: select
+        options: [{label: WhatsApp, value: whatsapp}, {label: SMS, value: sms}, {label: Email, value: email}, {label: Instagram DM, value: instagram}, {label: Messenger, value: messenger}, {label: Google Review, value: review}, {label: Complaint Response, value: complaint}]
+      - { label: Purpose, name: purpose, widget: string, hint: 'Example: payment-reminder' }
+      - label: Objective
+        name: objective
+        widget: select
+        options: [lead-generation, follow-up, upsell, retention, support]
+      - label: Tone
+        name: tone
+        widget: select
+        options: [friendly, professional, luxury]
+      - label: Language
+        name: language
+        widget: select
+        options: [{label: English, value: en}, {label: Hindi, value: hi}, {label: Hinglish, value: hinglish}]
+      - { label: Draft, name: draft, widget: boolean, default: true, hint: 'Turn OFF to publish on the website.' }
+      - { label: Publish Date, name: published_at, widget: datetime, required: false }
+      - { label: Best Send Time, name: best_time, widget: string, required: false }
+      - { label: WhatsApp Approved, name: whatsapp_approved, widget: boolean, default: false }
+      - { label: Variables, name: variables, widget: list, required: false, field: {label: Variable, name: variable, widget: string} }
+      - { label: Tags, name: tags, widget: list, required: false, field: {label: Tag, name: tag, widget: string} }
+      - { label: Preview Snippet, name: preview_snippet, widget: text, required: false }
+      - { label: SEO Title, name: meta_title, widget: string, required: false }
+      - { label: SEO Description, name: meta_description, widget: text, required: false }
+      - { label: Thumbnail, name: thumbnail, widget: image, required: false }
+      - label: Buttons
+        name: buttons
+        widget: list
+        required: false
+        fields:
+          - { label: Type, name: type, widget: select, options: [reply, phone, url] }
+          - { label: Text, name: text, widget: string }
+      - { label: Related Template IDs, name: related, widget: list, required: false, field: {label: Template ID, name: template_id, widget: string} }
+      - { label: Paste Markdown Message, name: body, widget: markdown, modes: [raw, rich_text] }
+
+  - name: blog_categories
+    label: Blog Categories
+    label_singular: Blog Category
+    folder: src/content/blog-categories
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: "{{fields.slug}}"
+    identifier_field: name
+    fields:
+      - { label: Name, name: name, widget: string }
+      - { label: Slug, name: slug, widget: string, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Use lowercase letters, numbers and hyphens only'] }
+      - { label: Description, name: description, widget: text, required: false }
+      - { label: Sort order, name: order, widget: number, value_type: int, default: 99 }
+
+  - name: blog
+    label: Blog Posts
+    label_singular: Blog Post
+    folder: src/content/blog
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: "{{fields.slug}}"
+    identifier_field: title
+    summary: "{{title}} · {{category}}"
+    sortable_fields: [title, published_at, category]
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: URL Slug, name: slug, widget: string, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Use lowercase letters, numbers and hyphens only'], hint: 'Final URL: /blog/your-slug' }
+      - label: Category
+        name: category
+        widget: relation
+        collection: blog_categories
+        search_fields: [name, slug]
+        value_field: slug
+        display_fields: [name]
+      - { label: Short Excerpt, name: excerpt, widget: text }
+      - { label: Author, name: author, widget: string, default: ReplyFlow Editorial }
+      - { label: Cover Image, name: cover, widget: image, required: false }
+      - { label: Tags, name: tags, widget: list, required: false, field: {label: Tag, name: tag, widget: string} }
+      - { label: Draft, name: draft, widget: boolean, default: true, hint: 'Turn OFF to publish.' }
+      - { label: Featured, name: featured, widget: boolean, default: false }
+      - { label: Publish Date, name: published_at, widget: datetime }
+      - { label: Updated Date, name: updated_at, widget: datetime, required: false }
+      - { label: SEO Title, name: meta_title, widget: string, required: false }
+      - { label: SEO Description, name: meta_description, widget: text, required: false }
+      - { label: Paste Markdown Article, name: body, widget: markdown, modes: [raw, rich_text] }
+
+  - name: site_configuration
+    label: Site Configuration
+    files:
+      - label: General Settings
+        name: settings
+        file: src/data/settings.json
+        fields:
+          - { label: Site Name, name: siteName, widget: string }
+          - { label: Tagline, name: tagline, widget: string }
+          - { label: Support Email, name: supportEmail, widget: string }
+          - { label: Copyright Text, name: copyrightText, widget: string }
+          - { label: Enable Ads, name: enableAds, widget: boolean, default: false }
+          - { label: AdSense Client ID, name: adsenseClientId, widget: string, required: false }
+          - { label: Header Ad Slot, name: headerAdSlot, widget: string, required: false }
+          - { label: Content Ad Slot, name: inContentAdSlot, widget: string, required: false }
+          - { label: Footer Ad Slot, name: footerAdSlot, widget: string, required: false }

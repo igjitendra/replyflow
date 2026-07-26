@@ -1,0 +1,244 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import ChatPreview from '../../../components/ChatPreview.astro';
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/industry/real-estate/flows`;
+
+const flowsJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Real Estate WhatsApp Message Automation Funnel Flows — ReplyFlow',
+  url: pageUrl,
+  description: 'Complete multi-step WhatsApp sales automation funnel flows for real estate brokers, developers, and agents with interactive CTA buttons.',
+};
+
+const residentialFlow = [
+  {
+    step: 1,
+    title: 'Day 1: Instant Lead Auto-Reply & Digital Brochure',
+    delay: 'Instant (0-3 mins)',
+    text: `Hi {{name}}! 👋 Thank you for inquiring about {{project}} in {{location}}!\n\nHumne aapki request receive kar li hai. Aapki reference ke liye digital brochure aur price breakdown list yahan attach hai: 📂✨\n\nQuick summary:\n🏢 Premium 2 & 3 BHK Apartments\n📍 Prime Location with 30+ World-Class Amenities\n💰 Flexible Payment Plans Available\n\nKya aap aaj shaam ya kal ek quick 5-minute call ke liye available hain?`,
+    variables: ['name', 'project', 'location'],
+    buttons: [
+      { type: 'reply' as const, text: '📅 Book Free Site Visit' },
+      { type: 'phone' as const, text: '📞 Call Sales Team' },
+      { type: 'url' as const, text: '🌐 Download Digital Brochure' },
+    ],
+  },
+  {
+    step: 2,
+    title: 'Day 2: Weekend Site Visit Invitation & Free Cab Pick-Up',
+    delay: '24 Hours Later',
+    text: `Namaste {{name}} ji! 😊\n\nAapne kal {{project}} ke liye inquiry ki thi. Kya aap iss weekend physical site visit ke liye free hain?\n\n🚗 Hum aapke ghar se Free Cab Pick & Drop Service bhi arrange kar denge!\n\nKripya batayein: Saturday ya Sunday, kaunsa din convenient rahega?`,
+    variables: ['name', 'project'],
+    buttons: [
+      { type: 'reply' as const, text: '🚕 Book Free Pick & Drop Cab' },
+      { type: 'reply' as const, text: '📅 Confirm Saturday Visit' },
+    ],
+  },
+  {
+    step: 3,
+    title: 'Day 4: Bank Home Loan Eligibility & Special Discount',
+    delay: '48 Hours Post Site Visit',
+    text: `Hello {{name}} ji! 👋\n\n{{project}} mein aapke sapno ke ghar ke liye Bank Home Loan approval process ko humne bilkul aasan bana diya hai! 🏦✨\n\nKey Loan Benefits:\n✅ Lowest Interest Rates starting from 8.35% p.a.\n✅ Up to 85% Property Valuation Funding\n✅ Zero Hidden Charges & On-Site Loan Executive Support\n\nReply 'LOAN' to schedule your free consultation!`,
+    variables: ['name', 'project'],
+    buttons: [
+      { type: 'reply' as const, text: '📊 Check My Loan Eligibility' },
+      { type: 'phone' as const, text: '📞 Talk to Loan Expert' },
+    ],
+  },
+  {
+    step: 4,
+    title: 'Day 6: Limited Inventory Urgency & Price Hike Alert',
+    delay: 'Day 6 (Urgency)',
+    text: `Hi {{name}}! 🚨\n\nImportant Update regarding *{{project}}*! Keval 3 units remaining hain hamare phase 1 inventory mein.\n\nNext week se prices mein ₹200/sq. ft. ka price hike hone wala hai. 📈\n\nAgar aap current pricing lock karna chahte hain, toh aap zero commitment ke sath 24 hours ke liye unit block kar sakte hain.\n\nReply 'BLOCK' to hold your preferred unit today!`,
+    variables: ['name', 'project'],
+    buttons: [
+      { type: 'reply' as const, text: '🔒 Hold Unit for 24 Hrs' },
+      { type: 'phone' as const, text: '📞 Call Manager Instantly' },
+    ],
+  },
+  {
+    step: 5,
+    title: 'Day 7: Booking Confirmation & Token Receipt',
+    delay: 'Post Booking',
+    text: `Dear {{name}},\n\nWe are delighted to confirm the receipt of your booking token amount for Unit No. {{unit_no}} at *{{project}}*! 🎉🏢\n\nBooking Summary:\n🏢 Unit: {{unit_no}}\n💰 Token Received: ₹1,00,000/-\n📄 Allotment Status: Reserved\n\nAttached is your official booking receipt PDF.\n\nWelcome to the family!`,
+    variables: ['name', 'unit_no', 'project'],
+    buttons: [
+      { type: 'reply' as const, text: '📄 Request Payment Receipt PDF' },
+      { type: 'phone' as const, text: '📞 Contact Accounts Team' },
+    ],
+  },
+];
+
+const investorFlow = [
+  {
+    step: 1,
+    title: 'Step 1: NRI / Investor High-Yield Teaser & 3D Tour',
+    delay: 'Day 1',
+    text: `Dear {{name}},\n\nGreetings from India! 🇮🇳\n\nAre you looking to optimize your Indian real estate portfolio with high rental income and strong capital appreciation?\n\nWe present *{{project}}* at {{location}} — a Grade-A asset engineered for NRI investors:\n\n📈 Projected Rental Yield: 8.5% p.a.\n🚀 Anticipated Appreciation: 35% over 3 years\n🔑 End-to-End Tenant & Asset Management\n\nExperience the sample apartment via 3D Virtual Tour or request a private Zoom consultation.`,
+    variables: ['name', 'project', 'location'],
+    buttons: [
+      { type: 'url' as const, text: '🎥 Watch 360° Virtual Tour' },
+      { type: 'reply' as const, text: '📅 Schedule Zoom Consultation' },
+    ],
+  },
+  {
+    step: 2,
+    title: 'Step 2: Financial Yield & Rental Guarantee Breakdown',
+    delay: 'Day 3',
+    text: `Hello {{name}},\n\nInvest in India’s booming commercial and residential hubs from the comfort of your home overseas. 🌐\n\nKey Project Highlights:\n• Assured Monthly Rental: Starts from ₹75,000/month\n• Capital Entry Point: From ₹45 Lacs\n• RERA Registered & Top-Tier Bank Approved\n\nOur NRI Desk handles zero-hassle documentation, POA registration, and rent collection.\n\nReply 'YES' to schedule a time convenient for your local timezone.`,
+    variables: ['name'],
+    buttons: [
+      { type: 'url' as const, text: '📊 Download Financial ROI Model' },
+      { type: 'phone' as const, text: '📞 Call NRI Helpline' },
+    ],
+  },
+  {
+    step: 3,
+    title: 'Step 3: Grade-A Commercial Bay & Pre-Leased Shop Offer',
+    delay: 'Day 5',
+    text: `Dear {{name}},\n\nLooking for pre-leased commercial office space or high-street retail shops in {{location}}?\n\nExplore *{{project}}* – designed for maximum footfall and high ROI:\n\n🏬 High-Street Retail & Food Court Bay Spaces\n💼 Grade-A Corporate Office Suites\n🚶 Daily Catchment Footfall: 50,000+ residents\n🔒 Pre-leased options with top brands (6% - 9% Yield)\n\nWould you like us to share the master layout and pricing breakdown?`,
+    variables: ['name', 'location', 'project'],
+    buttons: [
+      { type: 'url' as const, text: '📥 Download Floor Plans & Layouts' },
+      { type: 'reply' as const, text: '🏢 Request Walkthrough' },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Real Estate WhatsApp Message Automation Funnel Flows — ReplyFlow"
+  description="Complete multi-step WhatsApp sales automation funnel flows for real estate brokers, developers, and agents with interactive CTA buttons."
+  keywords="real estate whatsapp flow, real estate whatsapp funnel, real estate automation sequence, whatsapp business cta flow"
+  canonicalUrl={pageUrl}
+  jsonLd={flowsJsonLd}
+>
+  <div class="max-w-5xl mx-auto space-y-12 pb-16">
+    <Breadcrumbs
+      items={[
+        { label: 'Industries', href: '/' },
+        { label: 'Real Estate', href: '/industry/real-estate' },
+        { label: 'WhatsApp Automation Message Flows' },
+      ]}
+    />
+
+    <!-- Header Banner -->
+    <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 rounded-3xl p-8 sm:p-12 text-white shadow-xl space-y-4">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-xs font-semibold uppercase tracking-wider">
+        ⚡ Proven WhatsApp Sales Funnels
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight">
+        Real Estate WhatsApp Message Automation Flows
+      </h1>
+      <p class="text-sm sm:text-base text-emerald-100 max-w-3xl leading-relaxed">
+        Step-by-step multi-message WhatsApp sales sequences designed for brokers, property dealers, and Tier-1 builders to convert leads into site visits and closed bookings.
+      </p>
+    </div>
+
+    <!-- Funnel 1: Residential High-Ticket Lead Flow -->
+    <section class="space-y-6">
+      <div class="border-b border-border dark:border-slate-800 pb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+          Flow 1 (5-Step Sequence)
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white">
+          🏡 High-Ticket Residential Lead Nurturing & Site Visit Funnel
+        </h2>
+        <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 mt-1">
+          Triggers automatically upon ad lead submission to guide buyers from brochure download to booking token.
+        </p>
+      </div>
+
+      <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 sm:before:left-8 before:w-0.5 before:bg-emerald-200 dark:before:bg-slate-800 before:z-0">
+        {residentialFlow.map((item) => (
+          <div class="relative z-10 flex items-start gap-4 sm:gap-6">
+            <div class="w-8 h-8 sm:w-16 sm:h-16 rounded-2xl bg-emerald-600 text-white font-extrabold text-sm sm:text-xl flex items-center justify-center shrink-0 shadow-md">
+              {item.step}
+            </div>
+            <div class="flex-grow space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-text dark:text-white">
+                  {item.title}
+                </h3>
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                  ⏱️ {item.delay}
+                </span>
+              </div>
+
+              <ChatPreview
+                title={`Step ${item.step}: WhatsApp Message`}
+                text={item.text}
+                variables={item.variables}
+                whatsappApproved={true}
+                buttons={item.buttons}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Funnel 2: Commercial & NRI Investor Flow -->
+    <section class="space-y-6 pt-6 border-t border-border dark:border-slate-800">
+      <div class="border-b border-border dark:border-slate-800 pb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+          Flow 2 (3-Step Sequence)
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white">
+          🏢 Commercial Property & NRI Investor High-Yield Funnel
+        </h2>
+        <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 mt-1">
+          Designed for HNI & NRI investors looking for high rental yields, 3D virtual tours, and pre-leased shops.
+        </p>
+      </div>
+
+      <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 sm:before:left-8 before:w-0.5 before:bg-blue-200 dark:before:bg-slate-800 before:z-0">
+        {investorFlow.map((item) => (
+          <div class="relative z-10 flex items-start gap-4 sm:gap-6">
+            <div class="w-8 h-8 sm:w-16 sm:h-16 rounded-2xl bg-blue-600 text-white font-extrabold text-sm sm:text-xl flex items-center justify-center shrink-0 shadow-md">
+              {item.step}
+            </div>
+            <div class="flex-grow space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-text dark:text-white">
+                  {item.title}
+                </h3>
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                  ⏱️ {item.delay}
+                </span>
+              </div>
+
+              <ChatPreview
+                title={`Step ${item.step}: WhatsApp Message`}
+                text={item.text}
+                variables={item.variables}
+                whatsappApproved={true}
+                buttons={item.buttons}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Bottom CTA Card -->
+    <div class="bg-surface dark:bg-slate-800 p-8 rounded-3xl border border-border dark:border-slate-700 text-center space-y-4">
+      <h3 class="text-2xl font-bold text-text dark:text-white">
+        Explore All 60+ Individual Real Estate Templates
+      </h3>
+      <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 max-w-xl mx-auto">
+        Browse single templates for site visits, festive offers, bank loans, NRI pitches, allotment letters, and maintenance reminders.
+      </p>
+      <a
+        href="/industry/real-estate"
+        class="inline-block px-6 py-3.5 bg-primary text-white font-extrabold rounded-2xl shadow-lg hover:bg-blue-700 transition-all text-sm"
+      >
+        View All Real Estate Templates →
+      </a>
+    </div>
+  </div>
+</BaseLayout>

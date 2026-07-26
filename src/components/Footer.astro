@@ -1,0 +1,122 @@
+---
+import { getCollection } from 'astro:content';
+const industryEntries = await getCollection('industries');
+const industriesData = industryEntries.map((entry) => ({ ...entry.data, slug: entry.slug })).sort((a, b) => a.order - b.order);
+import channelsData from '../data/channels.json';
+import defaultSettings from '../data/settings.json';
+---
+
+<footer class="border-t border-border/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 text-text dark:text-slate-200 mt-auto transition-colors duration-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12">
+    
+    <!-- Top Grid Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+      
+      <!-- Brand & Mission Column -->
+      <div class="lg:col-span-2 space-y-4">
+        <a href="/" class="flex items-center gap-2.5 group">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 p-0.5 shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+            <div class="w-full h-full bg-primary rounded-[10px] flex items-center justify-center text-white font-extrabold text-lg">
+              R
+            </div>
+          </div>
+          <span class="font-syne font-extrabold text-xl tracking-tight text-text dark:text-white">
+            Reply<span class="bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">Flow</span>
+          </span>
+        </a>
+
+        <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 max-w-sm leading-relaxed">
+          ReplyFlow is a growing multi-channel business message library for WhatsApp, SMS, Email, Instagram DMs and customer communication.
+        </p>
+
+        <!-- Operational Status Pill -->
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          New templates published regularly
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links & Settings -->
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-text dark:text-white">
+          Explore Platform
+        </h4>
+        <ul class="space-y-2 text-xs text-text-muted dark:text-slate-400 font-medium">
+          <li><a href="/" class="hover:text-primary dark:hover:text-blue-400 transition-colors">Home Library</a></li>
+          <li><a href="/search" class="hover:text-primary dark:hover:text-blue-400 transition-colors">Full-Text Search</a></li>
+          <li><a href="/ai" class="hover:text-primary dark:hover:text-blue-400 transition-colors text-purple-600 dark:text-purple-400 font-bold">✨ AI Generator</a></li>
+          <li><a href="/industry/restaurant/flows" class="hover:text-primary dark:hover:text-blue-400 transition-colors text-amber-600 dark:text-amber-400 font-bold">⚡ Restaurant WhatsApp Flows</a></li>
+          <li><a href="/industry/salon/flows" class="hover:text-primary dark:hover:text-blue-400 transition-colors text-pink-600 dark:text-pink-400 font-bold">⚡ Salon WhatsApp Flows</a></li>
+          <li><a href="/industry/clinic/flows" class="hover:text-primary dark:hover:text-blue-400 transition-colors text-cyan-600 dark:text-cyan-400 font-bold">⚡ Clinic WhatsApp Flows</a></li>
+          <li><a href="/industry/real-estate/flows" class="hover:text-primary dark:hover:text-blue-400 transition-colors text-emerald-600 dark:text-emerald-400 font-bold">⚡ Real Estate WhatsApp Flows</a></li>
+          <li><a href="/settings" class="hover:text-primary dark:hover:text-blue-400 transition-colors font-semibold text-primary">⚙️ Site & Ads Settings</a></li>
+          <li><a href="/about" class="hover:text-primary dark:hover:text-blue-400 transition-colors">About ReplyFlow</a></li>
+          <li><a href="/privacy" class="hover:text-primary dark:hover:text-blue-400 transition-colors">Privacy Policy</a></li>
+          <li><a href="/terms" class="hover:text-primary dark:hover:text-blue-400 transition-colors">Terms of Service</a></li>
+          <li><a href="/disclaimer" class="hover:text-primary dark:hover:text-blue-400 transition-colors">Disclaimer</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Top Industries -->
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-text dark:text-white">
+          Top Industries
+        </h4>
+        <ul class="space-y-2 text-xs text-text-muted dark:text-slate-400 font-medium">
+          {industriesData.slice(0, 5).map((ind) => (
+            <li>
+              <a href={`/industry/${ind.slug}`} class="hover:text-primary dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
+                <span>{ind.emoji}</span> {ind.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Column 4: Communication Channels -->
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-text dark:text-white">
+          Channels
+        </h4>
+        <ul class="space-y-2 text-xs text-text-muted dark:text-slate-400 font-medium">
+          {channelsData.map((c) => (
+            <li>
+              <a href={`/channel/${c.slug}`} class="hover:text-primary dark:hover:text-blue-400 transition-colors">
+                {c.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom Copyright & Full Branding (Dynamic Sync) -->
+    <div class="pt-8 border-t border-border/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted dark:text-slate-400">
+      <p id="footer-copyright-text" class="font-medium">
+        {defaultSettings.copyrightText}
+      </p>
+      
+      <div class="flex items-center gap-6 font-medium">
+        <a href="/sitemap.xml" class="hover:text-primary dark:hover:text-blue-400 transition-colors">Sitemap</a>
+        <a href="/robots.txt" class="hover:text-primary dark:hover:text-blue-400 transition-colors">Robots.txt</a>
+        <a href="/manifest.json" class="hover:text-primary dark:hover:text-blue-400 transition-colors">PWA Manifest</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function updateFooterCopyright() {
+    const rawSettings = localStorage.getItem('rf_site_settings');
+    if (rawSettings) {
+      const settings = JSON.parse(rawSettings);
+      const copyrightEl = document.getElementById('footer-copyright-text');
+      if (copyrightEl && settings.copyrightText) {
+        copyrightEl.textContent = settings.copyrightText;
+      }
+    }
+  }
+
+  updateFooterCopyright();
+  document.addEventListener('astro:page-load', updateFooterCopyright);
+</script>

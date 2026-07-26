@@ -1,0 +1,413 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import ChatPreview from '../../../components/ChatPreview.astro';
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/industry/restaurant/flows`;
+
+const flowsJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Restaurant & Cafe WhatsApp Message Automation Funnel Flows — ReplyFlow',
+  url: pageUrl,
+  description: 'Pro-level multi-step WhatsApp food ordering, table reservation, abandoned cart recovery, and catering automation funnel flows for restaurants and cafes with interactive CTA buttons.',
+};
+
+const foodOrderFlow = [
+  {
+    step: 1,
+    title: 'Step 1: Instant Food Order Confirmation & Digital Bill',
+    delay: 'Instant (0 mins)',
+    text: `Hi {{name}}! 🍕 Order Confirmed at *{{restaurant}}*!\n\n📋 Order ID: #{{order_id}}\n🍔 Items: {{item}}\n💰 Total Bill: ₹{{amount}}\n\nKitchen me cooking start ho gaya hai! Track live status on map below.`,
+    variables: ['name', 'restaurant', 'order_id', 'item', 'amount'],
+    buttons: [
+      { type: 'url' as const, text: '🛵 Track Order Status Live' },
+      { type: 'url' as const, text: '🧾 Download Tax Invoice' },
+    ],
+  },
+  {
+    step: 2,
+    title: 'Step 2: Rider Assigned & Live Order GPS Tracking',
+    delay: '+15 Mins (Out for Delivery)',
+    text: `Food is on the way! 🛵💨\n\nHi {{name}}, Order #{{order_id}} from *{{restaurant}}* is thermal-packed & out for delivery to {{address}}!\n\nTrack rider live on GPS map:`,
+    variables: ['name', 'order_id', 'restaurant', 'address'],
+    buttons: [
+      { type: 'url' as const, text: '📍 Track Rider on Live Map' },
+      { type: 'phone' as const, text: '📞 Call Delivery Executive' },
+    ],
+  },
+  {
+    step: 3,
+    title: 'Step 3: Delivered Notice & Next Meal Discount Voucher',
+    delay: 'Post Delivery (+30 Mins)',
+    text: `Bon Appétit {{name}}! 🍕😋\n\nYour order #{{order_id}} from *{{restaurant}}* has been delivered!\n\n🎁 Next Meal Perk: Use code *{{coupon}}* on your next WhatsApp food order to get 10% OFF!`,
+    variables: ['name', 'order_id', 'restaurant', 'coupon'],
+    buttons: [
+      { type: 'url' as const, text: '⭐ Leave 5-Star Google Review' },
+      { type: 'reply' as const, text: '😋 Loved the Food!' },
+    ],
+  },
+];
+
+const dineInFlow = [
+  {
+    step: 1,
+    title: 'Step 1: Instant Table Reservation Confirmation',
+    delay: 'Instant (0 mins)',
+    text: `Table Reserved! 🍽️🥂\n\nDear {{name}}, your table reservation at *{{restaurant}}* is confirmed for {{guests}} guests on {{date}} at {{time}}!\n\nFree Valet Parking Available. Click below for GPS directions!`,
+    variables: ['name', 'restaurant', 'guests', 'date', 'time'],
+    buttons: [
+      { type: 'url' as const, text: '📍 Open GPS Navigation in Maps' },
+      { type: 'reply' as const, text: '🔄 Reschedule Time / Guests' },
+    ],
+  },
+  {
+    step: 2,
+    title: 'Step 2: 2-Hour Upcoming Table Reservation Reminder',
+    delay: 'T-2 Hours Before Reservation',
+    text: `See You Soon! 🍽️✨\n\nHi {{name}}! Quick reminder for your table reservation for {{guests}} guests today @ {{time}} at *{{restaurant}}*.\n\nReply to confirm if you are on your way!`,
+    variables: ['name', 'guests', 'time', 'restaurant'],
+    buttons: [
+      { type: 'reply' as const, text: '✅ On Our Way!' },
+      { type: 'reply' as const, text: '⏱️ Running 15 Mins Late' },
+    ],
+  },
+  {
+    step: 3,
+    title: 'Step 3: Post-Dining 5-Star Google Review Request & Cashback',
+    delay: '+2 Hours Post Dining',
+    text: `Hi {{name}}! 😊🍕\n\nAapka *{{restaurant}}* par dining experience kaisa raha?\n\nKripya 5-star Google rating share karein aur agle visit par ₹100 OFF voucher (*{{coupon}}*) paayein!`,
+    variables: ['name', 'restaurant', 'coupon'],
+    buttons: [
+      { type: 'url' as const, text: '⭐ Leave 5-Star Google Review' },
+      { type: 'reply' as const, text: '💬 Share Private Feedback' },
+    ],
+  },
+];
+
+const cartRecoveryFlow = [
+  {
+    step: 1,
+    title: 'Step 1: 15-Minute Unfinished Food Cart Reminder',
+    delay: '+15 Mins Post Abandonment',
+    text: `Your Food is Waiting! 🛒🍕\n\nHi {{name}}, you left {{item}} in your cart at *{{restaurant}}*!\n\nComplete your checkout now before items sell out:`,
+    variables: ['name', 'item', 'restaurant'],
+    buttons: [
+      { type: 'url' as const, text: '🛒 Complete Order Now' },
+      { type: 'reply' as const, text: '❓ Need Help Ordering' },
+    ],
+  },
+  {
+    step: 2,
+    title: 'Step 2: 10% OFF Promo Code Expiry Warning',
+    delay: '+2 Hours Post Abandonment',
+    text: `Special 10% OFF Perk! 🎁🔥\n\nHi {{name}}, complete your order for {{item}} at *{{restaurant}}* in the next 30 mins using code *{{coupon}}* to get FLAT 10% OFF!`,
+    variables: ['name', 'item', 'restaurant', 'coupon'],
+    buttons: [
+      { type: 'url' as const, text: '⚡ Claim 10% OFF & Checkout' },
+      { type: 'reply' as const, text: '🔄 Change Menu Items' },
+    ],
+  },
+];
+
+const cateringFlow = [
+  {
+    step: 1,
+    title: 'Step 1: Instant Party & Bulk Order Inquiry Reply',
+    delay: 'Instant (0 mins)',
+    text: `Thank You for Catering Inquiry! 🍱🎉\n\nHello {{name}}! *{{restaurant}}* accepts bulk party orders for up to {{max_guests}} guests.\n\nView our packages & menu PDF below:`,
+    variables: ['name', 'restaurant', 'max_guests'],
+    buttons: [
+      { type: 'url' as const, text: '📄 View Catering PDF Menu' },
+      { type: 'reply' as const, text: '📝 Request Custom Quote' },
+    ],
+  },
+  {
+    step: 2,
+    title: 'Step 2: Free Food Tasting Appointment Booking',
+    delay: '+24 Hours Post Inquiry',
+    text: `Free Tasting Session Invitation! 👨‍🍳✨\n\nHi {{name}}, plan your party menu with our master chef at *{{restaurant}}*! Book a complimentary tasting session today:`,
+    variables: ['name', 'restaurant'],
+    buttons: [
+      { type: 'phone' as const, text: '📞 Call Catering Manager' },
+      { type: 'reply' as const, text: '🗓️ Book Food Tasting' },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Pro-Level Restaurant & Cafe WhatsApp Automation Funnel Flows — ReplyFlow"
+  description="Complete multi-step WhatsApp food ordering, table reservation, cart recovery, and catering automation funnel flows for restaurants and cafes with interactive CTA buttons."
+  keywords="restaurant whatsapp flow, food delivery sequence, table reservation whatsapp automation, restaurant google review, cart recovery flow"
+  canonicalUrl={pageUrl}
+  jsonLd={flowsJsonLd}
+>
+  <div class="max-w-5xl mx-auto space-y-12 pb-16">
+    <!-- Breadcrumbs -->
+    <Breadcrumbs
+      items={[
+        { label: 'Industries', href: '/' },
+        { label: 'Restaurant & Cafe', href: '/industry/restaurant' },
+        { label: 'WhatsApp Automation Message Flows' },
+      ]}
+    />
+
+    <!-- Pro Hero Header Banner -->
+    <div class="bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 rounded-3xl p-8 sm:p-12 text-white shadow-xl space-y-6 relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 opacity-15 text-9xl select-none pointer-events-none">
+        🍕
+      </div>
+
+      <div class="flex items-center gap-3 flex-wrap">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-xs font-extrabold uppercase tracking-wider">
+          ⚡ Pro-Level WhatsApp Funnel Sequences
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/20 backdrop-blur text-xs font-semibold">
+          Meta API & WATI Approved
+        </span>
+      </div>
+
+      <div class="space-y-3 max-w-3xl">
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+          Restaurant & Cafe WhatsApp Automation Flows
+        </h1>
+        <p class="text-sm sm:text-base text-amber-100 leading-relaxed">
+          High-converting, multi-step WhatsApp sequences for food outlets, cloud kitchens, and cafes to automate food order status tracking, table reservations, cart recovery, and 5-star Google reviews.
+        </p>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-white/20 text-xs sm:text-sm font-bold">
+        <div class="bg-white/10 backdrop-blur p-3 rounded-2xl border border-white/15">
+          <span class="block text-amber-200 text-[11px] font-medium">Avg. Open Rate</span>
+          <span class="text-xl font-extrabold">98.4%</span>
+        </div>
+        <div class="bg-white/10 backdrop-blur p-3 rounded-2xl border border-white/15">
+          <span class="block text-amber-200 text-[11px] font-medium">Cart Recovery</span>
+          <span class="text-xl font-extrabold">+24.5%</span>
+        </div>
+        <div class="bg-white/10 backdrop-blur p-3 rounded-2xl border border-white/15">
+          <span class="block text-amber-200 text-[11px] font-medium">Table No-Show Reduction</span>
+          <span class="text-xl font-extrabold">-42%</span>
+        </div>
+        <div class="bg-white/10 backdrop-blur p-3 rounded-2xl border border-white/15">
+          <span class="block text-amber-200 text-[11px] font-medium">Google Review Boost</span>
+          <span class="text-xl font-extrabold">4.9 ★ Rating</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Funnel 1: Food Order Confirmation & Live GPS Tracking Funnel -->
+    <section class="space-y-6">
+      <div class="border-b border-border dark:border-slate-800 pb-4 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+            Flow 1 (3-Step Delivery & Tracking Sequence)
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white">
+            🛵 Food Order, Live GPS Tracking & Retention Funnel
+          </h2>
+          <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 mt-1">
+            Automates order receipt, tax invoice, live GPS rider map tracking, delivery confirmation, and next-meal discount coupon.
+          </p>
+        </div>
+        <span class="px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+          3 Steps • Complete
+        </span>
+      </div>
+
+      <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 sm:before:left-8 before:w-0.5 before:bg-amber-200 dark:before:bg-slate-800 before:z-0">
+        {foodOrderFlow.map((item) => (
+          <div class="relative z-10 flex items-start gap-4 sm:gap-6">
+            <div class="w-8 h-8 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white font-extrabold text-sm sm:text-xl flex items-center justify-center shrink-0 shadow-md">
+              {item.step}
+            </div>
+            <div class="flex-grow space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-text dark:text-white">
+                  {item.title}
+                </h3>
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                  ⏱️ Delay: {item.delay}
+                </span>
+              </div>
+
+              <ChatPreview
+                title={`Step ${item.step}: WhatsApp Message Template`}
+                text={item.text}
+                variables={item.variables}
+                whatsappApproved={true}
+                buttons={item.buttons}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Funnel 2: Table Reservation & Post-Dining Review Funnel -->
+    <section class="space-y-6 pt-6 border-t border-border dark:border-slate-800">
+      <div class="border-b border-border dark:border-slate-800 pb-4 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">
+            Flow 2 (3-Step Dine-in Reservation & Review Journey)
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white">
+            🍽️ Table Reservation, 2-Hour Reminder & Review Funnel
+          </h2>
+          <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 mt-1">
+            Confirms table bookings, sends pre-arrival reminders to prevent no-shows, and collects 5-star Google Map reviews post-dining.
+          </p>
+        </div>
+        <span class="px-3 py-1.5 text-xs font-bold rounded-xl bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-300 border border-orange-300 dark:border-orange-800">
+          3 Steps • Complete
+        </span>
+      </div>
+
+      <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 sm:before:left-8 before:w-0.5 before:bg-orange-200 dark:before:bg-slate-800 before:z-0">
+        {dineInFlow.map((item) => (
+          <div class="relative z-10 flex items-start gap-4 sm:gap-6">
+            <div class="w-8 h-8 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 text-white font-extrabold text-sm sm:text-xl flex items-center justify-center shrink-0 shadow-md">
+              {item.step}
+            </div>
+            <div class="flex-grow space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-text dark:text-white">
+                  {item.title}
+                </h3>
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-orange-100 dark:bg-orange-950/80 text-orange-800 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
+                  ⏱️ Delay: {item.delay}
+                </span>
+              </div>
+
+              <ChatPreview
+                title={`Step ${item.step}: WhatsApp Message Template`}
+                text={item.text}
+                variables={item.variables}
+                whatsappApproved={true}
+                buttons={item.buttons}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Funnel 3: Food Cart Abandonment Recovery Funnel -->
+    <section class="space-y-6 pt-6 border-t border-border dark:border-slate-800">
+      <div class="border-b border-border dark:border-slate-800 pb-4 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
+            Flow 3 (2-Step Cart Recovery Funnel)
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white">
+            🛒 Unfinished Food Cart Recovery Sequence
+          </h2>
+          <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 mt-1">
+            Recovers abandoned website/WhatsApp food carts by sending automated 15-minute nudges and a 10% OFF limited-time promo code.
+          </p>
+        </div>
+        <span class="px-3 py-1.5 text-xs font-bold rounded-xl bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-800">
+          2 Steps • High ROI
+        </span>
+      </div>
+
+      <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 sm:before:left-8 before:w-0.5 before:bg-red-200 dark:before:bg-slate-800 before:z-0">
+        {cartRecoveryFlow.map((item) => (
+          <div class="relative z-10 flex items-start gap-4 sm:gap-6">
+            <div class="w-8 h-8 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 text-white font-extrabold text-sm sm:text-xl flex items-center justify-center shrink-0 shadow-md">
+              {item.step}
+            </div>
+            <div class="flex-grow space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-text dark:text-white">
+                  {item.title}
+                </h3>
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-red-100 dark:bg-red-950/80 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800">
+                  ⏱️ Delay: {item.delay}
+                </span>
+              </div>
+
+              <ChatPreview
+                title={`Step ${item.step}: WhatsApp Message Template`}
+                text={item.text}
+                variables={item.variables}
+                whatsappApproved={true}
+                buttons={item.buttons}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Funnel 4: Corporate & Bulk Catering Inquiry Flow -->
+    <section class="space-y-6 pt-6 border-t border-border dark:border-slate-800">
+      <div class="border-b border-border dark:border-slate-800 pb-4 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">
+            Flow 4 (2-Step Party & Bulk Catering Flow)
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white">
+            🍱 Corporate & Party Catering Inquiry Automation
+          </h2>
+          <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 mt-1">
+            Instantly responds to large party inquiries, shares digital PDF catering menus, and invites clients for a complimentary food tasting.
+          </p>
+        </div>
+        <span class="px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+          2 Steps • High Ticket
+        </span>
+      </div>
+
+      <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 sm:before:left-8 before:w-0.5 before:bg-amber-200 dark:before:bg-slate-800 before:z-0">
+        {cateringFlow.map((item) => (
+          <div class="relative z-10 flex items-start gap-4 sm:gap-6">
+            <div class="w-8 h-8 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-amber-600 to-yellow-600 text-white font-extrabold text-sm sm:text-xl flex items-center justify-center shrink-0 shadow-md">
+              {item.step}
+            </div>
+            <div class="flex-grow space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-text dark:text-white">
+                  {item.title}
+                </h3>
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                  ⏱️ Delay: {item.delay}
+                </span>
+              </div>
+
+              <ChatPreview
+                title={`Step ${item.step}: WhatsApp Message Template`}
+                text={item.text}
+                variables={item.variables}
+                whatsappApproved={true}
+                buttons={item.buttons}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Bottom CTA Card -->
+    <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-8 sm:p-10 rounded-3xl border border-slate-700 text-center space-y-5 shadow-xl">
+      <span class="inline-block text-4xl">🚀</span>
+      <h3 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        Explore All 59 Restaurant & Cafe Templates with Multi-Language Switcher
+      </h3>
+      <p class="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">
+        Browse ready-to-use templates for food delivery, table reservations, late-night munchies, weekend combos, festival thalis, and VIP gourmet clubs.
+      </p>
+      <div class="pt-2">
+        <a
+          href="/industry/restaurant"
+          class="inline-block px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold rounded-2xl shadow-lg transition-all text-sm tracking-wide"
+        >
+          Browse All 59 Restaurant Templates →
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,529 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ChannelBadge from '../../components/ChannelBadge.astro';
+import ToneTag from '../../components/ToneTag.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import ChatPreview from '../../components/ChatPreview.astro';
+import TemplateCard from '../../components/TemplateCard.astro';
+import AdSlot from '../../components/AdSlot.astro';
+
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+interface Props {
+  template: CollectionEntry<'templates'>;
+  allTemplates: CollectionEntry<'templates'>[];
+}
+
+export async function getStaticPaths() {
+
+  const allTemplates = await getCollection('templates', ({ data }) => !data.draft);
+
+  return allTemplates.map((template) => {
+    const id = template.data.id || template.slug;
+    return {
+      params: { id },
+      props: { template, allTemplates },
+    };
+  });
+}
+
+const { template, allTemplates } = Astro.props;
+const { data, body } = template;
+const industryEntries = await getCollection('industries');
+const industryObj = industryEntries.map((entry) => ({ ...entry.data, slug: entry.slug })).find((i) => i.slug === data.industry) || {
+  name: data.industry,
+  emoji: '📄',
+};
+
+// Related templates
+const relatedTemplates = allTemplates.filter((t) => {
+  const tId = t.data.id || t.slug;
+  const currentId = data.id || template.slug;
+  if (tId === currentId) return false;
+
+  if (data.related && data.related.includes(tId)) return true;
+  return t.data.industry === data.industry || t.data.channel === data.channel;
+}).slice(0, 4);
+
+const langLabels: Record<string, string> = {
+  hi: 'Hindi (हिंदी)',
+  en: 'English',
+  hinglish: 'Hinglish',
+};
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+const templateId = data.id || template.slug;
+const pageUrl = `${siteOrigin}/template/${templateId}`;
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: siteOrigin,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: industryObj.name,
+      item: `${siteOrigin}/industry/${data.industry}`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: data.title,
+      item: pageUrl,
+    },
+  ],
+};
+
+const creativeWorkJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  mainEntityOfPage: pageUrl,
+  headline: data.title,
+  text: body,
+  genre: data.industry,
+  inLanguage: data.language,
+  keywords: data.tags ? data.tags.join(', ') : `${data.industry}, ${data.channel}`,
+  author: {
+    '@type': 'Organization',
+    name: 'ReplyFlow',
+    url: siteOrigin,
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'ReplyFlow',
+    url: siteOrigin,
+  },
+};
+const pageTitle = data.meta_title || `${data.title} — ${industryObj.name} ${data.channel.toUpperCase()} Template | ReplyFlow`;
+const pageDesc = data.meta_description || `Ready-to-use ${data.channel.toUpperCase()} message template for ${industryObj.name}. Tone: ${data.tone}. Copy, customize variables and send instantly.`;
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  keywords={`${data.title}, ${industryObj.name} message template, ${data.channel} template, ${data.tone} business message`}
+  type="article"
+  canonicalUrl={pageUrl}
+  jsonLd={[breadcrumbJsonLd, creativeWorkJsonLd]}
+>
+
+
+  <div class="max-w-4xl mx-auto space-y-8 pb-16">
+    <!-- Breadcrumbs -->
+    <Breadcrumbs
+      items={[
+        { label: 'Industries', href: '/' },
+        { label: industryObj.name, href: `/industry/${data.industry}` },
+        { label: data.title },
+      ]}
+    />
+
+    <!-- Header Section -->
+    <div class="relative overflow-hidden bg-white dark:bg-slate-800 border border-border/70 dark:border-slate-700/80 rounded-[2rem] p-7 sm:p-9 shadow-sm space-y-5" data-pagefind-body>
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-500"></div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="sr-only" data-pagefind-filter="channel">{data.channel}</span>
+        <span class="sr-only" data-pagefind-filter="tone">{data.tone}</span>
+        <span class="sr-only" data-pagefind-filter="language">{data.language}</span>
+        <span class="sr-only" data-pagefind-filter="industry">{data.industry}</span>
+        <ChannelBadge channel={data.channel} />
+        <ToneTag tone={data.tone} />
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+          {langLabels[data.language] || data.language}
+        </span>
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl font-black text-text dark:text-white tracking-tight leading-[1.1]" data-pagefind-weight="10">
+        {data.title}
+      </h1>
+
+
+      <!-- Metadata Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-5 border-t border-border dark:border-slate-700 text-sm">
+        <div>
+          <span class="text-text-muted dark:text-slate-400 block">Industry</span>
+          <a href={`/industry/${data.industry}`} class="font-semibold text-primary dark:text-blue-400 hover:underline">
+            {industryObj.emoji} {industryObj.name}
+          </a>
+        </div>
+        <div>
+          <span class="text-text-muted dark:text-slate-400 block">Objective</span>
+          <span class="font-semibold text-text dark:text-slate-200 capitalize">
+            {data.objective.replace(/-/g, ' ')}
+          </span>
+        </div>
+        <div>
+          <span class="text-text-muted dark:text-slate-400 block">Best Send Time</span>
+          <span class="font-semibold text-text dark:text-slate-200">
+            {data.best_time || 'Anytime'}
+          </span>
+        </div>
+        <div>
+          <span class="text-text-muted dark:text-slate-400 block">WhatsApp Status</span>
+          <span class="font-semibold text-emerald-600 dark:text-emerald-400">
+            {data.whatsapp_approved ? '✓ Approved' : 'Standard'}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Google AdSense In-Content Slot -->
+    <AdSlot slotType="inContent" />
+
+    <!-- Live Interactive Chat Preview & Multi-Language Switcher -->
+    <section class="space-y-6">
+      <div class="space-y-3">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h2 class="text-lg font-bold text-text dark:text-white flex items-center gap-2">
+            <span>💬 Live Interactive Preview & Language Switcher</span>
+          </h2>
+          <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+            🌐 3 Languages Available (Hinglish, Hindi, English)
+          </span>
+        </div>
+
+        <!-- Language Selector Tabs -->
+        {data.variations && data.variations.length > 0 && (
+          <div class="p-3 bg-surface dark:bg-slate-800/80 rounded-2xl border border-border dark:border-slate-700/80 flex items-center gap-2 overflow-x-auto">
+            <span class="text-xs font-bold text-text-muted dark:text-slate-400 whitespace-nowrap shrink-0">
+              Select Language:
+            </span>
+            <div class="flex items-center gap-2 flex-wrap" id="language-tabs-container">
+              <button
+                type="button"
+                data-lang-index="0"
+                data-lang-text={body}
+                class="lang-tab-btn active px-3.5 py-2 rounded-xl text-xs font-bold bg-primary text-white shadow-sm transition-all flex items-center gap-1.5"
+              >
+                <span>💬 Hinglish (Default)</span>
+              </button>
+              {data.variations.map((v, idx) => (
+                <button
+                  type="button"
+                  data-lang-index={idx + 1}
+                  data-lang-text={v.text}
+                  class="lang-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-700 text-text dark:text-slate-200 border border-border dark:border-slate-600 hover:border-primary transition-all flex items-center gap-1.5"
+                >
+                  <span>
+                    {v.language === 'hi' ? '🇮🇳 Hindi (हिंदी)' : v.language === 'en' ? '🇬🇧 English' : `✨ ${v.title}`}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <ChatPreview
+          title={data.title}
+          text={body}
+          variables={data.variables}
+          whatsappApproved={data.whatsapp_approved}
+          buttons={data.buttons}
+        />
+      </div>
+
+      <!-- Dedicated Language Copy Cards for All Versions -->
+      <div class="space-y-4 pt-6 border-t border-border dark:border-slate-800">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h3 class="text-xl font-extrabold text-text dark:text-white flex items-center gap-2">
+            <span>📋 All Language Copy Versions (1-Click Copy)</span>
+          </h3>
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 dark:bg-slate-700 text-primary dark:text-blue-400">
+            Hinglish + Hindi + English
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6">
+          <!-- 1. Primary Hinglish Version -->
+          <div class="bg-white dark:bg-slate-800/80 rounded-2xl border border-border dark:border-slate-700 p-5 space-y-3 shadow-sm">
+            <div class="flex items-center justify-between pb-3 border-b border-border dark:border-slate-700">
+              <span class="px-3 py-1 text-xs font-bold rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800 flex items-center gap-1.5">
+                <span>💬 Hinglish Version</span>
+              </span>
+              <CopyButton text={body} variables={data.variables} buttonText="Copy Hinglish Copy" variant="primary" />
+            </div>
+            <pre class="text-sm sm:text-base font-sans whitespace-pre-line text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/60 leading-relaxed">{body}</pre>
+          </div>
+
+          <!-- 2. Additional Language Variations -->
+          {data.variations && data.variations.map((v) => (
+            <div class="bg-white dark:bg-slate-800/80 rounded-2xl border border-border dark:border-slate-700 p-5 space-y-3 shadow-sm">
+              <div class="flex items-center justify-between pb-3 border-b border-border dark:border-slate-700">
+                <span class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 flex items-center gap-1.5">
+                  <span>
+                    {v.language === 'hi' ? '🇮🇳 Hindi (हिंदी) Version' : v.language === 'en' ? '🇬🇧 English Version' : `✨ ${v.title}`}
+                  </span>
+                </span>
+                <CopyButton text={v.text} variables={data.variables} buttonText={`Copy ${v.language === 'hi' ? 'Hindi' : v.language === 'en' ? 'English' : 'Variation'} Copy`} variant="secondary" />
+              </div>
+              <pre class="text-sm sm:text-base font-sans whitespace-pre-line text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/60 leading-relaxed">{v.text}</pre>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Page Actions: Share Button, AI Rewrite & Raw Copy -->
+    <div class="flex flex-wrap items-center justify-between gap-3 p-4 bg-surface dark:bg-slate-800/60 rounded-2xl border border-border dark:border-slate-700">
+      <div class="flex items-center gap-2 flex-wrap">
+        <CopyButton text={body} variables={data.variables} buttonText="Copy Plain Text" variant="primary" />
+
+        <a
+          href={`/ai?rewrite_text=${encodeURIComponent(body)}`}
+          class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg border border-purple-300 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 text-sm font-semibold hover:bg-purple-100 dark:hover:bg-purple-900/60 transition-colors"
+        >
+          <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+          AI Rewrite
+        </a>
+      </div>
+
+      <button
+        type="button"
+        id="share-btn"
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border dark:border-slate-700 text-sm font-semibold hover:bg-white dark:hover:bg-slate-700 transition-colors"
+      >
+        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+        </svg>
+        Share Template
+      </button>
+    </div>
+
+    <!-- Unique Context & Implementation Strategy -->
+    {data.context_section && (
+      <section class="bg-blue-50/70 dark:bg-slate-800/90 border border-blue-200/80 dark:border-slate-700 p-6 sm:p-8 rounded-3xl space-y-4 shadow-sm" data-pagefind-body>
+        <div class="flex items-center gap-2">
+          <span class="text-xl">💡</span>
+          <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">
+            When to Use & Practical Customization Tip
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2 text-xs sm:text-sm">
+          <div class="space-y-1.5 p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-blue-100 dark:border-slate-700/60 shadow-xs">
+            <span class="font-bold text-primary dark:text-blue-400 block text-xs uppercase tracking-wider">
+              🚀 Trigger & Scenario
+            </span>
+            <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+              {data.context_section.when_to_use}
+            </p>
+          </div>
+
+          <div class="space-y-1.5 p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-blue-100 dark:border-slate-700/60 shadow-xs">
+            <span class="font-bold text-emerald-600 dark:text-emerald-400 block text-xs uppercase tracking-wider">
+              👥 Target Audience
+            </span>
+            <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+              {data.context_section.target_audience}
+            </p>
+          </div>
+
+          <div class="space-y-1.5 p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-blue-100 dark:border-slate-700/60 shadow-xs">
+            <span class="font-bold text-purple-600 dark:text-purple-400 block text-xs uppercase tracking-wider">
+              ⚡ Customization Tip
+            </span>
+            <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+              {data.context_section.customization_tip}
+            </p>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- SEO Content & Marketing Guide Section -->
+    <section class="space-y-6 pt-8 border-t border-border dark:border-slate-800" data-pagefind-body>
+      <div class="bg-gradient-to-br from-slate-50 to-white dark:from-slate-800/90 dark:to-slate-800/40 p-6 sm:p-8 rounded-3xl border border-border dark:border-slate-700 space-y-6 shadow-sm">
+        
+        <div class="space-y-2">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-primary dark:text-blue-400">
+            📖 Complete Usage & Optimization Guide
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white tracking-tight">
+            How to Use the "{data.title}" WhatsApp Template for Maximum Conversion
+          </h2>
+          <p class="text-sm text-text-muted dark:text-slate-300 leading-relaxed">
+            This pre-approved, high-converting WhatsApp message template is specifically crafted for {industryObj.name} businesses to drive instant customer engagement, high open rates, and direct replies.
+          </p>
+        </div>
+
+        <!-- 3 Feature Pillars -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/70 space-y-2">
+            <div class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-950 text-primary dark:text-blue-400 flex items-center justify-center font-bold text-sm">
+              🎯
+            </div>
+            <h3 class="font-bold text-sm text-text dark:text-white">High Open & Reply Rates</h3>
+            <p class="text-xs text-text-muted dark:text-slate-400">
+              Formatted with attention-grabbing headline emojis, clear value bullets, and dynamic variables to avoid feeling like generic bulk spam.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/70 space-y-2">
+            <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-sm">
+              ⚡
+            </div>
+            <h3 class="font-bold text-sm text-text dark:text-white">1-Click CTA Buttons</h3>
+            <p class="text-xs text-text-muted dark:text-slate-400">
+              Includes pre-configured Quick Reply (`reply`), Website/Catalog Link (`url`), and Direct Phone Call (`phone`) interactive buttons.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/70 space-y-2">
+            <div class="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-sm">
+              🌐
+            </div>
+            <h3 class="font-bold text-sm text-text dark:text-white">3 Language Options</h3>
+            <p class="text-xs text-text-muted dark:text-slate-400">
+              Easily toggle between Hinglish, Hindi (हिंदी), and English versions on this single clean page to target your exact demographic.
+            </p>
+          </div>
+        </div>
+
+        <!-- Dynamic Variables Breakdown -->
+        {data.variables && data.variables.length > 0 && (
+          <div class="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+            <h3 class="text-lg font-extrabold text-text dark:text-white flex items-center gap-2">
+              <span>🔤 Variables Customization Guide</span>
+            </h3>
+            <p class="text-xs text-text-muted dark:text-slate-300">
+              Replace the following curly brace placeholder tags in your CRM or WhatsApp sender tool before broadcasting:
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {data.variables.map((varName) => (
+                <div class="flex items-center gap-3 p-3 bg-white dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700/60">
+                  <code class="px-2 py-1 text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 text-primary dark:text-blue-400 rounded-md">
+                    {`{{${varName}}}`}
+                  </code>
+                  <span class="text-xs font-medium text-slate-700 dark:text-slate-300 capitalize">
+                    {varName.replace(/_/g, ' ')}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- Best Practices & Timing Strategy -->
+        <div class="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+          <h3 class="text-lg font-extrabold text-text dark:text-white flex items-center gap-2">
+            <span>📊 Broadcast & Best Timing Strategy</span>
+          </h3>
+          <ul class="space-y-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside leading-relaxed">
+            <li>
+              <strong>Optimal Send Window:</strong> Best delivered between <span class="font-bold text-primary dark:text-blue-400">{data.best_time || '10:00 - 18:00'}</span> for highest response rates.
+            </li>
+            <li>
+              <strong>Personalization Impact:</strong> Always address the lead or customer by name (<code class="text-xs">&#123;&#123;customer_name&#125;&#125;</code> or <code class="text-xs">&#123;&#123;name&#125;&#125;</code>) to improve trust.
+            </li>
+            <li>
+              <strong>WhatsApp Compliance:</strong> Ensure users have opted in to receive updates on WhatsApp to maintain high quality rating on Meta API.
+            </li>
+          </ul>
+        </div>
+
+        <!-- Frequently Asked Questions (FAQ) Accordion/Block -->
+        <div class="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+          <h3 class="text-lg font-extrabold text-text dark:text-white flex items-center gap-2">
+            <span>❓ Frequently Asked Questions (FAQ)</span>
+          </h3>
+          <div class="space-y-3 text-xs sm:text-sm">
+            <details class="group p-4 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700/60">
+              <summary class="font-bold cursor-pointer text-slate-900 dark:text-white flex items-center justify-between">
+                <span>Can I use this template on Meta WhatsApp Business API & WhatsApp Web?</span>
+                <span class="transition group-open:rotate-180 text-primary">▼</span>
+              </summary>
+              <p class="mt-2 text-slate-600 dark:text-slate-400 leading-relaxed">
+                Yes! This message template is 100% compatible with official Meta WhatsApp Business API partners (WATI, Interakt, Aisensy, etc.) as well as manual copy-paste for standard WhatsApp Business app.
+              </p>
+            </details>
+
+            <details class="group p-4 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700/60">
+              <summary class="font-bold cursor-pointer text-slate-900 dark:text-white flex items-center justify-between">
+                <span>How do I switch the language between Hinglish, Hindi, and English?</span>
+                <span class="transition group-open:rotate-180 text-primary">▼</span>
+              </summary>
+              <p class="mt-2 text-slate-600 dark:text-slate-400 leading-relaxed">
+                Simply click on the language tabs at the top of the Live Simulator on this page. You can also scroll to the "All Language Copy Versions" section to copy Hinglish, Hindi (हिंदी), or English text directly with a single click.
+              </p>
+            </details>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Related Templates -->
+    {relatedTemplates.length > 0 && (
+      <section class="space-y-4 pt-6 border-t border-border dark:border-slate-800">
+        <h3 class="text-xl font-bold text-text dark:text-white">
+          Related Templates in {industryObj.name}
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {relatedTemplates.map((rel) => (
+            <TemplateCard template={rel} />
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  function setupPageScripts() {
+    // Share Button Handler
+    const shareBtn = document.getElementById('share-btn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', async () => {
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: document.title,
+              url: window.location.href,
+            });
+          } catch (e) {
+            // User cancelled
+          }
+        } else {
+          await navigator.clipboard.writeText(window.location.href);
+          alert('Template page link copied to clipboard!');
+        }
+      });
+    }
+
+    // Language Tab Switcher for Live Preview
+    const langBtns = document.querySelectorAll<HTMLButtonElement>('.lang-tab-btn');
+    const chatMsgBody = document.querySelector<HTMLElement>('.chat-message-body');
+
+    if (langBtns.length > 0 && chatMsgBody) {
+      langBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          langBtns.forEach((b) => {
+            b.classList.remove('bg-primary', 'text-white', 'shadow-sm');
+            b.classList.add('bg-white', 'dark:bg-slate-700', 'text-text', 'dark:text-slate-200');
+          });
+
+          btn.classList.remove('bg-white', 'dark:bg-slate-700', 'text-text', 'dark:text-slate-200');
+          btn.classList.add('bg-primary', 'text-white', 'shadow-sm');
+
+          const newText = btn.getAttribute('data-lang-text') || '';
+          if (newText) {
+            chatMsgBody.setAttribute('data-raw-message', newText);
+            chatMsgBody.textContent = newText;
+          }
+        });
+      });
+    }
+  }
+
+  setupPageScripts();
+  document.addEventListener('astro:page-load', setupPageScripts);
+</script>

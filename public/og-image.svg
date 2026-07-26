@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#0F172A"/>
+  <rect x="60" y="60" width="1080" height="510" rx="24" fill="#1E293B" stroke="#334155" stroke-width="4"/>
+  <rect x="120" y="120" width="80" height="80" rx="20" fill="#2563EB"/>
+  <text x="160" y="180" font-family="system-ui, sans-serif" font-size="56" font-weight="bold" fill="white" text-anchor="middle">R</text>
+  <text x="230" y="175" font-family="system-ui, sans-serif" font-size="52" font-weight="bold" fill="white">Reply<tspan fill="#2563EB">Flow</tspan></text>
+  <text x="120" y="310" font-family="system-ui, sans-serif" font-size="44" font-weight="800" fill="#F8FAFC">Multi-Channel Business Message Template Library</text>
+  <text x="120" y="380" font-family="system-ui, sans-serif" font-size="26" font-weight="500" fill="#94A3B8">High-converting ready-to-use templates for WhatsApp, SMS, Email &amp; DMs.</text>
+  <rect x="120" y="440" width="220" height="50" rx="12" fill="#2563EB"/>
+  <text x="230" y="473" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">replyflow.procsctools.in</text>
+</svg>

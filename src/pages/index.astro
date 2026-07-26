@@ -1,0 +1,731 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchBar from '../components/SearchBar.astro';
+import IndustryCard from '../components/IndustryCard.astro';
+import TemplateCard from '../components/TemplateCard.astro';
+import ChannelBadge from '../components/ChannelBadge.astro';
+import ChatPreview from '../components/ChatPreview.astro';
+
+import { getCollection } from 'astro:content';
+import channelsData from '../data/channels.json';
+import { TOP_FEATURED_INDUSTRIES } from '../utils/categoryGrouping';
+
+const allTemplates = await getCollection('templates', ({ data }) => !data.draft);
+const industryEntries = await getCollection('industries');
+const industriesData = industryEntries.map((entry) => ({ ...entry.data, slug: entry.slug })).sort((a, b) => a.order - b.order);
+
+// Compute template counts per industry
+const industryCounts: Record<string, number> = {};
+allTemplates.forEach((t) => {
+  const ind = t.data.industry;
+  industryCounts[ind] = (industryCounts[ind] || 0) + 1;
+});
+
+const totalTemplates = allTemplates.length;
+const featuredTemplates = allTemplates.slice(0, 4);
+const heroDemoTemplate = allTemplates.find((t) => t.data.id === 'real-estate-new-lead-friendly-hinglish') || allTemplates[0];
+
+const faqs = [
+  {
+    q: 'Is ReplyFlow 100% free to use?',
+    a: 'Yes. ReplyFlow is completely free for business owners, copywriters, and marketers. Search, customize, and copy as many message templates as you need — no subscription, ever.',
+  },
+  {
+    q: 'Do I need to create an account or log in?',
+    a: 'No. ReplyFlow works with zero login or registration. Every template, search function, and AI utility is available 100% anonymously.',
+  },
+  {
+    q: 'How does the AI Generator handle my API key?',
+    a: "The AI Generator uses your own Google Gemini, OpenAI, or Anthropic API key. It is stored only in your browser's localStorage and requests travel directly from your device to the provider. We never store or log your key on any server.",
+  },
+  {
+    q: 'Are templates compliant with WhatsApp & SMS rules?',
+    a: 'Yes. Templates follow customer-communication best practices. Items marked “WhatsApp Verified” conform to standard Meta Business categories, and SMS templates follow standard DLT format structures.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+const topFeatured = industriesData.filter((ind) => TOP_FEATURED_INDUSTRIES.includes(ind.slug));
+const extraIndustries = industriesData.filter((ind) => !TOP_FEATURED_INDUSTRIES.includes(ind.slug));
+
+const stats = [
+  { value: `${totalTemplates}`, label: 'Templates published' },
+  { value: `${industriesData.length}`, label: 'Industries' },
+  { value: `${channelsData.length}`, label: 'Channels' },
+  { value: '0', label: 'Login required' },
+];
+---
+
+<BaseLayout
+  title="ReplyFlow — Business Message Templates for WhatsApp, SMS & Email"
+  description="Find, customize & copy ready-to-use business message templates for WhatsApp, SMS, Email, Instagram DMs & Google Reviews in seconds. 100% free, 0 login required."
+  keywords="whatsapp templates, business message templates, customer follow up copy, Hinglish whatsapp copy, sms message templates, sales message templates"
+  jsonLd={faqJsonLd}
+>
+
+  <div class="relative space-y-24 overflow-x-clip pb-20 sm:space-y-32">
+
+    <!-- ============ 1. HERO ============ -->
+    <section class="relative -mt-8 isolate min-h-[760px] overflow-hidden rounded-b-[2rem] pt-10 sm:pt-14 lg:min-h-[720px] lg:pt-16">
+      <div class="hero-orb hero-orb-one" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb-two" aria-hidden="true"></div>
+      <div class="premium-grid absolute inset-0 -z-20 opacity-70" aria-hidden="true"></div>
+
+      <div class="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.02fr_.98fr] lg:gap-16">
+        <div class="max-w-2xl text-center lg:text-left">
+          <div class="mb-7 inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/80 px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/[.06] dark:text-slate-300">
+            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-300">
+              <svg class="h-3 w-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.25"><path d="m5 10 3 3 7-7"/></svg>
+            </span>
+            Free forever · No signup · Built for India
+          </div>
+
+          <h1 class="font-outfit text-[2.75rem] font-extrabold leading-[.98] tracking-[-0.045em] text-slate-950 dark:text-white sm:text-[4rem] lg:text-[4.7rem]">
+            The right words.<br />
+            <span class="premium-gradient-text">Right when you need them.</span>
+          </h1>
+
+          <p class="mx-auto mt-7 max-w-xl text-[1.05rem] leading-8 text-slate-600 dark:text-slate-300 lg:mx-0">
+            Find proven business messages for WhatsApp, SMS, Email and DMs. Personalize every detail, preview the result, and send with confidence — in English, Hindi or Hinglish.
+          </p>
+
+          <div class="mt-8 max-w-2xl">
+            <SearchBar placeholder='Try “payment reminder” or “salon offer”' autofocus={true} />
+          </div>
+
+          <div class="mt-5 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+            <a href="#industries" class="premium-button inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white shadow-[0_10px_30px_-12px_rgba(15,23,42,.7)] transition hover:-translate-y-0.5 hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-blue-500/20 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100">
+              Browse templates
+              <svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10h12m-4-4 4 4-4 4"/></svg>
+            </a>
+            <a href="/ai" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white/80 px-5 py-3 text-sm font-bold text-slate-700 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-blue-300 hover:text-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/15 dark:border-white/10 dark:bg-white/[.06] dark:text-white dark:hover:border-blue-400/50">
+              <svg class="h-4 w-4 text-blue-600 dark:text-blue-400" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m10 2 1.4 4.1L15.5 7.5l-4.1 1.4L10 13l-1.4-4.1-4.1-1.4 4.1-1.4L10 2Z"/><path d="m15.5 12 .7 2.1 2.1.7-2.1.7-.7 2.1-.7-2.1-2.1-.7 2.1-.7.7-2.1Z"/></svg>
+              Write with AI
+            </a>
+          </div>
+
+          <div class="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-xs font-semibold text-slate-500 dark:text-slate-400 lg:justify-start">
+            <span class="inline-flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>{totalTemplates > 0 ? `${totalTemplates}+ templates` : 'Fresh templates added daily'}</span>
+            <span class="inline-flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>{industriesData.length} industries</span>
+            <span class="inline-flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-violet-500"></span>{channelsData.length} channels</span>
+          </div>
+        </div>
+
+        <div class="relative mx-auto w-full max-w-[560px] lg:mx-0">
+          <div class="absolute -inset-8 -z-10 rounded-[3rem] bg-blue-500/[.08] blur-3xl dark:bg-blue-500/[.12]" aria-hidden="true"></div>
+          <div class="hero-product-shell relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-white/85 p-3 shadow-[0_36px_90px_-38px_rgba(15,23,42,.5)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/80">
+            <div class="flex items-center justify-between border-b border-slate-200/70 px-3 pb-3 dark:border-white/10">
+              <div class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-rose-400"></span><span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span><span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+              </div>
+              <span class="rounded-md bg-slate-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[.14em] text-slate-500 dark:bg-white/[.07] dark:text-slate-400">Live preview</span>
+            </div>
+
+            <div class="grid gap-3 p-1 pt-4 sm:grid-cols-[.88fr_1.12fr]">
+              <div class="rounded-2xl border border-slate-200/80 bg-slate-50/90 p-4 dark:border-white/10 dark:bg-white/[.035]">
+                <div class="mb-4 flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-200">
+                  <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white">1</span>
+                  Personalize
+                </div>
+                <label class="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-400">Customer name</label>
+                <div class="rounded-lg border border-blue-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-800 shadow-sm dark:border-blue-400/30 dark:bg-slate-900 dark:text-white">Priya</div>
+                <label class="mb-2 mt-4 block text-[11px] font-bold uppercase tracking-wider text-slate-400">Offer</label>
+                <div class="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-white/10 dark:bg-slate-900 dark:text-slate-200">20% welcome discount</div>
+                <button type="button" class="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-3 py-2.5 text-sm font-bold text-white shadow-[0_8px_22px_-10px_rgba(37,99,235,.8)]">
+                  <svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="9" height="9" rx="2"/><path d="M4 12H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v1"/></svg>
+                  Copy message
+                </button>
+              </div>
+
+              <div class="relative overflow-hidden rounded-2xl bg-[#e9f1ec] p-4 dark:bg-[#14211b]">
+                <div class="absolute inset-0 opacity-30" style="background-image:radial-gradient(circle at 20% 20%,#94a3b8 1px,transparent 1px);background-size:18px 18px" aria-hidden="true"></div>
+                <div class="relative mb-4 flex items-center gap-2.5 rounded-xl bg-[#075e54] px-3 py-2.5 text-white shadow-sm">
+                  <div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-xs font-bold">RF</div>
+                  <div><div class="text-xs font-bold">ReplyFlow Demo</div><div class="text-[10px] text-white/70">online</div></div>
+                </div>
+                <div class="relative ml-auto max-w-[95%] rounded-2xl rounded-tr-sm bg-[#dcf8c6] p-3.5 text-[12px] leading-[1.6] text-slate-800 shadow-sm dark:bg-emerald-900/80 dark:text-emerald-50">
+                  Hi <strong>Priya</strong> 👋<br /><br />Thanks for reaching out! We’ve saved a <strong>20% welcome discount</strong> just for you.<br /><br />Would you like to see our latest collection?
+                  <div class="mt-2 text-right text-[9px] text-slate-500 dark:text-emerald-200/60">10:42 ✓✓</div>
+                </div>
+                <div class="relative mt-3 grid grid-cols-3 gap-1.5">
+                  <span class="rounded-lg bg-white/80 px-2 py-2 text-center text-[9px] font-bold text-slate-600 dark:bg-white/10 dark:text-slate-300">WhatsApp</span>
+                  <span class="rounded-lg bg-white/80 px-2 py-2 text-center text-[9px] font-bold text-slate-600 dark:bg-white/10 dark:text-slate-300">Hinglish</span>
+                  <span class="rounded-lg bg-white/80 px-2 py-2 text-center text-[9px] font-bold text-slate-600 dark:bg-white/10 dark:text-slate-300">Friendly</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="absolute -bottom-6 -left-5 hidden items-center gap-3 rounded-2xl border border-white bg-white/90 px-4 py-3 shadow-xl backdrop-blur sm:flex dark:border-white/10 dark:bg-slate-800/90">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-300">
+              <svg class="h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 10 4 4 8-8"/></svg>
+            </span>
+            <div><div class="text-xs font-extrabold text-slate-900 dark:text-white">Ready to send</div><div class="text-[10px] text-slate-500 dark:text-slate-400">Personalized in seconds</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mx-auto mt-20 max-w-6xl border-t border-slate-200/70 pt-6 dark:border-white/10">
+        <p class="mb-4 text-center text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-400 lg:text-left">Works across every customer channel</p>
+        <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-3 lg:justify-start">
+          {channelsData.map((c) => (
+            <a href={`/channel/${c.slug}`} class="opacity-70 grayscale transition hover:-translate-y-0.5 hover:opacity-100 hover:grayscale-0"><ChannelBadge channel={c.slug} size="sm" /></a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2. HOW IT WORKS ============ -->
+    <section class="space-y-14">
+      <div class="mx-auto max-w-2xl space-y-3 text-center">
+        <span class="text-[13px] font-bold uppercase tracking-[0.15em] text-primary">How it works</span>
+        <h2 class="font-syne text-3xl font-extrabold tracking-tight text-text dark:text-white sm:text-[2.5rem]">
+          From blank chat to sent message in three steps
+        </h2>
+      </div>
+
+      <div class="relative grid grid-cols-1 gap-6 md:grid-cols-3">
+        <!-- connecting line (desktop) -->
+        <div class="pointer-events-none absolute left-0 right-0 top-[52px] hidden border-t border-dashed border-border dark:border-slate-700 md:block"></div>
+
+        <!-- Step 1: Search -->
+        <div class="relative flex flex-col items-center gap-5 rounded-3xl border border-border bg-white p-8 text-center shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" />
+            </svg>
+            <span class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-sm">1</span>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="text-lg font-bold text-text dark:text-white">Search</h3>
+            <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">Browse by industry, channel, or goal and find a proven template in seconds.</p>
+          </div>
+        </div>
+
+        <!-- Step 2: Personalize -->
+        <div class="relative flex flex-col items-center gap-5 rounded-3xl border border-border bg-white p-8 text-center shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h7M15 18h5" /><circle cx="16" cy="6" r="2" /><circle cx="8" cy="12" r="2" /><circle cx="13" cy="18" r="2" />
+            </svg>
+            <span class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-sm">2</span>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="text-lg font-bold text-text dark:text-white">Personalize</h3>
+            <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">Fill in live variables and preview the exact message before you use it.</p>
+          </div>
+        </div>
+
+        <!-- Step 3: Copy & send -->
+        <div class="relative flex flex-col items-center gap-5 rounded-3xl border border-border bg-white p-8 text-center shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+            </svg>
+            <span class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-sm">3</span>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="text-lg font-bold text-text dark:text-white">Copy &amp; send</h3>
+            <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">One-click copy to any channel — or rewrite instantly with your own AI key.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2b. WHO IT'S FOR ============ -->
+    <section class="space-y-14">
+      <div class="mx-auto max-w-2xl space-y-3 text-center">
+        <span class="text-[13px] font-bold uppercase tracking-[0.15em] text-primary">Who it's for</span>
+        <h2 class="font-syne text-3xl font-extrabold tracking-tight text-text dark:text-white sm:text-[2.5rem]">
+          One library, every kind of business
+        </h2>
+        <p class="text-base text-text-muted dark:text-slate-400">
+          Close deals, book appointments, or run campaigns — there's a proven message ready for every moment.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="group space-y-4 rounded-3xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_40px_-24px_rgba(37,99,235,0.5)] dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l1.8-5h14.4L21 9M4.5 9v9a1 1 0 001 1h13a1 1 0 001-1V9M4 9h16M9.5 19v-5h5v5" /></svg>
+          </div>
+          <h3 class="text-[17px] font-bold text-text dark:text-white">Local businesses</h3>
+          <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">Clinics, salons, restaurants &amp; shops — handle bookings, reminders &amp; offers in seconds.</p>
+        </div>
+        <div class="group space-y-4 rounded-3xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_40px_-24px_rgba(37,99,235,0.5)] dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4.5 20.5a7.5 7.5 0 0115 0" /></svg>
+          </div>
+          <h3 class="text-[17px] font-bold text-text dark:text-white">Freelancers</h3>
+          <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">Send polished proposals, follow-ups &amp; payment nudges without overthinking the wording.</p>
+        </div>
+        <div class="group space-y-4 rounded-3xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_40px_-24px_rgba(37,99,235,0.5)] dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 19v-1.5a3.5 3.5 0 00-3.5-3.5h-5A3.5 3.5 0 004 17.5V19M9.5 10.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM19.5 19v-1.5a3.5 3.5 0 00-2.6-3.4M16 3.6a3.5 3.5 0 010 6.8" /></svg>
+          </div>
+          <h3 class="text-[17px] font-bold text-text dark:text-white">Agencies</h3>
+          <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">Give every account manager on-brand, tested copy for consistent client communication.</p>
+        </div>
+        <div class="group space-y-4 rounded-3xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_40px_-24px_rgba(37,99,235,0.5)] dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.5l5.5-5.5 3.5 3.5L21 6M15 6h6v6" /></svg>
+          </div>
+          <h3 class="text-[17px] font-bold text-text dark:text-white">Sales teams</h3>
+          <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">Move leads down the funnel with fast, consistent, high-converting replies.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 3. LIVE SANDBOX ============ -->
+    <section class="relative mx-auto max-w-5xl">
+      <div class="space-y-8 rounded-[2rem] border border-border bg-white p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] dark:border-slate-700/70 dark:bg-slate-800/90 sm:p-10">
+        <div class="mx-auto max-w-2xl space-y-3 text-center">
+          <div class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-1.5 text-[13px] font-semibold text-text-muted dark:border-slate-700 dark:bg-slate-700/50 dark:text-slate-300">
+            <span class="relative flex h-1.5 w-1.5">
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+            </span>
+            Interactive live sandbox
+          </div>
+          <h2 class="font-syne text-3xl font-extrabold tracking-tight text-text dark:text-white sm:text-[2.5rem]">
+            See it before you send it
+          </h2>
+          <p class="text-sm leading-relaxed text-text-muted dark:text-slate-300">
+            Type into the variable fields to watch a real, pixel-accurate WhatsApp message build itself in real time.
+          </p>
+        </div>
+
+        {heroDemoTemplate && (
+          <div class="overflow-hidden rounded-2xl border border-border bg-surface p-2 dark:border-slate-700/80 dark:bg-slate-900/50 sm:p-4">
+            <ChatPreview
+              title="Real Estate Lead Welcome & Brochure"
+              text={heroDemoTemplate.body}
+              variables={heroDemoTemplate.data.variables}
+              whatsappApproved={heroDemoTemplate.data.whatsapp_approved}
+              buttons={heroDemoTemplate.data.buttons}
+            />
+          </div>
+        )}
+
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {[
+            { t: 'Real-time variables', d: 'Fields fill the message live' },
+            { t: 'Authentic channel UI', d: 'Pixel-accurate WhatsApp view' },
+            { t: 'One-click copy', d: 'Paste anywhere instantly' },
+          ].map((item) => (
+            <div class="flex items-start gap-3 rounded-2xl border border-border bg-surface px-4 py-3.5 dark:border-slate-700/60 dark:bg-slate-700/30">
+              <svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+              <div>
+                <div class="text-sm font-bold text-text dark:text-white">{item.t}</div>
+                <div class="text-xs text-text-muted dark:text-slate-400">{item.d}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4. FEATURES ============ -->
+    <section class="space-y-14">
+      <div class="mx-auto max-w-2xl space-y-3 text-center">
+        <span class="text-[13px] font-bold uppercase tracking-[0.15em] text-primary">Why ReplyFlow</span>
+        <h2 class="font-syne text-3xl font-extrabold tracking-tight text-text dark:text-white sm:text-[2.5rem]">
+          Built for teams that reply fast
+        </h2>
+        <p class="text-base text-text-muted dark:text-slate-400">
+          Everything local businesses, freelancers, agencies and sales teams need to answer every customer, on every channel.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <!-- Speed to lead -->
+        <div class="group space-y-4 rounded-3xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_40px_-24px_rgba(37,99,235,0.5)] dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5z" /></svg>
+          </div>
+          <h3 class="text-[17px] font-bold text-text dark:text-white">Speed to lead</h3>
+          <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">Reply to inquiries in under 10 seconds with pre-written, tested copy that converts.</p>
+        </div>
+
+        <!-- Multi-channel -->
+        <div class="group space-y-4 rounded-3xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_40px_-24px_rgba(37,99,235,0.5)] dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 10.5h8M8 13.5h5" /><path d="M3 18V7a3 3 0 013-3h9a3 3 0 013 3v5a3 3 0 01-3 3H8l-5 3z" /><path d="M18 8h1a2 2 0 012 2v9l-3-2h-4" /></svg>
+          </div>
+          <h3 class="text-[17px] font-bold text-text dark:text-white">Every channel</h3>
+          <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">WhatsApp, SMS, Email, Instagram DM, Messenger &amp; review requests — one library.</p>
+        </div>
+
+        <!-- AI rewriter -->
+        <div class="group space-y-4 rounded-3xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_40px_-24px_rgba(37,99,235,0.5)] dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.9L18.7 9.7 13.8 11.5 12 16.4 10.2 11.5 5.3 9.7 10.2 7.9 12 3z" /><path d="M18.5 15.5l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.4z" /></svg>
+          </div>
+          <h3 class="text-[17px] font-bold text-text dark:text-white">AI rewriter</h3>
+          <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">Customize or rewrite any template instantly with your own Gemini, ChatGPT or Claude key.</p>
+        </div>
+
+        <!-- No login -->
+        <div class="group space-y-4 rounded-3xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_40px_-24px_rgba(37,99,235,0.5)] dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11V8a5 5 0 019.9-1" /><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M12 15v2" /></svg>
+          </div>
+          <h3 class="text-[17px] font-bold text-text dark:text-white">Zero login, 100% free</h3>
+          <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">No account, no password, no email. Open the site and start copying immediately.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4b. BENTO SHOWCASE ============ -->
+    <section class="space-y-14">
+      <div class="mx-auto max-w-2xl space-y-3 text-center">
+        <span class="text-[13px] font-bold uppercase tracking-[0.15em] text-primary">The toolkit</span>
+        <h2 class="font-syne text-3xl font-extrabold tracking-tight text-text dark:text-white sm:text-[2.5rem]">
+          More than a list of templates
+        </h2>
+        <p class="text-base text-text-muted dark:text-slate-400">
+          A complete messaging workspace — library, AI, live preview and privacy, in one fast, free tool.
+        </p>
+      </div>
+
+      <div class="grid gap-4 md:auto-rows-[minmax(0,1fr)] md:grid-cols-3">
+        <!-- Big: library -->
+        <div class="relative flex flex-col justify-between overflow-hidden rounded-3xl border border-border bg-white p-8 dark:border-slate-700/70 dark:bg-slate-800/80 md:col-span-2 md:row-span-2">
+          <div class="pointer-events-none absolute inset-0" style='background-image:radial-gradient(circle, rgba(100,116,139,0.12) 1px, transparent 1px); background-size:20px 20px; -webkit-mask-image:radial-gradient(ellipse 80% 80% at 90% 10%, black, transparent 70%); mask-image:radial-gradient(ellipse 80% 80% at 90% 10%, black, transparent 70%);'></div>
+          <div class="relative space-y-4">
+            <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>
+            </div>
+            <h3 class="font-outfit text-2xl font-extrabold tracking-tight text-text dark:text-white">A growing library of ready-to-send templates</h3>
+            <p class="max-w-md text-sm leading-relaxed text-text-muted dark:text-slate-400">New, carefully written templates are published regularly across industries, channels and business goals.</p>
+          </div>
+          <div class="relative mt-6 flex flex-wrap gap-2">
+            {['Follow-ups', 'Payment reminders', 'Welcome messages', 'Offers & promos', 'Review requests', 'Re-engagement'].map((chip) => (
+              <span class="rounded-full border border-border bg-surface px-3 py-1 text-xs font-semibold text-text-muted dark:border-slate-700 dark:bg-slate-700/40 dark:text-slate-300">{chip}</span>
+            ))}
+          </div>
+        </div>
+
+        <!-- AI rewrite -->
+        <div class="space-y-3 rounded-3xl border border-border bg-white p-7 dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.9L18.7 9.7 13.8 11.5 12 16.4 10.2 11.5 5.3 9.7 10.2 7.9 12 3z"/><path d="M18.5 15.5l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.4z"/></svg>
+          </div>
+          <h3 class="text-[17px] font-bold text-text dark:text-white">Bring your own AI</h3>
+          <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">Rewrite any template with your own Gemini, ChatGPT or Claude key.</p>
+        </div>
+
+        <!-- Languages -->
+        <div class="space-y-3 rounded-3xl border border-border bg-white p-7 dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.8 6 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-6-3.8-9S9.5 5.5 12 3z"/></svg>
+          </div>
+          <h3 class="text-[17px] font-bold text-text dark:text-white">3 languages</h3>
+          <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">Hindi, English &amp; natural Hinglish — tuned for real Indian customers.</p>
+        </div>
+
+        <!-- Compliance (wide) -->
+        <div class="flex items-start gap-4 rounded-3xl border border-border bg-white p-7 dark:border-slate-700/70 dark:bg-slate-800/80 md:col-span-2">
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="text-[17px] font-bold text-text dark:text-white">Compliant by default</h3>
+            <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">“WhatsApp Verified” items follow Meta Business categories and SMS templates match standard DLT structures — so you stay safe while you scale.</p>
+          </div>
+        </div>
+
+        <!-- PWA / privacy -->
+        <div class="space-y-3 rounded-3xl border border-border bg-white p-7 dark:border-slate-700/70 dark:bg-slate-800/80">
+          <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M11 18h2"/></svg>
+          </div>
+          <h3 class="text-[17px] font-bold text-text dark:text-white">Installable &amp; private</h3>
+          <p class="text-sm leading-relaxed text-text-muted dark:text-slate-400">Add to your home screen, works offline, and never asks for your data.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4c. LANGUAGES ============ -->
+    <section class="overflow-hidden rounded-[2rem] border border-border bg-white dark:border-slate-700/70 dark:bg-slate-800/80">
+      <div class="grid md:grid-cols-2">
+        <div class="space-y-5 p-8 sm:p-10">
+          <span class="text-[13px] font-bold uppercase tracking-[0.15em] text-primary">Speak their language</span>
+          <h2 class="font-syne text-3xl font-extrabold tracking-tight text-text dark:text-white sm:text-4xl">
+            Hindi, English &amp; Hinglish — natively
+          </h2>
+          <p class="text-base leading-relaxed text-text-muted dark:text-slate-400">
+            Every template is written the way real customers actually chat. Pick the tone and language that fits your audience — no awkward machine translations.
+          </p>
+          <ul class="space-y-3 pt-1">
+            {['Natural Hinglish that sounds human, not robotic', 'Clean English for corporate & premium brands', 'Simple Hindi that builds instant local trust'].map((t) => (
+              <li class="flex items-start gap-3 text-sm font-medium text-text dark:text-slate-200">
+                <svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="space-y-3 border-t border-border bg-surface p-8 dark:border-slate-700 dark:bg-slate-900/40 sm:p-10 md:border-l md:border-t-0">
+          {[
+            { lang: 'Hinglish', msg: 'Hi Rahul! Aapki site visit kal 4 PM confirm ho gayi hai. Location neeche di gayi hai, milte hain!' },
+            { lang: 'English', msg: 'Hi Rahul, your site visit is confirmed for tomorrow at 4 PM. The location is shared below — see you soon!' },
+            { lang: 'Hindi', msg: 'Namaste Rahul ji, aapki visit kal shaam 4 baje confirm hai. Location neeche di gayi hai. Dhanyavaad!' },
+          ].map((s) => (
+            <div class="rounded-2xl border border-border bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+              <div class="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-primary">{s.lang}</div>
+              <p class="text-sm leading-relaxed text-text dark:text-slate-200">{s.msg}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 5. INDUSTRIES ============ -->
+    <section id="industries" class="space-y-8">
+      <div class="flex flex-col items-start justify-between gap-4 border-b border-border pb-5 dark:border-slate-800 sm:flex-row sm:items-end">
+        <div class="space-y-1.5">
+          <span class="text-[13px] font-bold uppercase tracking-[0.15em] text-primary">Featured verticals</span>
+          <h2 class="font-syne text-3xl font-extrabold tracking-tight text-text dark:text-white">
+            Templates tuned to your industry
+          </h2>
+        </div>
+        <a href="/search" class="group inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline dark:text-blue-400">
+          Search all templates
+          <svg class="h-4 w-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {topFeatured.map((ind) => (
+          <IndustryCard slug={ind.slug} name={ind.name} emoji={ind.emoji} count={industryCounts[ind.slug] || 0} />
+        ))}
+      </div>
+
+      <div id="all-industries-container" class="hidden grid grid-cols-1 gap-4 pt-1 sm:grid-cols-2 lg:grid-cols-3">
+        {extraIndustries.map((ind) => (
+          <IndustryCard slug={ind.slug} name={ind.name} emoji={ind.emoji} count={industryCounts[ind.slug] || 0} />
+        ))}
+      </div>
+
+      <div class="pt-2 text-center">
+        <button
+          id="toggle-categories-btn"
+          type="button"
+          class="group inline-flex items-center gap-2 rounded-2xl border border-border bg-white px-6 py-3.5 text-sm font-bold text-text shadow-sm transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700/80"
+        >
+          <span id="toggle-categories-text">See all categories ({industriesData.length})</span>
+          <svg id="toggle-categories-icon" class="h-4 w-4 text-primary transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <script>
+      function initCategoryToggle() {
+        const toggleBtn = document.getElementById('toggle-categories-btn');
+        const container = document.getElementById('all-industries-container');
+        const btnText = document.getElementById('toggle-categories-text');
+        const btnIcon = document.getElementById('toggle-categories-icon');
+
+        if (toggleBtn && container && btnText && btnIcon) {
+          toggleBtn.addEventListener('click', () => {
+            const isHidden = container.classList.contains('hidden');
+            if (isHidden) {
+              container.classList.remove('hidden');
+              btnText.textContent = 'Show top categories only';
+              btnIcon.classList.add('rotate-180');
+            } else {
+              container.classList.add('hidden');
+              btnText.textContent = 'See all categories (15+)';
+              btnIcon.classList.remove('rotate-180');
+            }
+          });
+        }
+      }
+
+      initCategoryToggle();
+      document.addEventListener('astro:page-load', initCategoryToggle);
+    </script>
+
+    <!-- ============ 6. FEATURED TEMPLATES ============ -->
+    <section class="space-y-8">
+      <div class="flex flex-col items-start justify-between gap-4 border-b border-border pb-5 dark:border-slate-800 sm:flex-row sm:items-end">
+        <div class="space-y-1.5">
+          <span class="text-[13px] font-bold uppercase tracking-[0.15em] text-emerald-600 dark:text-emerald-400">High converting</span>
+          <h2 class="font-syne text-3xl font-extrabold tracking-tight text-text dark:text-white">
+            Most-copied templates this week
+          </h2>
+        </div>
+      </div>
+
+      {featuredTemplates.length > 0 ? (
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {featuredTemplates.map((template) => (
+            <TemplateCard template={template} />
+          ))}
+        </div>
+      ) : (
+        <div class="rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center dark:border-white/15 dark:bg-slate-900/60">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-2xl dark:bg-blue-400/10">✍️</div>
+          <h3 class="mt-4 text-lg font-extrabold text-slate-950 dark:text-white">Fresh templates are on the way</h3>
+          <p class="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-600 dark:text-slate-400">We are publishing new business message templates regularly. Browse an industry or use the AI generator in the meantime.</p>
+        </div>
+      )}
+    </section>
+
+    <!-- ============ 6b. COMPARISON ============ -->
+    <section class="space-y-14">
+      <div class="mx-auto max-w-2xl space-y-3 text-center">
+        <span class="text-[13px] font-bold uppercase tracking-[0.15em] text-primary">The difference</span>
+        <h2 class="font-syne text-3xl font-extrabold tracking-tight text-text dark:text-white sm:text-[2.5rem]">
+          Stop typing every message from scratch
+        </h2>
+      </div>
+
+      <div class="grid gap-5 md:grid-cols-2">
+        <!-- Without -->
+        <div class="space-y-5 rounded-3xl border border-border bg-surface p-8 dark:border-slate-700 dark:bg-slate-800/40">
+          <div class="flex items-center gap-3">
+            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </span>
+            <h3 class="text-lg font-bold text-text-muted dark:text-slate-400">Doing it manually</h3>
+          </div>
+          <ul class="space-y-3">
+            {['Retype the same message 20+ times a day', 'Second-guess tone and wording every time', 'Inconsistent replies across your team', 'Slow responses mean lost leads', 'Copy-paste from scattered notes & docs'].map((t) => (
+              <li class="flex items-start gap-3 text-sm text-text-muted dark:text-slate-400">
+                <svg class="mt-0.5 h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- With -->
+        <div class="relative space-y-5 rounded-3xl border-2 border-primary/30 bg-white p-8 shadow-[0_16px_40px_-24px_rgba(37,99,235,0.5)] dark:bg-slate-800">
+          <span class="absolute right-6 top-6 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">Recommended</span>
+          <div class="flex items-center gap-3">
+            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            </span>
+            <h3 class="text-lg font-bold text-text dark:text-white">With ReplyFlow</h3>
+          </div>
+          <ul class="space-y-3">
+            {['Proven copy ready in one click', 'Consistent, on-brand voice every time', 'Your whole team shares one tested library', 'Reply in under 10 seconds, every time', 'Personalize live with variables + AI'].map((t) => (
+              <li class="flex items-start gap-3 text-sm font-medium text-text dark:text-slate-200">
+                <svg class="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6c. TESTIMONIALS ============ -->
+    <section class="space-y-12">
+      <div class="mx-auto max-w-2xl space-y-4 text-center">
+        <div class="flex items-center justify-center gap-1 text-amber-400">
+          {[0,1,2,3,4].map(() => (
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17.3 5.8 20.9l1.6-6.8L2.2 9.5l6.9-.6L12 2z"/></svg>
+          ))}
+        </div>
+        <h2 class="font-syne text-3xl font-extrabold tracking-tight text-text dark:text-white sm:text-[2.5rem]">
+          Loved by fast-moving teams
+        </h2>
+        <p class="text-base text-text-muted dark:text-slate-400">
+          Business owners, freelancers and agencies use ReplyFlow to reply faster every single day.
+        </p>
+      </div>
+
+      <div class="grid gap-5 md:grid-cols-3">
+        {[
+          { quote: 'Pehle har lead ko reply karne mein 5 minute lagte the — ab 10 second. Meri booking conversion double ho gayi.', name: 'Priya Sharma', role: 'Real estate agent, Jaipur', initials: 'PS' },
+          { quote: 'The WhatsApp templates are gold. My salon\'s confirmations look professional now and no-shows dropped noticeably.', name: 'Arjun Mehta', role: 'Salon owner, Pune', initials: 'AM' },
+          { quote: 'We onboard clients faster — every account manager sends the same tested copy. The zero-login part is a huge plus.', name: 'Neha Kapoor', role: 'Founder, growth agency', initials: 'NK' },
+        ].map((t) => (
+          <figure class="flex flex-col gap-5 rounded-3xl border border-border bg-white p-7 dark:border-slate-700/70 dark:bg-slate-800/80">
+            <svg class="h-7 w-7 text-primary/25" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.2 6C4.9 7.4 3.5 9.9 3.5 12.9c0 2.7 1.7 4.6 4 4.6 2 0 3.5-1.5 3.5-3.5S9.6 10.6 7.7 10.6c-.3 0-.7 0-1 .2.4-1.3 1.4-2.5 2.9-3.4L7.2 6zm9 0c-2.3 1.4-3.7 3.9-3.7 6.9 0 2.7 1.7 4.6 4 4.6 2 0 3.5-1.5 3.5-3.5s-1.4-3.4-3.3-3.4c-.3 0-.7 0-1 .2.4-1.3 1.4-2.5 2.9-3.4L16.2 6z"/></svg>
+            <blockquote class="flex-1 text-[15px] leading-relaxed text-text dark:text-slate-200">“{t.quote}”</blockquote>
+            <figcaption class="flex items-center gap-3 border-t border-border pt-4 dark:border-slate-700">
+              <span class="flex h-11 w-11 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">{t.initials}</span>
+              <span>
+                <span class="block text-sm font-bold text-text dark:text-white">{t.name}</span>
+                <span class="block text-xs text-text-muted dark:text-slate-400">{t.role}</span>
+              </span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <!-- ============ 7. FAQ ============ -->
+    <section class="mx-auto max-w-3xl space-y-10">
+      <div class="space-y-3 text-center">
+        <span class="text-[13px] font-bold uppercase tracking-[0.15em] text-primary">FAQ</span>
+        <h2 class="font-syne text-3xl font-extrabold tracking-tight text-text dark:text-white sm:text-[2.5rem]">
+          Everything you need to know
+        </h2>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map((f, i) => (
+          <details class="group rounded-2xl border border-border bg-white px-5 py-4 transition-colors open:border-primary/30 open:bg-primary/[0.02] dark:border-slate-700/70 dark:bg-slate-800/80 dark:open:bg-slate-800" open={i === 0}>
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-3 text-[15px] font-bold text-text dark:text-white">
+              {f.q}
+              <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border text-text-muted transition-transform duration-200 group-open:rotate-180 group-open:border-primary/30 group-open:text-primary dark:border-slate-600 dark:text-slate-400">
+                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 text-sm leading-relaxed text-text-muted dark:text-slate-400">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- ============ 8. CTA ============ -->
+    <section class="relative overflow-hidden rounded-[2rem] bg-slate-900 px-8 py-14 text-white shadow-2xl dark:bg-slate-950 sm:px-14 sm:py-16">
+      <div
+        class="pointer-events-none absolute inset-0 opacity-[0.15]"
+        style='background-image:radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px); background-size:22px 22px; -webkit-mask-image:radial-gradient(ellipse 60% 80% at 80% 20%, black, transparent 70%); mask-image:radial-gradient(ellipse 60% 80% at 80% 20%, black, transparent 70%);'
+      ></div>
+      <div class="pointer-events-none absolute -right-10 -top-16 h-64 w-64 rounded-full bg-primary/30 blur-[100px]"></div>
+
+      <div class="relative flex flex-col items-center justify-between gap-8 text-center md:flex-row md:text-left">
+        <div class="max-w-xl space-y-4">
+          <h3 class="font-syne text-3xl font-extrabold tracking-tight sm:text-[2.5rem]">
+            Reply to your next customer in seconds
+          </h3>
+          <p class="text-base leading-relaxed text-slate-300">
+            Browse our growing template library or generate a custom message with AI — free, no login, no limits.
+          </p>
+        </div>
+
+        <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+          <a href="/search" class="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-bold text-slate-900 shadow-lg transition-all hover:-translate-y-0.5 hover:bg-slate-100">
+            Explore all templates
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+          <a href="/ai" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/5 px-6 py-3.5 text-sm font-bold text-white backdrop-blur transition-all hover:bg-white/10">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.9L18.7 9.7 13.8 11.5 12 16.4 10.2 11.5 5.3 9.7 10.2 7.9 12 3z" /></svg>
+            Try the AI Generator
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>

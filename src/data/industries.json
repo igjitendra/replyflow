@@ -1,0 +1,17 @@
+[
+  { "slug": "real-estate", "name": "Real Estate", "emoji": "🏢" },
+  { "slug": "clinic", "name": "Clinic & Healthcare", "emoji": "🏥" },
+  { "slug": "salon", "name": "Salon & Spa", "emoji": "💇" },
+  { "slug": "restaurant", "name": "Restaurant & Cafe", "emoji": "🍽️" },
+  { "slug": "retail", "name": "Retail & Local Shop", "emoji": "🛍️" },
+  { "slug": "gym", "name": "Gym & Fitness", "emoji": "🏋️" },
+  { "slug": "freelancer", "name": "Freelancer & Consultant", "emoji": "💻" },
+  { "slug": "agency", "name": "Marketing & IT Agency", "emoji": "🚀" },
+  { "slug": "education", "name": "Education & Coaching", "emoji": "📚" },
+  { "slug": "e-commerce", "name": "E-Commerce", "emoji": "🛒" },
+  { "slug": "automobile", "name": "Automobile & Services", "emoji": "🚗" },
+  { "slug": "financial-services", "name": "Financial Services & CA", "emoji": "💰" },
+  { "slug": "hospitality", "name": "Hotel & Hospitality", "emoji": "🏨" },
+  { "slug": "event-management", "name": "Events & Wedding Planner", "emoji": "🎉" },
+  { "slug": "legal-consulting", "name": "Legal & Corporate Consulting", "emoji": "⚖️" }
+]

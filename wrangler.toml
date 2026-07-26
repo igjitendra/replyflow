@@ -1,0 +1,5 @@
+name = "replyflow"
+pages_build_output_dir = "./dist"
+
+[vars]
+NODE_VERSION = "22.12.0"

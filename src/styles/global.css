@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { color-scheme: light dark; }
+  html { font-family: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif; scroll-behavior: smooth; }
+  body { @apply min-h-screen bg-white text-text antialiased dark:bg-slate-950 dark:text-text-dark; }
+  ::selection { background: rgba(37, 99, 235, .18); color: inherit; }
+  :focus-visible { outline: 2px solid #2563eb; outline-offset: 3px; }
+}
+
+@layer components {
+  .premium-grid {
+    background-image: linear-gradient(to right, rgba(148,163,184,.11) 1px, transparent 1px), linear-gradient(to bottom, rgba(148,163,184,.11) 1px, transparent 1px);
+    background-size: 32px 32px;
+    -webkit-mask-image: linear-gradient(to bottom, #000 5%, transparent 86%);
+    mask-image: linear-gradient(to bottom, #000 5%, transparent 86%);
+  }
+  .premium-gradient-text {
+    color: #2563eb;
+    background: linear-gradient(100deg, #2563eb 5%, #6d5ce7 52%, #0f9f7a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-orb { position: absolute; z-index: -10; border-radius: 999px; filter: blur(1px); pointer-events: none; }
+  .hero-orb-one { width: 26rem; height: 26rem; right: -7rem; top: 1rem; background: radial-gradient(circle, rgba(96,165,250,.20), rgba(96,165,250,0) 70%); }
+  .hero-orb-two { width: 24rem; height: 24rem; left: -9rem; top: 16rem; background: radial-gradient(circle, rgba(167,139,250,.16), rgba(167,139,250,0) 70%); }
+  .hero-product-shell::after { content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; box-shadow: inset 0 1px 0 rgba(255,255,255,.8); }
+  .premium-button { position: relative; overflow: hidden; }
+  .premium-button::after { content: ''; position: absolute; inset: 0; transform: translateX(-110%); background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent); transition: transform .55s ease; }
+  .premium-button:hover::after { transform: translateX(110%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

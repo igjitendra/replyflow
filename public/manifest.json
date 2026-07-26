@@ -1,0 +1,22 @@
+{
+  "name": "ReplyFlow — Business Message Template Library",
+  "short_name": "ReplyFlow",
+  "description": "Discover, customize and copy business message templates for WhatsApp, SMS, Email, Instagram DMs and customer communication.",
+  "start_url": "/",
+  "scope": "/",
+  "lang": "en-US",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2563EB",
+  "categories": ["business", "productivity", "utilities"],
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

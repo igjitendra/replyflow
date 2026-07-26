@@ -1,0 +1,255 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import defaultSettings from '../data/settings.json';
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/settings`;
+---
+
+<BaseLayout
+  title="Website Control Panel & Google Ads Settings — ReplyFlow"
+  description="Manage site-wide Google AdSense client IDs, ad slot placements, custom branding, and footer copyright settings."
+  canonicalUrl={pageUrl}
+>
+
+  <div class="max-w-4xl mx-auto space-y-8 pb-16">
+    <Breadcrumbs items={[{ label: 'Site Settings & Google Ads' }]} />
+
+    <!-- Page Header -->
+    <div class="bg-white dark:bg-slate-800 border border-border dark:border-slate-700/80 rounded-3xl p-6 sm:p-10 shadow-sm space-y-3">
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-50 dark:bg-slate-700 text-primary">
+          ⚙️ Website Admin & Ads Panel
+        </span>
+        <div id="save-status-badge" class="hidden px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs font-bold animate-bounce">
+          ✓ Settings Saved Successfully!
+        </div>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-text dark:text-white tracking-tight">
+        Website & Google Ads Settings
+      </h1>
+      <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400">
+        Control Google AdSense ads, custom copyright branding, support contact, and site-wide preferences directly from your browser.
+      </p>
+    </div>
+
+    <!-- Main Settings Form -->
+    <div class="bg-white dark:bg-slate-800 border border-border dark:border-slate-700/80 rounded-3xl p-6 sm:p-10 shadow-sm space-y-10">
+      
+      <!-- Section 1: Google AdSense Control Panel -->
+      <div class="space-y-6">
+        <div class="border-b border-border dark:border-slate-700 pb-3 flex items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-extrabold text-text dark:text-white flex items-center gap-2">
+              <span>📢 Google AdSense Integration</span>
+            </h2>
+            <p class="text-xs text-text-muted dark:text-slate-400 mt-0.5">
+              Enable ads site-wide and insert your Google AdSense Publisher Client ID to monetize ReplyFlow.
+            </p>
+          </div>
+          
+          <!-- Master Ads Toggle Switch -->
+          <label class="relative inline-flex items-center cursor-pointer shrink-0">
+            <input type="checkbox" id="enable-ads-toggle" class="sr-only peer" checked />
+            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-slate-600 peer-checked:bg-emerald-500"></div>
+            <span class="ml-2 text-xs font-bold text-text dark:text-white">Enable Ads</span>
+          </label>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          
+          <!-- AdSense Client ID -->
+          <div class="sm:col-span-2 space-y-2">
+            <label for="adsense-client-id" class="block text-xs font-bold text-text dark:text-slate-200">
+              Google AdSense Publisher Client ID (ca-pub-XXXXXXXXXXXXXXXX)
+            </label>
+            <input
+              type="text"
+              id="adsense-client-id"
+              placeholder="e.g. ca-pub-1234567890123456"
+              class="w-full px-4 py-3 rounded-2xl bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 text-sm font-mono text-text dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
+            />
+            <p class="text-[11px] text-text-muted dark:text-slate-400">
+              Found in your Google AdSense Account → Account Information → Publisher ID.
+            </p>
+          </div>
+
+          <!-- Header Ad Slot ID -->
+          <div class="space-y-2">
+            <label for="header-ad-slot" class="block text-xs font-bold text-text dark:text-slate-200">
+              Header Banner Ad Slot ID (Optional)
+            </label>
+            <input
+              type="text"
+              id="header-ad-slot"
+              placeholder="e.g. 9876543210"
+              class="w-full px-4 py-3 rounded-2xl bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 text-sm font-mono text-text dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
+            />
+          </div>
+
+          <!-- In-Content Ad Slot ID -->
+          <div class="space-y-2">
+            <label for="incontent-ad-slot" class="block text-xs font-bold text-text dark:text-slate-200">
+              In-Content / Template Ad Slot ID (Optional)
+            </label>
+            <input
+              type="text"
+              id="incontent-ad-slot"
+              placeholder="e.g. 1234567890"
+              class="w-full px-4 py-3 rounded-2xl bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 text-sm font-mono text-text dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
+            />
+          </div>
+
+          <!-- Footer Ad Slot ID -->
+          <div class="space-y-2 sm:col-span-2">
+            <label for="footer-ad-slot" class="block text-xs font-bold text-text dark:text-slate-200">
+              Footer Ad Slot ID (Optional)
+            </label>
+            <input
+              type="text"
+              id="footer-ad-slot"
+              placeholder="e.g. 5555555555"
+              class="w-full px-4 py-3 rounded-2xl bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 text-sm font-mono text-text dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Pro Branding & Copyright Customization -->
+      <div class="space-y-6">
+        <div class="border-b border-border dark:border-slate-700 pb-3">
+          <h2 class="text-xl font-extrabold text-text dark:text-white flex items-center gap-2">
+            <span>🏷️ Website Branding & Copyright</span>
+          </h2>
+          <p class="text-xs text-text-muted dark:text-slate-400 mt-0.5">
+            Customize official site branding, footer copyright line, and support contact details.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          
+          <!-- Site Name -->
+          <div class="space-y-2">
+            <label for="site-name" class="block text-xs font-bold text-text dark:text-slate-200">
+              Platform Brand Name
+            </label>
+            <input
+              type="text"
+              id="site-name"
+              placeholder="ReplyFlow"
+              class="w-full px-4 py-3 rounded-2xl bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 text-sm font-semibold text-text dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
+            />
+          </div>
+
+          <!-- Support Email -->
+          <div class="space-y-2">
+            <label for="support-email" class="block text-xs font-bold text-text dark:text-slate-200">
+              Support / Business Email
+            </label>
+            <input
+              type="email"
+              id="support-email"
+              placeholder="support@procsctools.in"
+              class="w-full px-4 py-3 rounded-2xl bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 text-sm font-semibold text-text dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
+            />
+          </div>
+
+          <!-- Copyright Text -->
+          <div class="sm:col-span-2 space-y-2">
+            <label for="copyright-text" class="block text-xs font-bold text-text dark:text-slate-200">
+              Footer Copyright Line
+            </label>
+            <input
+              type="text"
+              id="copyright-text"
+              placeholder="© 2026 ReplyFlow Business Communication Hub. All Rights Reserved."
+              class="w-full px-4 py-3 rounded-2xl bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 text-sm font-semibold text-text dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions Bar -->
+      <div class="pt-6 border-t border-border dark:border-slate-700 flex items-center justify-between gap-4 flex-wrap">
+        <button
+          type="button"
+          id="reset-settings-btn"
+          class="px-5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold transition-colors"
+        >
+          🔄 Reset Defaults
+        </button>
+
+        <button
+          type="button"
+          id="save-settings-btn"
+          class="px-8 py-3 rounded-2xl bg-primary hover:bg-primary-dark text-white font-extrabold text-sm shadow-lg shadow-blue-500/20 hover:scale-105 transition-all"
+        >
+          💾 Save Site Settings
+        </button>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<script is:inline define:vars={{ defaultSettings }}>
+  function initSettingsPage() {
+
+    const rawSettings = localStorage.getItem('rf_site_settings');
+    const settings = rawSettings ? JSON.parse(rawSettings) : defaultSettings;
+
+    const adsToggle = document.getElementById('enable-ads-toggle');
+    const adsenseId = document.getElementById('adsense-client-id');
+    const headerAd = document.getElementById('header-ad-slot');
+    const incontentAd = document.getElementById('incontent-ad-slot');
+    const footerAd = document.getElementById('footer-ad-slot');
+    const siteName = document.getElementById('site-name');
+    const supportEmail = document.getElementById('support-email');
+    const copyrightText = document.getElementById('copyright-text');
+
+    if (adsToggle) adsToggle.checked = settings.enableAds !== false;
+    if (adsenseId) adsenseId.value = settings.adsenseClientId || '';
+    if (headerAd) headerAd.value = settings.headerAdSlot || '';
+    if (incontentAd) incontentAd.value = settings.inContentAdSlot || '';
+    if (footerAd) footerAd.value = settings.footerAdSlot || '';
+    if (siteName) siteName.value = settings.siteName || defaultSettings.siteName;
+    if (supportEmail) supportEmail.value = settings.supportEmail || defaultSettings.supportEmail;
+    if (copyrightText) copyrightText.value = settings.copyrightText || defaultSettings.copyrightText;
+
+    // Save Button Handler
+    const saveBtn = document.getElementById('save-settings-btn');
+    const saveBadge = document.getElementById('save-status-badge');
+
+    saveBtn?.addEventListener('click', () => {
+      const updated = {
+        enableAds: adsToggle?.checked ?? true,
+        adsenseClientId: adsenseId?.value.trim() || '',
+        headerAdSlot: headerAd?.value.trim() || '',
+        inContentAdSlot: incontentAd?.value.trim() || '',
+        footerAdSlot: footerAd?.value.trim() || '',
+        siteName: siteName?.value.trim() || defaultSettings.siteName,
+        supportEmail: supportEmail?.value.trim() || defaultSettings.supportEmail,
+        copyrightText: copyrightText?.value.trim() || defaultSettings.copyrightText,
+      };
+
+      localStorage.setItem('rf_site_settings', JSON.stringify(updated));
+
+      if (saveBadge) {
+        saveBadge.classList.remove('hidden');
+        setTimeout(() => saveBadge.classList.add('hidden'), 3500);
+      }
+    });
+
+    // Reset Button Handler
+    const resetBtn = document.getElementById('reset-settings-btn');
+    resetBtn?.addEventListener('click', () => {
+      if (confirm('Are you sure you want to reset settings to defaults?')) {
+        localStorage.removeItem('rf_site_settings');
+        window.location.reload();
+      }
+    });
+  }
+
+  initSettingsPage();
+  document.addEventListener('astro:page-load', initSettingsPage);
+</script>

@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+export async function getStaticPaths() { const posts = await getCollection('blog', ({ data }) => !data.draft); return posts.map((post) => ({ params: { slug: post.slug }, props: { post } })); }
+const { post } = Astro.props as { post: CollectionEntry<'blog'> };
+const { Content } = await post.render();
+const siteOrigin = 'https:' + '//' + 'replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/blog/${post.slug}`;
+const articleSchema = { '@context':'https://schema.org', '@type':'BlogPosting', headline:post.data.title, description:post.data.excerpt, datePublished:post.data.published_at.toISOString(), dateModified:(post.data.updated_at || post.data.published_at).toISOString(), author:{'@type':'Person',name:post.data.author}, mainEntityOfPage:pageUrl };
+---
+<BaseLayout title={post.data.meta_title || `${post.data.title} — ReplyFlow Blog`} description={post.data.meta_description || post.data.excerpt} canonicalUrl={pageUrl} type="article" jsonLd={articleSchema}>
+  <article class="mx-auto max-w-3xl pb-20" data-pagefind-body>
+    <a href="/blog" class="text-sm font-bold text-blue-600">← Back to Blog</a>
+    <header class="mt-8 border-b border-slate-200 pb-8 dark:border-white/10"><span class="text-xs font-bold uppercase tracking-wider text-blue-600">{post.data.category.replace(/-/g,' ')}</span><h1 class="mt-3 font-outfit text-4xl font-extrabold leading-tight tracking-tight text-slate-950 dark:text-white sm:text-6xl">{post.data.title}</h1><p class="mt-5 text-lg leading-8 text-slate-600 dark:text-slate-300">{post.data.excerpt}</p><div class="mt-5 text-sm text-slate-500">{post.data.author} · {post.data.published_at.toLocaleDateString('en-IN',{dateStyle:'long'})}</div></header>
+    {post.data.cover && <img src={post.data.cover} alt={post.data.title} class="mt-8 aspect-[16/9] w-full rounded-2xl object-cover" />}
+    <div class="prose prose-slate mt-10 max-w-none dark:prose-invert"><Content /></div>
+  </article>
+</BaseLayout>

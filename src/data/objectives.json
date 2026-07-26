@@ -1,0 +1,7 @@
+[
+  { "slug": "lead-generation", "name": "Lead Generation" },
+  { "slug": "follow-up", "name": "Follow-Up" },
+  { "slug": "upsell", "name": "Upsell & Cross-sell" },
+  { "slug": "retention", "name": "Retention & Renewal" },
+  { "slug": "support", "name": "Customer Support" }
+]

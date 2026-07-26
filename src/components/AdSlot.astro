@@ -1,0 +1,74 @@
+---
+interface Props {
+  slotType?: 'header' | 'inContent' | 'sidebar' | 'footer';
+  className?: string;
+}
+
+const { slotType = 'inContent', className = '' } = Astro.props;
+---
+
+<div class={`ad-slot-container my-4 text-center ${className}`} data-slot-type={slotType}>
+  <!-- Dynamic AdSense Render Container -->
+  <div class="ad-render-area hidden max-w-4xl mx-auto">
+    <!-- AdSense Code dynamically inserted via script -->
+  </div>
+
+  <!-- Fallback / Demo Ad Placeholder (visible when ads enabled or configured in /settings) -->
+  <div class="ad-placeholder hidden p-3 rounded-2xl bg-slate-100/70 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 text-center max-w-4xl mx-auto">
+    <div class="flex items-center justify-center gap-2 text-[11px] font-medium text-slate-400 dark:text-slate-500">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+      </svg>
+      <span>Advertisement Space ({slotType}) • Manage in <a href="/settings" class="text-primary underline font-bold">/settings</a></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setupAdSlots() {
+    const rawSettings = localStorage.getItem('rf_site_settings');
+    const settings = rawSettings ? JSON.parse(rawSettings) : { enableAds: true };
+    const containers = document.querySelectorAll<HTMLElement>('.ad-slot-container');
+
+    containers.forEach((container) => {
+      const renderArea = container.querySelector<HTMLElement>('.ad-render-area');
+      const placeholder = container.querySelector<HTMLElement>('.ad-placeholder');
+      const slotType = container.getAttribute('data-slot-type');
+
+      if (!settings.enableAds) {
+        container.classList.add('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+
+      if (settings.adsenseClientId && renderArea) {
+        let slotId = '';
+        if (slotType === 'header') slotId = settings.headerAdSlot;
+        else if (slotType === 'footer') slotId = settings.footerAdSlot;
+        else slotId = settings.inContentAdSlot;
+
+        renderArea.innerHTML = `
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="${settings.adsenseClientId}"
+               ${slotId ? `data-ad-slot="${slotId}"` : ''}
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+        `;
+        renderArea.classList.remove('hidden');
+        if (placeholder) placeholder.classList.add('hidden');
+
+        try {
+          // @ts-ignore
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {}
+      } else if (placeholder) {
+        placeholder.classList.remove('hidden');
+      }
+    });
+  }
+
+  setupAdSlots();
+  document.addEventListener('astro:page-load', setupAdSlots);
+</script>

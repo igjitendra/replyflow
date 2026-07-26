@@ -1,0 +1,223 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import ChatPreview from '../../../components/ChatPreview.astro';
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/industry/clinic/flows`;
+
+const flowsJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Clinic & Healthcare WhatsApp Message Automation Funnel Flows — ReplyFlow',
+  url: pageUrl,
+  description: 'Multi-step WhatsApp message automation sequences for clinics, hospitals, diagnostic labs, and doctors with interactive CTA buttons.',
+};
+
+const consultationFlow = [
+  {
+    step: 1,
+    title: 'Step 1: Instant Appointment Booking Confirmation & Token',
+    delay: 'Instant (0 mins)',
+    text: `Dear {{name}},\n\nYour appointment with Dr. {{doctor}} ({{speciality}}) has been successfully booked! 🎉\n\n📋 Booking Details:\n• Date: {{date}} | Time: {{time}}\n• Token Number: TK-014\n• Clinic: {{clinic}}\n📍 Address: {{address}}\n\nPlease arrive 15 minutes before your time slot.`,
+    variables: ['name', 'doctor', 'speciality', 'date', 'time', 'clinic', 'address'],
+    buttons: [
+      { type: 'url' as const, text: '📍 Get Directions to Clinic' },
+      { type: 'reply' as const, text: '🔄 Reschedule Slot' },
+      { type: 'phone' as const, text: '📞 Call Clinic Reception' },
+    ],
+  },
+  {
+    step: 2,
+    title: 'Step 2: 24-Hour Prior Appointment Reminder',
+    delay: 'T-24 Hours',
+    text: `Hello {{name}}! 👋\n\nQuick reminder for your upcoming doctor appointment tomorrow. 🩺\n\n👨‍⚕️ Doctor: Dr. {{doctor}}\n🗓️ Date & Time: {{date}} at {{time}}\n📍 Clinic: {{clinic}}\n\nPlease confirm if you are attending or reschedule if needed.`,
+    variables: ['name', 'doctor', 'date', 'time', 'clinic'],
+    buttons: [
+      { type: 'reply' as const, text: '✅ Confirm Attendance' },
+      { type: 'reply' as const, text: '📅 Reschedule Slot' },
+      { type: 'reply' as const, text: '❌ Cancel Booking' },
+    ],
+  },
+  {
+    step: 3,
+    title: 'Step 3: Post-Consultation Prescription & Lab Test Nudge',
+    delay: 'Post Consultation',
+    text: `Dear {{name}},\n\nThank you for consulting Dr. {{doctor}} at {{clinic}} today! 🩺📄\n\nYour Rx Prescription & prescribed diagnostic lab test details are available on your patient portal.\n\nNeed home sample collection or medicine doorstep delivery?`,
+    variables: ['name', 'doctor', 'clinic'],
+    buttons: [
+      { type: 'url' as const, text: '📄 Download Rx Prescription PDF' },
+      { type: 'reply' as const, text: '🩸 Book Home Blood Sample' },
+    ],
+  },
+  {
+    step: 4,
+    title: 'Step 4: Patient CSAT Feedback & Google Review Request',
+    delay: '+2 Hours Post Visit',
+    text: `Hi {{name}}! 😊\n\nHow was your visit with Dr. {{doctor}} today at *{{clinic}}*? 🙏\n\nYour 30-second review helps other patients find reliable medical care. Please share a 5-star Google review!`,
+    variables: ['name', 'doctor', 'clinic'],
+    buttons: [
+      { type: 'url' as const, text: '⭐ Leave 5-Star Google Review' },
+      { type: 'reply' as const, text: '💬 Share Private Feedback' },
+    ],
+  },
+];
+
+const diagnosticFlow = [
+  {
+    step: 1,
+    title: 'Step 1: Home Blood Sample Collection Booking',
+    delay: 'On Booking',
+    text: `Dear {{name}},\n\nYour Home Blood Sample Collection is confirmed! 🩸🏡\n\n📋 Booking Details:\n• Scheduled: {{date}} | 07:00 AM - 08:00 AM\n• Tests: Full Body Screening\n• Phlebotomist: Rahul Sharma (+91 98765 43210)\n\n⚠️ Fasting: 10-12 hours water-only overnight fasting required.`,
+    variables: ['name', 'date'],
+    buttons: [
+      { type: 'url' as const, text: '📍 Track Phlebotomist' },
+      { type: 'phone' as const, text: '📞 Call Phlebotomist' },
+    ],
+  },
+  {
+    step: 2,
+    title: 'Step 2: Lab Test Report Ready & Password Protected PDF',
+    delay: 'Report Ready',
+    text: `Dear {{name}},\n\nYour diagnostic test report for Full Body Screening (Ref: LAB-99201) is ready! 📄✅\n\n🔒 Password Hint: First 4 letters of your name in CAPITALS + Year of Birth (e.g. RAHU1988).\n\nClick below to download your verified report.`,
+    variables: ['name'],
+    buttons: [
+      { type: 'url' as const, text: '📥 Download Report PDF' },
+      { type: 'reply' as const, text: '🩺 Consult Doctor for Report' },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Clinic & Healthcare WhatsApp Message Automation Funnel Flows — ReplyFlow"
+  description="Multi-step WhatsApp message automation sequences for clinics, hospitals, diagnostic labs, and doctors with interactive CTA buttons."
+  keywords="clinic whatsapp flow, doctor appointment sequence, healthcare whatsapp automation, lab report pdf whatsapp"
+  canonicalUrl={pageUrl}
+  jsonLd={flowsJsonLd}
+>
+  <div class="max-w-5xl mx-auto space-y-12 pb-16">
+    <Breadcrumbs
+      items={[
+        { label: 'Industries', href: '/' },
+        { label: 'Clinic & Healthcare', href: '/industry/clinic' },
+        { label: 'WhatsApp Automation Message Flows' },
+      ]}
+    />
+
+    <!-- Header Banner -->
+    <div class="bg-gradient-to-r from-cyan-600 via-teal-600 to-emerald-600 rounded-3xl p-8 sm:p-12 text-white shadow-xl space-y-4">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-xs font-semibold uppercase tracking-wider">
+        ⚡ Proven Patient Engagement Sequences
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight">
+        Clinic & Healthcare WhatsApp Message Flows
+      </h1>
+      <p class="text-sm sm:text-base text-cyan-100 max-w-3xl leading-relaxed">
+        Automated multi-step WhatsApp patient journeys designed for doctors, polyclinics, diagnostic labs, and hospitals to increase booking confirmation rates and reduce no-shows.
+      </p>
+    </div>
+
+    <!-- Funnel 1: Patient Consultation Journey -->
+    <section class="space-y-6">
+      <div class="border-b border-border dark:border-slate-800 pb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400">
+          Flow 1 (4-Step Patient Journey)
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white">
+          🩺 Doctor Consultation & Patient Feedback Funnel
+        </h2>
+        <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 mt-1">
+          From appointment booking token to post-consultation prescription and 5-star Google review.
+        </p>
+      </div>
+
+      <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 sm:before:left-8 before:w-0.5 before:bg-teal-200 dark:before:bg-slate-800 before:z-0">
+        {consultationFlow.map((item) => (
+          <div class="relative z-10 flex items-start gap-4 sm:gap-6">
+            <div class="w-8 h-8 sm:w-16 sm:h-16 rounded-2xl bg-teal-600 text-white font-extrabold text-sm sm:text-xl flex items-center justify-center shrink-0 shadow-md">
+              {item.step}
+            </div>
+            <div class="flex-grow space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-text dark:text-white">
+                  {item.title}
+                </h3>
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-teal-100 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                  ⏱️ {item.delay}
+                </span>
+              </div>
+
+              <ChatPreview
+                title={`Step ${item.step}: WhatsApp Message`}
+                text={item.text}
+                variables={item.variables}
+                whatsappApproved={true}
+                buttons={item.buttons}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Funnel 2: Diagnostic Lab Sample & Report Delivery -->
+    <section class="space-y-6 pt-6 border-t border-border dark:border-slate-800">
+      <div class="border-b border-border dark:border-slate-800 pb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+          Flow 2 (Diagnostic & Lab Report Sequence)
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white">
+          🔬 Diagnostic Test Home Collection & PDF Report Delivery
+        </h2>
+        <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 mt-1">
+          Sample collection tracking and password-protected PDF report delivery.
+        </p>
+      </div>
+
+      <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 sm:before:left-8 before:w-0.5 before:bg-cyan-200 dark:before:bg-slate-800 before:z-0">
+        {diagnosticFlow.map((item) => (
+          <div class="relative z-10 flex items-start gap-4 sm:gap-6">
+            <div class="w-8 h-8 sm:w-16 sm:h-16 rounded-2xl bg-cyan-600 text-white font-extrabold text-sm sm:text-xl flex items-center justify-center shrink-0 shadow-md">
+              {item.step}
+            </div>
+            <div class="flex-grow space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-text dark:text-white">
+                  {item.title}
+                </h3>
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-cyan-100 dark:bg-cyan-950/80 text-cyan-800 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800">
+                  ⏱️ {item.delay}
+                </span>
+              </div>
+
+              <ChatPreview
+                title={`Step ${item.step}: WhatsApp Message`}
+                text={item.text}
+                variables={item.variables}
+                whatsappApproved={true}
+                buttons={item.buttons}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Bottom CTA Card -->
+    <div class="bg-surface dark:bg-slate-800 p-8 rounded-3xl border border-border dark:border-slate-700 text-center space-y-4">
+      <h3 class="text-2xl font-bold text-text dark:text-white">
+        Explore All Clinic & Healthcare Templates
+      </h3>
+      <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 max-w-xl mx-auto">
+        Browse ready-to-use templates for dental checkups, eye testing, child vaccinations, chronic care follow-ups, and emergency doctor callbacks.
+      </p>
+      <a
+        href="/industry/clinic"
+        class="inline-block px-6 py-3.5 bg-primary text-white font-extrabold rounded-2xl shadow-lg hover:bg-cyan-700 transition-all text-sm"
+      >
+        View All Clinic Templates →
+      </a>
+    </div>
+  </div>
+</BaseLayout>

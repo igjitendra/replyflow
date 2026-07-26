@@ -1,0 +1,39 @@
+---
+interface Props {
+  slug: string;
+  name: string;
+  emoji: string;
+  count?: number;
+}
+
+const { slug, name, emoji, count = 0 } = Astro.props;
+---
+
+<a
+  href={`/industry/${slug}`}
+  class="industry-card group relative flex items-center justify-between gap-3 overflow-hidden rounded-3xl border border-border/80 bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_8px_30px_rgba(37,99,235,0.12)] dark:border-slate-700/70 dark:bg-slate-800/80 dark:hover:border-primary/50"
+>
+  <!-- Hover accent wash -->
+  <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-blue-500/0 to-indigo-500/0 opacity-0 transition-opacity duration-300 group-hover:from-blue-500/5 group-hover:to-indigo-500/5 group-hover:opacity-100"></div>
+
+  <div class="relative flex items-center gap-4">
+    <div class="flex h-14 w-14 items-center justify-center rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 text-2xl shadow-sm transition-transform duration-300 group-hover:scale-110 dark:border-slate-600 dark:from-slate-700 dark:to-slate-700/60">
+      {emoji}
+    </div>
+
+    <div>
+      <h4 class="text-[17px] font-bold tracking-tight text-text transition-colors group-hover:text-primary dark:text-white dark:group-hover:text-blue-400">
+        {name}
+      </h4>
+      <p class="mt-0.5 text-sm font-medium text-text-muted dark:text-slate-400">
+        {count} template{count === 1 ? '' : 's'}
+      </p>
+    </div>
+  </div>
+
+  <div class="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400 transition-all duration-300 group-hover:translate-x-0.5 group-hover:bg-primary group-hover:text-white dark:bg-slate-700 dark:text-slate-300">
+    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+    </svg>
+  </div>
+</a>

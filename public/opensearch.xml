@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>ReplyFlow</ShortName>
+  <Description>Search ReplyFlow business message templates</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image height="16" width="16" type="image/svg+xml">https://replyflow.procsctools.in/favicon.svg</Image>
+  <Url type="text/html" template="https://replyflow.procsctools.in/search?q={searchTerms}" />
+</OpenSearchDescription>

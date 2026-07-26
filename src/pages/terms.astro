@@ -1,0 +1,100 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+const lastUpdated = 'July 24, 2026';
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/terms`;
+
+const termsJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Terms of Service — ReplyFlow',
+  url: pageUrl,
+  description: 'ReplyFlow Terms of Service: Guidelines and rules for accessing and using our free static multi-channel business message template library.',
+};
+---
+
+<BaseLayout
+  title="Terms of Service — ReplyFlow"
+  description="ReplyFlow Terms of Service: Guidelines and rules for accessing and using our free static multi-channel business message template library."
+  canonicalUrl={pageUrl}
+  jsonLd={termsJsonLd}
+>
+
+  <div class="max-w-4xl mx-auto space-y-8 pb-16">
+    <Breadcrumbs items={[{ label: 'Terms of Service' }]} />
+
+    <!-- Page Header -->
+    <div class="bg-white dark:bg-slate-800 border border-border dark:border-slate-700/80 rounded-3xl p-6 sm:p-10 shadow-sm space-y-3">
+      <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-50 dark:bg-slate-700 text-primary">
+        Legal Agreements
+      </span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-text dark:text-white tracking-tight">
+        Terms of Service
+      </h1>
+      <p class="text-xs text-text-muted dark:text-slate-400 font-medium">
+        Last Updated: {lastUpdated}
+      </p>
+    </div>
+
+    <!-- Content Sections -->
+    <div class="bg-white dark:bg-slate-800/80 border border-border dark:border-slate-700/80 rounded-3xl p-6 sm:p-10 shadow-sm space-y-8 text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
+      
+      <!-- Section 1 -->
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-text dark:text-white border-b border-border dark:border-slate-700 pb-2">
+          1. Acceptance of Terms
+        </h2>
+        <p>
+          By accessing or using <strong>ReplyFlow</strong> (replyflow.procsctools.in), you agree to be bound by these Terms of Service. ReplyFlow is a free, static multi-channel business message template library designed to help small and medium businesses find, customize, and copy communication templates.
+        </p>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-text dark:text-white border-b border-border dark:border-slate-700 pb-2">
+          2. No User Account / Registration Required
+        </h2>
+        <p>
+          ReplyFlow is provided as an open, static reference tool. You do not need to register, log in, or create a user account to access any feature of the platform.
+        </p>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-text dark:text-white border-b border-border dark:border-slate-700 pb-2">
+          3. Usage License & Permitted Uses
+        </h2>
+        <p>You are granted a non-exclusive, worldwide, royalty-free license to:</p>
+        <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm text-text-muted dark:text-slate-400">
+          <li>Copy, adapt, edit, and send any template from ReplyFlow for your commercial or personal business communications.</li>
+          <li>Use templates across WhatsApp, SMS, Email, Instagram DMs, Google Review requests, and customer support channels.</li>
+        </ul>
+        <p class="pt-2">You may NOT re-sell or re-distribute our template database en masse as a competing template library website without express written consent.</p>
+      </section>
+
+      <!-- Section 4 -->
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-text dark:text-white border-b border-border dark:border-slate-700 pb-2">
+          4. User Responsibility & Regulatory Compliance
+        </h2>
+        <p>
+          You are solely responsible for all messages you transmit to your customers. When sending messages, you agree to comply with all applicable messaging laws, local anti-spam regulations (such as TRAI guidelines in India, DND registries, and WhatsApp Business Policies). ReplyFlow does not transmit messages directly on your behalf.
+        </p>
+      </section>
+
+      <!-- Section 5 -->
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-text dark:text-white border-b border-border dark:border-slate-700 pb-2">
+          5. Limitation of Liability
+        </h2>
+        <p>
+          ReplyFlow is provided on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind. In no event shall ReplyFlow or its creators be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use our message templates.
+        </p>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>

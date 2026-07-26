@@ -1,0 +1,164 @@
+---
+import CopyButton from './CopyButton.astro';
+
+interface Props {
+  text: string;
+  variables?: string[];
+  title?: string;
+  whatsappApproved?: boolean;
+  time?: string;
+  buttons?: { type: 'url' | 'phone' | 'reply'; text: string }[];
+}
+
+const {
+  text,
+  variables = [],
+  title = 'WhatsApp Preview',
+  whatsappApproved = true,
+  time = '10:42 AM',
+  buttons = [],
+} = Astro.props;
+
+const containerId = 'chat-preview-' + Math.random().toString(36).substring(2, 9);
+---
+
+<div id={containerId} class="chat-preview-container bg-emerald-50/60 dark:bg-slate-900 border border-emerald-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+  <!-- Header Bar -->
+  <div class="flex items-center justify-between pb-3 border-b border-emerald-100 dark:border-slate-800">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-xs shadow-sm">
+        RF
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm text-slate-800 dark:text-slate-200 leading-tight">
+          {title}
+        </h4>
+        <p class="text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          WhatsApp Business Ready
+        </p>
+      </div>
+    </div>
+
+    {whatsappApproved && (
+      <span class="px-2 py-0.5 text-[10px] font-semibold tracking-wide bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded border border-emerald-300 dark:border-emerald-700">
+        ✓ Verified Template
+      </span>
+    )}
+  </div>
+
+  <!-- Variable Fill Form (if variables exist) -->
+  {variables.length > 0 && (
+    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur rounded-xl p-3 border border-emerald-100 dark:border-slate-700 space-y-2">
+      <p class="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+        Customize Variables
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {variables.map((v) => (
+          <div>
+            <label class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-0.5 capitalize">
+              {v.replace(/_/g, ' ')}
+            </label>
+            <input
+              type="text"
+              data-var-name={v}
+              placeholder={`Enter ${v.replace(/_/g, ' ')}...`}
+              class="var-input w-full px-2.5 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 text-slate-800 dark:text-slate-100"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <!-- WhatsApp Chat Wall -->
+  <div class="relative bg-[#efeae2] dark:bg-[#0b141a] rounded-xl p-4 sm:p-5 min-h-[140px] flex flex-col justify-end shadow-inner bg-opacity-90 overflow-hidden">
+    <!-- Chat Bubble Container -->
+    <div class="self-end max-w-[88%] sm:max-w-[80%] space-y-1.5">
+      <!-- Outcoming Green Message -->
+      <div class="bg-[#d9fdd3] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] rounded-2xl rounded-tr-none px-3.5 py-2.5 text-sm shadow-sm relative leading-relaxed font-sans transition-all">
+        <p class="chat-message-body whitespace-pre-line break-words" data-raw-message={text}>
+          {text}
+        </p>
+
+        <!-- Message Footer: Time + Blue Ticks -->
+        <div class="flex items-center justify-end gap-1 mt-1 text-[10px] text-slate-500 dark:text-slate-300 font-medium">
+          <span>{time}</span>
+          <svg class="w-3.5 h-3.5 text-[#53bdeb] stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7M11 13l4 4L23 7"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- WhatsApp Interactive CTA / Quick Reply Buttons -->
+      {buttons && buttons.length > 0 && (
+        <div class="space-y-1">
+          {buttons.map((btn) => (
+            <div class="bg-white/95 dark:bg-slate-800 text-[#00a884] dark:text-[#00a884] font-semibold text-xs py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-sm flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors">
+              {btn.type === 'phone' && (
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                </svg>
+              )}
+              {btn.type === 'url' && (
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+              )}
+              {btn.type === 'reply' && (
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                </svg>
+              )}
+              <span>{btn.text}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+
+
+  <!-- Bottom Copy Action -->
+  <div class="flex justify-end pt-1">
+    <CopyButton text={text} variables={variables} buttonText="Copy WhatsApp Message" variant="secondary" />
+  </div>
+</div>
+
+<script>
+  function setupChatPreviewInteractivity() {
+    const containers = document.querySelectorAll('.chat-preview-container');
+
+    containers.forEach((container) => {
+      const inputs = container.querySelectorAll<HTMLInputElement>('.var-input');
+      const bodyEl = container.querySelector<HTMLElement>('.chat-message-body');
+      if (!bodyEl) return;
+
+      const rawText = bodyEl.getAttribute('data-raw-message') || '';
+
+      const updateBody = () => {
+        let updatedText = rawText;
+        inputs.forEach((input) => {
+          const varName = input.getAttribute('data-var-name');
+          const val = input.value.trim();
+          if (varName) {
+            const regex = new RegExp(`\\{\\{\\s*${varName}\\s*\\}\\}`, 'g');
+            if (val) {
+              updatedText = updatedText.replace(regex, `<span class="bg-amber-200/80 dark:bg-amber-500/40 text-slate-900 dark:text-amber-100 font-semibold px-1 rounded">${val}</span>`);
+            } else {
+              updatedText = updatedText.replace(regex, `{{${varName}}}`);
+            }
+          }
+        });
+        bodyEl.innerHTML = updatedText;
+      };
+
+      inputs.forEach((input) => {
+        input.addEventListener('input', updateBody);
+      });
+    });
+  }
+
+  setupChatPreviewInteractivity();
+  document.addEventListener('astro:page-load', setupChatPreviewInteractivity);
+</script>

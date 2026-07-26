@@ -1,0 +1,395 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CopyButton from '../components/CopyButton.astro';
+
+import channelsData from '../data/channels.json';
+import tonesData from '../data/tones.json';
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+
+const aiAppJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'ReplyFlow AI Message Generator & Rewriter',
+  url: `${siteOrigin}/ai`,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'All',
+  browserRequirements: 'Requires JavaScript. Requires HTML5.',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  description: 'Generate and rewrite custom, high-converting WhatsApp, SMS & Email business message templates using your own Gemini, ChatGPT, or Claude API key with 100% browser privacy.',
+};
+---
+
+
+<BaseLayout
+  title="AI Business Message Generator & Rewriter — ReplyFlow"
+  description="Generate custom, high-converting WhatsApp, SMS & Email message templates using your own Gemini, OpenAI or Anthropic API key with 100% browser-based privacy."
+  keywords="AI message generator, AI whatsapp copy writer, business message rewriter, chatgpt message generator, gemini sales copy generator"
+  jsonLd={aiAppJsonLd}
+>
+
+  <div class="max-w-4xl mx-auto space-y-8 pb-16">
+    <!-- Breadcrumbs -->
+    <Breadcrumbs items={[{ label: 'AI Message Generator' }]} />
+
+    <!-- Hero Header -->
+    <div class="text-center space-y-3 pt-2">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 text-xs font-semibold">
+        ✨ Powered by Your Own AI API Key
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-text dark:text-white tracking-tight">
+        AI Template Generator & Rewriter
+      </h1>
+      <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 max-w-xl mx-auto">
+        Craft tailored business messages or rewrite existing templates using Gemini, ChatGPT, or Claude.
+      </p>
+    </div>
+
+    <!-- Security & Privacy Banner -->
+    <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-2xl flex items-start gap-3 text-xs text-emerald-800 dark:text-emerald-300">
+      <svg class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+      </svg>
+      <div>
+        <span class="font-bold block">100% Client-Side Privacy Guarantee</span>
+        Your API key is stored <strong>only in your browser's localStorage</strong>. Requests go directly from your browser to your chosen AI provider. We never store, proxy, or log your key.
+      </div>
+    </div>
+
+    <!-- Main Generator Form Card -->
+    <div class="bg-white dark:bg-slate-800/90 border border-border dark:border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+      
+      <!-- 1. API Provider & Key Setup -->
+      <div class="space-y-4 pb-6 border-b border-border dark:border-slate-700">
+        <h3 class="text-sm font-bold text-text dark:text-white uppercase tracking-wider flex items-center gap-2">
+          <span>1. Select AI Provider & API Key</span>
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <label class="provider-radio-label flex items-center gap-3 p-3 rounded-xl border border-border dark:border-slate-700 cursor-pointer hover:border-primary">
+            <input type="radio" name="ai-provider" value="gemini" checked class="accent-primary" />
+            <div>
+              <span class="text-xs font-bold text-text dark:text-white block">Google Gemini</span>
+              <span class="text-[10px] text-text-muted dark:text-slate-400">Gemini 1.5 Flash (Free Tier)</span>
+            </div>
+          </label>
+
+          <label class="provider-radio-label flex items-center gap-3 p-3 rounded-xl border border-border dark:border-slate-700 cursor-pointer hover:border-primary">
+            <input type="radio" name="ai-provider" value="openai" class="accent-primary" />
+            <div>
+              <span class="text-xs font-bold text-text dark:text-white block">OpenAI</span>
+              <span class="text-[10px] text-text-muted dark:text-slate-400">ChatGPT (GPT-4o-mini)</span>
+            </div>
+          </label>
+
+          <label class="provider-radio-label flex items-center gap-3 p-3 rounded-xl border border-border dark:border-slate-700 cursor-pointer hover:border-primary">
+            <input type="radio" name="ai-provider" value="anthropic" class="accent-primary" />
+            <div>
+              <span class="text-xs font-bold text-text dark:text-white block">Anthropic</span>
+              <span class="text-[10px] text-text-muted dark:text-slate-400">Claude 3.5 Sonnet</span>
+            </div>
+          </label>
+        </div>
+
+        <div>
+          <label for="ai-api-key" class="block text-xs font-semibold text-text dark:text-slate-200 mb-1">
+            API Key
+          </label>
+          <div class="relative">
+            <input
+              type="password"
+              id="ai-api-key"
+              placeholder="Paste your API key here (e.g. AIzaSy...)"
+              class="w-full px-3.5 py-2.5 text-xs font-mono bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 rounded-xl text-text dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+            <button
+              type="button"
+              id="toggle-key-visibility"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-muted hover:text-text dark:text-slate-400"
+            >
+              Show
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Business & Communication Context -->
+      <div class="space-y-4">
+        <h3 class="text-sm font-bold text-text dark:text-white uppercase tracking-wider flex items-center gap-2">
+          <span>2. Customize Message Parameters</span>
+        </h3>
+
+        <!-- Optional Original Template Text for Rewrite Mode -->
+        <div id="rewrite-mode-container" class="hidden space-y-1 p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl">
+          <label class="block text-xs font-bold text-amber-900 dark:text-amber-300">
+            🔄 AI Rewrite Mode Active
+          </label>
+          <textarea
+            id="ai-existing-template"
+            rows="3"
+            class="w-full p-2.5 text-xs font-mono bg-white dark:bg-slate-900 border border-amber-300 dark:border-amber-700 rounded-lg text-slate-800 dark:text-slate-200"
+          ></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="ai-business-details" class="block text-xs font-semibold text-text dark:text-slate-200 mb-1">
+              Business Name & Details
+            </label>
+            <input
+              type="text"
+              id="ai-business-details"
+              placeholder="e.g. Apex Realty, luxury 3BHK apartments in Gurgaon"
+              class="w-full px-3.5 py-2.5 text-xs bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 rounded-xl text-text dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          <div>
+            <label for="ai-purpose" class="block text-xs font-semibold text-text dark:text-slate-200 mb-1">
+              Purpose / Objective
+            </label>
+            <input
+              type="text"
+              id="ai-purpose"
+              placeholder="e.g. Festival discount, weekend site visit reminder"
+              class="w-full px-3.5 py-2.5 text-xs bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 rounded-xl text-text dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          <div>
+            <label for="ai-channel" class="block text-xs font-semibold text-text dark:text-slate-200 mb-1">
+              Channel
+            </label>
+            <select
+              id="ai-channel"
+              class="w-full px-3.5 py-2.5 text-xs bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 rounded-xl text-text dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              {channelsData.map((c) => (
+                <option value={c.name}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label for="ai-tone" class="block text-xs font-semibold text-text dark:text-slate-200 mb-1">
+              Tone
+            </label>
+            <select
+              id="ai-tone"
+              class="w-full px-3.5 py-2.5 text-xs bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 rounded-xl text-text dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              {tonesData.map((t) => (
+                <option value={t.name}>{t.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label for="ai-language" class="block text-xs font-semibold text-text dark:text-slate-200 mb-1">
+              Language
+            </label>
+            <select
+              id="ai-language"
+              class="w-full px-3.5 py-2.5 text-xs bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 rounded-xl text-text dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="Hinglish">Hinglish (Hindi + English)</option>
+              <option value="Hindi">Hindi (हिंदी)</option>
+              <option value="English">English</option>
+            </select>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          id="generate-ai-btn"
+          class="w-full py-3.5 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <svg class="w-5 h-5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+          <span id="btn-text-content">Generate AI Template</span>
+        </button>
+
+        <!-- Error Alert Message -->
+        <div id="ai-error-alert" class="hidden p-3.5 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 rounded-xl text-xs text-rose-700 dark:text-rose-300 font-medium"></div>
+      </div>
+    </div>
+
+    <!-- 3. Generated Results Card -->
+    <div id="ai-results-card" class="hidden bg-white dark:bg-slate-800 border border-border dark:border-slate-700 rounded-3xl p-6 sm:p-8 shadow-sm space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-border dark:border-slate-700">
+        <h3 class="text-lg font-bold text-text dark:text-white flex items-center gap-2">
+          <span>🎉 Generated Template Result</span>
+        </h3>
+        <button
+          type="button"
+          id="save-favorite-btn"
+          class="px-3 py-1.5 rounded-lg border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-xs font-semibold flex items-center gap-1.5 hover:bg-amber-100 transition-colors"
+        >
+          <svg class="w-4 h-4 text-amber-500 fill-current" viewBox="0 0 24 24">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+          </svg>
+          Save to Favorites
+        </button>
+      </div>
+
+      <div class="bg-surface dark:bg-slate-900 rounded-2xl p-5 border border-border dark:border-slate-700 font-mono text-sm leading-relaxed text-text dark:text-slate-100 whitespace-pre-line" id="ai-output-text">
+      </div>
+
+      <div class="flex justify-end">
+        <CopyButton text="" buttonText="Copy Generated Message" variant="primary" id="ai-copy-btn" />
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { generateMessageWithAI } from '../utils/aiClient';
+
+  function setupAIPage() {
+    const keyInput = document.getElementById('ai-api-key') as HTMLInputElement | null;
+    const providerRadios = document.querySelectorAll<HTMLInputElement>('input[name="ai-provider"]');
+    const toggleKeyBtn = document.getElementById('toggle-key-visibility');
+
+    const businessInput = document.getElementById('ai-business-details') as HTMLInputElement | null;
+    const purposeInput = document.getElementById('ai-purpose') as HTMLInputElement | null;
+    const channelSelect = document.getElementById('ai-channel') as HTMLSelectElement | null;
+    const toneSelect = document.getElementById('ai-tone') as HTMLSelectElement | null;
+    const langSelect = document.getElementById('ai-language') as HTMLSelectElement | null;
+    const existingTempTextarea = document.getElementById('ai-existing-template') as HTMLTextAreaElement | null;
+    const rewriteContainer = document.getElementById('rewrite-mode-container');
+
+    const generateBtn = document.getElementById('generate-ai-btn');
+    const btnText = document.getElementById('btn-text-content');
+    const errorAlert = document.getElementById('ai-error-alert');
+    const resultsCard = document.getElementById('ai-results-card');
+    const outputText = document.getElementById('ai-output-text');
+    const saveFavBtn = document.getElementById('save-favorite-btn');
+
+    // Load saved API key & provider from localStorage
+    if (keyInput) {
+      keyInput.value = localStorage.getItem('rf_ai_key') || '';
+      keyInput.addEventListener('input', () => {
+        localStorage.setItem('rf_ai_key', keyInput.value.trim());
+      });
+    }
+
+    const savedProvider = localStorage.getItem('rf_ai_provider') || 'gemini';
+    providerRadios.forEach((radio) => {
+      if (radio.value === savedProvider) radio.checked = true;
+      radio.addEventListener('change', () => {
+        if (radio.checked) {
+          localStorage.setItem('rf_ai_provider', radio.value);
+        }
+      });
+    });
+
+    // Toggle Key Visibility
+    if (toggleKeyBtn && keyInput) {
+      toggleKeyBtn.addEventListener('click', () => {
+        if (keyInput.type === 'password') {
+          keyInput.type = 'text';
+          toggleKeyBtn.textContent = 'Hide';
+        } else {
+          keyInput.type = 'password';
+          toggleKeyBtn.textContent = 'Show';
+        }
+      });
+    }
+
+    // Check for Rewrite mode query param
+    const urlParams = new URLSearchParams(window.location.search);
+    const rewriteTemplateText = urlParams.get('rewrite_text');
+    if (rewriteTemplateText && rewriteContainer && existingTempTextarea) {
+      rewriteContainer.classList.remove('hidden');
+      existingTempTextarea.value = decodeURIComponent(rewriteTemplateText);
+      if (btnText) btnText.textContent = 'Rewrite Template with AI';
+    }
+
+    // Generate AI Action
+    if (generateBtn) {
+      generateBtn.addEventListener('click', async () => {
+        if (errorAlert) errorAlert.classList.add('hidden');
+        const key = keyInput?.value.trim() || '';
+        const selectedProvider = (document.querySelector('input[name="ai-provider"]:checked') as HTMLInputElement)?.value || 'gemini';
+
+        if (!key) {
+          if (errorAlert) {
+            errorAlert.textContent = 'Please enter your AI provider API key above before generating.';
+            errorAlert.classList.remove('hidden');
+          }
+          return;
+        }
+
+        // Show Loading State
+        generateBtn.setAttribute('disabled', 'true');
+        if (btnText) btnText.textContent = 'Generating with AI...';
+
+        try {
+          const generatedText = await generateMessageWithAI({
+            provider: selectedProvider as any,
+            apiKey: key,
+            businessDetails: businessInput?.value.trim() || 'My Business',
+            purpose: purposeInput?.value.trim() || 'Customer Communication',
+            channel: channelSelect?.value || 'WhatsApp',
+            tone: toneSelect?.value || 'Friendly',
+            language: langSelect?.value || 'Hinglish',
+            existingTemplate: existingTempTextarea?.value.trim() || undefined,
+          });
+
+          if (resultsCard && outputText) {
+            outputText.textContent = generatedText;
+            resultsCard.classList.remove('hidden');
+            resultsCard.scrollIntoView({ behavior: 'smooth' });
+
+            // Update Copy Button Data
+            const copyBtnContainer = resultsCard.querySelector('.copy-button-container');
+            if (copyBtnContainer) {
+              copyBtnContainer.setAttribute('data-raw-text', generatedText);
+            }
+          }
+        } catch (err: any) {
+          if (errorAlert) {
+            errorAlert.textContent = err?.message || 'An error occurred during AI generation.';
+            errorAlert.classList.remove('hidden');
+          }
+        } finally {
+          generateBtn.removeAttribute('disabled');
+          if (btnText) btnText.textContent = rewriteTemplateText ? 'Rewrite Template with AI' : 'Generate AI Template';
+        }
+      });
+    }
+
+    // Save to Favorites
+    if (saveFavBtn && outputText) {
+      saveFavBtn.addEventListener('click', () => {
+        const textToSave = outputText.textContent || '';
+        if (!textToSave) return;
+
+        const favs = JSON.parse(localStorage.getItem('rf_favorites') || '[]');
+        const newFav = {
+          id: 'ai-gen-' + Date.now(),
+          title: 'AI Generated Template (' + (channelSelect?.value || 'WhatsApp') + ')',
+          body: textToSave,
+          date: new Date().toISOString(),
+        };
+
+        favs.push(newFav);
+        localStorage.setItem('rf_favorites', JSON.stringify(favs));
+
+        saveFavBtn.textContent = '✓ Saved to Favorites';
+        setTimeout(() => {
+          saveFavBtn.textContent = 'Save to Favorites';
+        }, 2000);
+      });
+    }
+  }
+
+  setupAIPage();
+  document.addEventListener('astro:page-load', setupAIPage);
+</script>

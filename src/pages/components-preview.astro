@@ -1,0 +1,140 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchBar from '../components/SearchBar.astro';
+import ChannelBadge from '../components/ChannelBadge.astro';
+import ToneTag from '../components/ToneTag.astro';
+import CopyButton from '../components/CopyButton.astro';
+import ChatPreview from '../components/ChatPreview.astro';
+import IndustryCard from '../components/IndustryCard.astro';
+import TemplateCard from '../components/TemplateCard.astro';
+import FilterBar from '../components/FilterBar.astro';
+
+import { getCollection } from 'astro:content';
+
+const templates = await getCollection('templates', ({ data }) => !data.draft);
+const sampleTemplate = templates[0];
+const sampleTemplate2 = templates[1] || templates[0];
+---
+
+<BaseLayout title="ReplyFlow Component Showcase & Preview" robots="noindex, nofollow">
+  <div class="max-w-6xl mx-auto space-y-12 pb-16">
+    <!-- Header banner -->
+    <div class="text-center space-y-3 py-6 border-b border-border dark:border-slate-800">
+      <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-slate-800 text-primary">
+        Design System Showcase
+      </span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-text dark:text-white tracking-tight">
+        ReplyFlow Component Library
+      </h1>
+      <p class="text-base text-text-muted dark:text-slate-400 max-w-2xl mx-auto">
+        Visual verification of all 8 core reusable UI components built with Astro & Tailwind CSS design tokens.
+      </p>
+    </div>
+
+    <!-- 1. SearchBar Component -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between border-b border-border dark:border-slate-800 pb-2">
+        <h2 class="text-xl font-bold text-text dark:text-white flex items-center gap-2">
+          <span>1. SearchBar Component</span>
+        </h2>
+        <span class="text-xs font-mono text-text-muted">src/components/SearchBar.astro</span>
+      </div>
+      <SearchBar placeholder='Try typing or press "/" to focus...' autofocus={false} />
+    </section>
+
+    <!-- 2. ChannelBadge & 3. ToneTag Components -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <section class="space-y-4 bg-white dark:bg-slate-800/60 p-6 rounded-2xl border border-border dark:border-slate-700/70">
+        <div class="flex items-center justify-between border-b border-border dark:border-slate-700 pb-2">
+          <h2 class="text-lg font-bold text-text dark:text-white">2. ChannelBadges</h2>
+          <span class="text-xs font-mono text-text-muted">ChannelBadge.astro</span>
+        </div>
+        <div class="flex flex-wrap gap-2.5">
+          <ChannelBadge channel="whatsapp" />
+          <ChannelBadge channel="sms" />
+          <ChannelBadge channel="email" />
+          <ChannelBadge channel="instagram" />
+          <ChannelBadge channel="messenger" />
+          <ChannelBadge channel="review" />
+          <ChannelBadge channel="complaint" />
+        </div>
+      </section>
+
+      <section class="space-y-4 bg-white dark:bg-slate-800/60 p-6 rounded-2xl border border-border dark:border-slate-700/70">
+        <div class="flex items-center justify-between border-b border-border dark:border-slate-700 pb-2">
+          <h2 class="text-lg font-bold text-text dark:text-white">3. ToneTags</h2>
+          <span class="text-xs font-mono text-text-muted">ToneTag.astro</span>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <ToneTag tone="friendly" />
+          <ToneTag tone="professional" />
+          <ToneTag tone="luxury" />
+        </div>
+      </section>
+    </div>
+
+    <!-- 4. IndustryCard Component -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between border-b border-border dark:border-slate-800 pb-2">
+        <h2 class="text-xl font-bold text-text dark:text-white">4. IndustryCard Component</h2>
+        <span class="text-xs font-mono text-text-muted">src/components/IndustryCard.astro</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <IndustryCard slug="real-estate" name="Real Estate" emoji="🏢" count={10} />
+        <IndustryCard slug="clinic" name="Clinic & Healthcare" emoji="🏥" count={24} />
+        <IndustryCard slug="salon" name="Salon & Spa" emoji="💇" count={18} />
+      </div>
+    </section>
+
+    <!-- 5. FilterBar Component -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between border-b border-border dark:border-slate-800 pb-2">
+        <h2 class="text-xl font-bold text-text dark:text-white">5. FilterBar Component</h2>
+        <span class="text-xs font-mono text-text-muted">src/components/FilterBar.astro</span>
+      </div>
+      <FilterBar selectedChannel="whatsapp" selectedTone="friendly" selectedLanguage="hi" />
+    </section>
+
+    <!-- 6. CopyButton Component -->
+    <section class="space-y-4 bg-white dark:bg-slate-800/60 p-6 rounded-2xl border border-border dark:border-slate-700/70">
+      <div class="flex items-center justify-between border-b border-border dark:border-slate-700 pb-2">
+        <h2 class="text-xl font-bold text-text dark:text-white">6. CopyButton Variants</h2>
+        <span class="text-xs font-mono text-text-muted">src/components/CopyButton.astro</span>
+      </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <CopyButton text="Namaste {{name}} ji, welcome to ReplyFlow!" variant="primary" buttonText="Primary Copy" />
+        <CopyButton text="Namaste {{name}} ji, welcome to ReplyFlow!" variant="secondary" buttonText="Secondary Copy" />
+        <CopyButton text="Namaste {{name}} ji, welcome to ReplyFlow!" variant="outline" buttonText="Outline Copy" />
+        <CopyButton text="Namaste {{name}} ji, welcome to ReplyFlow!" variant="icon" />
+      </div>
+    </section>
+
+    <!-- 7. ChatPreview Component -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between border-b border-border dark:border-slate-800 pb-2">
+        <h2 class="text-xl font-bold text-text dark:text-white">7. ChatPreview Component (Interactive WhatsApp Bubble)</h2>
+        <span class="text-xs font-mono text-text-muted">src/components/ChatPreview.astro</span>
+      </div>
+      <ChatPreview
+        title="Real Estate Lead Welcome"
+        text={"Namaste {{name}} ji! 🙏 {{project}} {{location}} mein aapki inquiry ke liye bahut-bahut dhanyavaad.\n\nAapki convenience ke liye project ki complete brochure bhej raha hoon!"}
+        variables={['name', 'project', 'location']}
+        whatsappApproved={true}
+      />
+    </section>
+
+    <!-- 8. TemplateCard Component Grid -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between border-b border-border dark:border-slate-800 pb-2">
+        <h2 class="text-xl font-bold text-text dark:text-white">8. TemplateCard Grid</h2>
+        <span class="text-xs font-mono text-text-muted">src/components/TemplateCard.astro</span>
+      </div>
+      {sampleTemplate && sampleTemplate2 && (
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <TemplateCard template={sampleTemplate} />
+          <TemplateCard template={sampleTemplate2} />
+        </div>
+      )}
+    </section>
+  </div>
+</BaseLayout>

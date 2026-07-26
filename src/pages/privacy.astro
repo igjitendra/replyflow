@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+const lastUpdated = 'July 24, 2026';
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/privacy`;
+
+const privacyJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Privacy Policy — ReplyFlow',
+  url: pageUrl,
+  description: 'ReplyFlow Privacy Policy: No user logins, no account registration, zero personal data collection, and 100% local browser storage for AI API keys.',
+};
+---
+
+<BaseLayout
+  title="Privacy Policy — ReplyFlow"
+  description="ReplyFlow Privacy Policy: No user logins, no account registration, zero personal data collection, and 100% local browser storage for AI API keys."
+  canonicalUrl={pageUrl}
+  jsonLd={privacyJsonLd}
+>
+
+  <div class="max-w-4xl mx-auto space-y-8 pb-16">
+    <Breadcrumbs items={[{ label: 'Privacy Policy' }]} />
+
+    <!-- Page Header -->
+    <div class="bg-white dark:bg-slate-800 border border-border dark:border-slate-700/80 rounded-3xl p-6 sm:p-10 shadow-sm space-y-3">
+      <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-50 dark:bg-slate-700 text-primary">
+        Legal & Security
+      </span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-text dark:text-white tracking-tight">
+        Privacy Policy
+      </h1>
+      <p class="text-xs text-text-muted dark:text-slate-400 font-medium">
+        Last Updated: {lastUpdated}
+      </p>
+    </div>
+
+    <!-- Content Sections -->
+    <div class="bg-white dark:bg-slate-800/80 border border-border dark:border-slate-700/80 rounded-3xl p-6 sm:p-10 shadow-sm space-y-8 text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
+      
+      <!-- Highlight Box: No Login System -->
+      <div class="p-4 sm:p-5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-2xl flex items-start gap-3 text-emerald-900 dark:text-emerald-300 text-xs sm:text-sm font-medium">
+        <svg class="w-6 h-6 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+        <div>
+          <span class="font-bold text-sm block mb-0.5">🔒 No Login Required & Zero Account Data</span>
+          ReplyFlow operates without any user account or login system. You can browse, search, customize, and copy all message templates 100% anonymously without providing any personal information, email address, or phone number.
+        </div>
+      </div>
+
+      <!-- Section 1 -->
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-text dark:text-white border-b border-border dark:border-slate-700 pb-2">
+          1. Information We Do NOT Collect
+        </h2>
+        <p>Because we do not require account registration or login:</p>
+        <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm text-text-muted dark:text-slate-400">
+          <li>We do not collect names, email addresses, phone numbers, or passwords.</li>
+          <li>We do not store your customer lists or any message content you copy or customize.</li>
+          <li>We do not maintain a user database or user profiles.</li>
+        </ul>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-text dark:text-white border-b border-border dark:border-slate-700 pb-2">
+          2. AI Feature & API Key Privacy
+        </h2>
+        <p>
+          ReplyFlow offers an optional client-side AI Template Generator & Rewriter at <a href="/ai" class="text-primary hover:underline font-semibold">/ai</a>.
+        </p>
+        <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm text-text-muted dark:text-slate-400">
+          <li><strong>Local Key Storage:</strong> API keys for Google Gemini, OpenAI, or Anthropic are saved <em>exclusively in your browser's local storage (`localStorage`)</em> on your device.</li>
+          <li><strong>Direct Browser Requests:</strong> Requests go directly from your web browser to the official provider endpoints (`googleapis.com`, `openai.com`, `anthropic.com`).</li>
+          <li><strong>Zero Backend Intermediary:</strong> Your API keys and generated messages are never sent, logged, proxied, or saved on any server owned by ReplyFlow.</li>
+        </ul>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-text dark:text-white border-b border-border dark:border-slate-700 pb-2">
+          3. Local Storage & Cookies
+        </h2>
+        <p>
+          We use browser `localStorage` solely for essential client-side user preferences:
+        </p>
+        <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm text-text-muted dark:text-slate-400">
+          <li><strong>Theme Preference:</strong> Storing whether you selected Light Mode, Dark Mode, or System Auto.</li>
+          <li><strong>Local Favorites:</strong> Storing templates you mark as favorite locally on your own device.</li>
+          <li><strong>AI API Key:</strong> Storing your personal AI provider API key locally if entered.</li>
+        </ul>
+      </section>
+
+      <!-- Section 4 -->
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-text dark:text-white border-b border-border dark:border-slate-700 pb-2">
+          4. Contact Information
+        </h2>
+        <p>
+          If you have questions or feedback about this Privacy Policy, please reach out to us via our <a href="/about" class="text-primary hover:underline font-semibold">About & Support page</a>.
+        </p>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>

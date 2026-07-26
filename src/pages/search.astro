@@ -1,0 +1,226 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchBar from '../components/SearchBar.astro';
+import FilterBar from '../components/FilterBar.astro';
+import TemplateCard from '../components/TemplateCard.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+import { getCollection } from 'astro:content';
+import industriesData from '../data/industries.json';
+
+const allTemplates = await getCollection('templates', ({ data }) => !data.draft);
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/search`;
+
+const searchPageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SearchResultsPage',
+  name: 'Search Business Message Templates — ReplyFlow',
+  url: pageUrl,
+  description: 'Search business message templates by industry, channel, tone, language, or keyword.',
+};
+---
+
+<BaseLayout
+  title="Search Business Message Templates — ReplyFlow"
+  description="Search ready-to-use business message templates by industry, channel, tone, or keyword. Instant filter for WhatsApp, SMS, Email, and Instagram DMs."
+  keywords="search message templates, find whatsapp copy, business sms search, customer follow up script search"
+  canonicalUrl={pageUrl}
+  jsonLd={searchPageJsonLd}
+>
+
+  <div class="max-w-6xl mx-auto space-y-8 pb-16">
+    <!-- Breadcrumbs -->
+    <Breadcrumbs items={[{ label: 'Search Templates' }]} />
+
+    <!-- Search Header & SearchBar -->
+    <div class="text-center space-y-4 pt-2">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-text dark:text-white tracking-tight">
+        Search Message Templates
+      </h1>
+      <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 max-w-xl mx-auto">
+        Search our growing collection of business templates for WhatsApp, SMS, Email and DMs.
+      </p>
+
+      <SearchBar autofocus={true} placeholder='Search by title, keyword, or variables (e.g. "follow-up", "reminder", "offer")...' />
+    </div>
+
+    <!-- Filter & Results Controls -->
+    <div class="space-y-6">
+      <div class="flex items-center justify-between">
+        <h2 id="results-count-heading" class="text-lg font-bold text-text dark:text-white flex items-center gap-2">
+          <span>Search Results</span>
+          <span id="results-count-badge" class="px-2 py-0.5 text-xs rounded-full bg-blue-100 dark:bg-slate-800 text-primary">
+            {allTemplates.length} templates
+          </span>
+        </h2>
+
+        <!-- Industry Extra Filter -->
+        <div class="flex items-center gap-2">
+          <label for="filter-industry" class="text-xs font-medium text-text-muted dark:text-slate-400 hidden sm:inline">
+            Industry:
+          </label>
+          <select
+            id="filter-industry"
+            class="px-3 py-1.5 text-xs bg-white dark:bg-slate-800 border border-border dark:border-slate-700 rounded-xl text-text dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-primary"
+          >
+            <option value="">All Industries</option>
+            {industriesData.map((ind) => (
+              <option value={ind.slug}>{ind.emoji} {ind.name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <FilterBar />
+
+      <!-- Results Grid Container -->
+      <div id="search-results-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {allTemplates.map((template) => (
+          <div
+            class="template-search-item"
+            data-id={template.data.id || template.slug}
+            data-title={template.data.title.toLowerCase()}
+            data-body={template.body.toLowerCase()}
+            data-industry={template.data.industry}
+            data-channel={template.data.channel}
+            data-tone={template.data.tone}
+            data-language={template.data.language}
+            data-tags={template.data.tags.join(' ').toLowerCase()}
+          >
+            <TemplateCard template={template} />
+          </div>
+        ))}
+      </div>
+
+      <!-- No Results State -->
+      <div id="no-results-state" class="hidden text-center py-16 bg-white dark:bg-slate-800/80 rounded-2xl border border-border dark:border-slate-700/80 space-y-3">
+        <p class="text-4xl">🔍</p>
+        <h3 class="text-lg font-bold text-text dark:text-white">
+          No templates match your search criteria
+        </h3>
+        <p class="text-xs text-text-muted dark:text-slate-400">
+          Try clearing filters, adjusting your search query, or selecting a different channel/industry.
+        </p>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Pagefind & Client-Side Filtering Controller
+  async function initSearchEngine() {
+    const searchInput = document.getElementById('search-input') as HTMLInputElement | null;
+    const items = document.querySelectorAll<HTMLElement>('.template-search-item');
+    const noResults = document.getElementById('no-results-state');
+    const badge = document.getElementById('results-count-badge');
+
+    const channelSel = document.getElementById('filter-channel') as HTMLSelectElement | null;
+    const toneSel = document.getElementById('filter-tone') as HTMLSelectElement | null;
+    const langSel = document.getElementById('filter-language') as HTMLSelectElement | null;
+    const indSel = document.getElementById('filter-industry') as HTMLSelectElement | null;
+
+    // Parse initial URL query params
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialQuery = urlParams.get('q') || '';
+    if (searchInput && initialQuery) {
+      searchInput.value = initialQuery;
+    }
+
+    let pagefind: any = null;
+    try {
+      // Lazy-load Pagefind index if available post-build
+      const pagefindPath = '/pagefind/pagefind.js';
+      pagefind = await import(/* @vite-ignore */ pagefindPath);
+      await pagefind.init();
+    } catch (e) {
+      // Pagefind index not built yet (dev mode) — fallback to fast client DOM filter
+    }
+
+    const performFilter = async () => {
+      const q = (searchInput?.value || '').trim().toLowerCase();
+      const selectedChannel = channelSel?.value || '';
+      const selectedTone = toneSel?.value || '';
+      const selectedLang = langSel?.value || '';
+      const selectedInd = indSel?.value || '';
+
+      let visibleCount = 0;
+
+      // If Pagefind is active, query pagefind
+      if (pagefind && q.length > 0) {
+        const filters: Record<string, string> = {};
+        if (selectedChannel) filters.channel = selectedChannel;
+        if (selectedTone) filters.tone = selectedTone;
+        if (selectedLang) filters.language = selectedLang;
+        if (selectedInd) filters.industry = selectedInd;
+
+        const searchRes = await pagefind.search(q, { filters });
+        const matchedUrls = new Set(await Promise.all(searchRes.results.map(async (r: any) => {
+          const data = await r.data();
+          return data.url;
+        })));
+
+        items.forEach((item) => {
+          const isMatch = Array.from(matchedUrls).some((u: any) => u.includes(item.getAttribute('data-id') || ''));
+          if (isMatch) {
+            item.classList.remove('hidden');
+            visibleCount++;
+          } else {
+            item.classList.add('hidden');
+          }
+        });
+      } else {
+
+        // Fast client-side DOM filter fallback
+        items.forEach((item) => {
+          const title = item.getAttribute('data-title') || '';
+          const body = item.getAttribute('data-body') || '';
+          const tags = item.getAttribute('data-tags') || '';
+          const industry = item.getAttribute('data-industry') || '';
+          const channel = item.getAttribute('data-channel') || '';
+          const tone = item.getAttribute('data-tone') || '';
+          const language = item.getAttribute('data-language') || '';
+
+          const matchesQuery = !q || title.includes(q) || body.includes(q) || tags.includes(q);
+          const matchesChannel = !selectedChannel || channel === selectedChannel;
+          const matchesTone = !selectedTone || tone === selectedTone;
+          const matchesLang = !selectedLang || language === selectedLang;
+          const matchesInd = !selectedInd || industry === selectedInd;
+
+          if (matchesQuery && matchesChannel && matchesTone && matchesLang && matchesInd) {
+            item.classList.remove('hidden');
+            visibleCount++;
+          } else {
+            item.classList.add('hidden');
+          }
+        });
+      }
+
+      if (badge) {
+        badge.textContent = `${visibleCount} template${visibleCount === 1 ? '' : 's'}`;
+      }
+
+      if (noResults) {
+        if (visibleCount === 0) {
+          noResults.classList.remove('hidden');
+        } else {
+          noResults.classList.add('hidden');
+        }
+      }
+    };
+
+    searchInput?.addEventListener('input', performFilter);
+    channelSel?.addEventListener('change', performFilter);
+    toneSel?.addEventListener('change', performFilter);
+    langSel?.addEventListener('change', performFilter);
+    indSel?.addEventListener('change', performFilter);
+    document.addEventListener('replyflow:filter', performFilter);
+
+    // Initial filter execution
+    performFilter();
+  }
+
+  initSearchEngine();
+  document.addEventListener('astro:page-load', initSearchEngine);
+</script>

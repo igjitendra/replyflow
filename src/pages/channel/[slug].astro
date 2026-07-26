@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ChannelBadge from '../../components/ChannelBadge.astro';
+import TemplateCard from '../../components/TemplateCard.astro';
+import FilterBar from '../../components/FilterBar.astro';
+
+import { getCollection, type CollectionEntry } from 'astro:content';
+import channelsData from '../../data/channels.json';
+
+interface Props {
+  channel: typeof channelsData[0];
+  templates: CollectionEntry<'templates'>[];
+}
+
+export async function getStaticPaths() {
+
+  const allTemplates = await getCollection('templates', ({ data }) => !data.draft);
+
+  return channelsData.map((chan) => {
+    const channelTemplates = allTemplates.filter(
+      (t) => t.data.channel === chan.slug
+    );
+    return {
+      params: { slug: chan.slug },
+      props: { channel: chan, templates: channelTemplates },
+    };
+  });
+}
+
+const { channel, templates } = Astro.props;
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/channel/${channel.slug}`;
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: siteOrigin,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: channel.name,
+      item: pageUrl,
+    },
+  ],
+};
+
+const collectionJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `${channel.name} Business Message Templates`,
+  url: pageUrl,
+  description: `Browse all ready-to-use ${channel.name} message copy templates across industries.`,
+};
+---
+
+<BaseLayout
+  title={`${channel.name} Business Message Templates & Copy — ReplyFlow`}
+  description={`Ready-to-use ${channel.name} business message templates for sales, lead welcome, follow-ups, and customer feedback. Copy and customize in seconds.`}
+  keywords={`${channel.name} message templates, ${channel.name} copy, ${channel.name} business scripts`}
+  canonicalUrl={pageUrl}
+  jsonLd={[breadcrumbJsonLd, collectionJsonLd]}
+>
+
+  <div class="space-y-8 pb-12">
+    <!-- Breadcrumbs -->
+    <Breadcrumbs items={[{ label: 'Channels', href: '/' }, { label: channel.name }]} />
+
+    <!-- Channel Header Banner -->
+    <div class="bg-white dark:bg-slate-800 border border-border dark:border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div class="space-y-2">
+        <div class="flex items-center gap-3">
+          <ChannelBadge channel={channel.slug} size="md" />
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white tracking-tight">
+          {channel.name} Message Templates
+        </h1>
+        <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400">
+          Browse all high-performing {channel.name} communication templates across industries.
+        </p>
+      </div>
+
+      <div class="px-4 py-2 bg-surface dark:bg-slate-900 border border-border dark:border-slate-700 rounded-2xl text-center">
+        <span class="text-2xl font-bold text-primary block">{templates.length}</span>
+        <span class="text-[11px] text-text-muted dark:text-slate-400 font-medium">Templates</span>
+      </div>
+    </div>
+
+    <!-- FilterBar -->
+    <FilterBar selectedChannel={channel.slug} />
+
+    <!-- Templates Grid -->
+    {templates.length > 0 ? (
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {templates.map((template) => (
+          <TemplateCard template={template} />
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-border dark:border-slate-700 space-y-3">
+        <p class="text-4xl">📱</p>
+        <h3 class="text-lg font-bold text-text dark:text-white">
+          No templates found for {channel.name} yet
+        </h3>
+        <p class="text-xs text-text-muted dark:text-slate-400">
+          Check out other channels or browse by industry.
+        </p>
+      </div>
+    )}
+  </div>
+</BaseLayout>

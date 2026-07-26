@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import IndustryCard from '../components/IndustryCard.astro';
+import industriesData from '../data/industries.json';
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/about`;
+
+const aboutPageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: 'About ReplyFlow',
+  url: pageUrl,
+  description: 'Learn about ReplyFlow: Our mission to provide small businesses with ready-to-use WhatsApp, SMS, Email, and Instagram message templates in seconds.',
+};
+---
+
+<BaseLayout
+  title="About ReplyFlow — Business Message Template Library"
+  description="Learn about ReplyFlow: Our mission to empower local businesses, copywriters, and agencies with ready-to-use WhatsApp, SMS & Email message templates."
+  keywords="about replyflow, business message templates mission, whatsapp templates directory"
+  canonicalUrl={pageUrl}
+  jsonLd={aboutPageJsonLd}
+>
+
+  <div class="max-w-4xl mx-auto space-y-12 pb-16">
+    <Breadcrumbs items={[{ label: 'About ReplyFlow' }]} />
+
+    <!-- Hero Header -->
+    <div class="text-center space-y-4 pt-2">
+      <span class="px-3.5 py-1.5 text-xs font-semibold rounded-full bg-blue-50 dark:bg-slate-800 text-primary border border-blue-200 dark:border-slate-700">
+        Our Story & Mission
+      </span>
+      <h1 class="text-3xl sm:text-5xl font-black text-text dark:text-white tracking-tight">
+        Empowering Business Communication Across Channels
+      </h1>
+      <p class="text-base sm:text-lg text-text-muted dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+        ReplyFlow is designed to help local business owners, real estate agents, clinic doctors, freelancers, and marketers find the perfect message in seconds.
+      </p>
+    </div>
+
+    <!-- Core Pillars Card Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-border dark:border-slate-700 space-y-2">
+        <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-slate-700 flex items-center justify-center text-primary text-xl font-bold">
+          ⚡
+        </div>
+        <h3 class="font-bold text-base text-text dark:text-white">Under 10 Seconds</h3>
+        <p class="text-xs text-text-muted dark:text-slate-400 leading-relaxed">
+          Search, customize variables, and copy ready-to-use business messages in under 10 seconds.
+        </p>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-border dark:border-slate-700 space-y-2">
+        <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-slate-700 flex items-center justify-center text-emerald-600 text-xl font-bold">
+          🔓
+        </div>
+        <h3 class="font-bold text-base text-text dark:text-white">No Login Barrier</h3>
+        <p class="text-xs text-text-muted dark:text-slate-400 leading-relaxed">
+          100% open and anonymous. No mandatory user registrations, passwords, or complex account flows.
+        </p>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-border dark:border-slate-700 space-y-2">
+        <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-slate-700 flex items-center justify-center text-purple-600 text-xl font-bold">
+          🌐
+        </div>
+        <h3 class="font-bold text-base text-text dark:text-white">Multi-Language</h3>
+        <p class="text-xs text-text-muted dark:text-slate-400 leading-relaxed">
+          Tailored templates in Hindi (हिंदी), English, and natural conversational Hinglish.
+        </p>
+      </div>
+    </div>
+
+    <!-- Supported Industries Preview -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-extrabold text-text dark:text-white border-b border-border dark:border-slate-800 pb-3">
+        Covering 15+ Business Verticals
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {industriesData.slice(0, 6).map((ind) => (
+          <IndustryCard slug={ind.slug} name={ind.name} emoji={ind.emoji} count={10} />
+        ))}
+      </div>
+    </section>
+
+    <!-- Support / Contact Section -->
+    <section class="bg-white dark:bg-slate-800 border border-border dark:border-slate-700 rounded-3xl p-6 sm:p-10 space-y-4">
+      <h2 class="text-xl font-bold text-text dark:text-white">
+        Get in Touch & Support
+      </h2>
+      <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 leading-relaxed">
+        Have feedback, template requests, or want to contribute custom message templates for your industry? Reach out to our editorial team or access our content editor via the <a href="/admin" class="text-primary font-semibold hover:underline">CMS Admin Panel</a>.
+      </p>
+    </section>
+  </div>
+</BaseLayout>

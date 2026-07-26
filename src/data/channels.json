@@ -1,0 +1,9 @@
+[
+  { "slug": "whatsapp", "name": "WhatsApp", "icon": "MessageSquare" },
+  { "slug": "sms", "name": "SMS", "icon": "Smartphone" },
+  { "slug": "email", "name": "Email", "icon": "Mail" },
+  { "slug": "instagram", "name": "Instagram DM", "icon": "Instagram" },
+  { "slug": "messenger", "name": "Messenger", "icon": "MessageCircle" },
+  { "slug": "review", "name": "Google Review Request", "icon": "Star" },
+  { "slug": "complaint", "name": "Complaint Response", "icon": "ShieldAlert" }
+]

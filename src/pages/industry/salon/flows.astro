@@ -1,0 +1,424 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import ChatPreview from '../../../components/ChatPreview.astro';
+
+const siteOrigin = 'https://replyflow.procsctools.in';
+const pageUrl = `${siteOrigin}/industry/salon/flows`;
+
+const flowsJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Salon & Spa WhatsApp Message Automation Funnel Flows — ReplyFlow',
+  url: pageUrl,
+  description: 'Complete multi-step WhatsApp sales & booking automation funnel flows for beauty salons, hair studios, spas, and makeup artists with interactive CTA buttons.',
+};
+
+const hairTransformationFlow = [
+  {
+    step: 1,
+    title: 'Step 1: Hair Damage Inquiry & Frizz-Free Assessment',
+    delay: 'Instant (0-3 mins)',
+    text: `Hi {{name}}! 👋 Thank you for inquiring about Hair Keratin & Smoothening at *{{salon}}*!\n\nFrizzy ya damaged hair se pareshan hain? Hamari Senior Hair Stylist Team aapke hair texture ke mutabiq customized treatment suggest karegi.\n\nQuick Highlights:\n✨ 100% Formaldehyde-Free Hair Botox & Keratin\n✨ Mirror Shine & Silky Smooth Texture for 6+ Months\n🎁 Free Hair Spa & Post-Care Consultation Included!`,
+    variables: ['name', 'salon'],
+    buttons: [
+      { type: 'reply' as const, text: '💇‍♀️ Book Free Hair Consult' },
+      { type: 'url' as const, text: '🖼️ View Before & After Photos' },
+      { type: 'phone' as const, text: '📞 Speak to Hair Specialist' },
+    ],
+  },
+  {
+    step: 2,
+    title: 'Step 2: Video Transformation & Real Client Proof',
+    delay: '24 Hours Later',
+    text: `Hello Gorgeous {{name}}! ✨\n\nDekhiye kaise hamare clients ne *{{salon}}* par Keratin & Hair Botox ke sath apna dream hair makeover paya! 🎥\n\nIs weekend par hum de rahe hain **Flat 30% OFF + Free Sulfate-Free Shampoo (worth ₹999)** on all hair treatments!`,
+    variables: ['name', 'salon'],
+    buttons: [
+      { type: 'url' as const, text: '🎥 Watch Transformation Video' },
+      { type: 'reply' as const, text: '✨ Claim 30% OFF Hair Voucher' },
+    ],
+  },
+  {
+    step: 3,
+    title: 'Step 3: Limited-Period Discount & Free Post-Care Shampoo',
+    delay: 'Day 4 (Offer Nudge)',
+    text: `Hi {{name}}! 🌸\n\nExclusive update: Book your Keratin or Hair Botox treatment before Sunday and get:\n\n✨ Flat 30% Discount\n✨ FREE L'Oreal Post-Care Shampoo + Hair Spa Voucher\n\nLimited slots remaining for this weekend at *{{salon}}*!`,
+    variables: ['name', 'salon'],
+    buttons: [
+      { type: 'reply' as const, text: '🔒 Reserve Weekend Slot' },
+      { type: 'phone' as const, text: '📞 Call Salon Reception' },
+    ],
+  },
+  {
+    step: 4,
+    title: 'Step 4: Booking Confirmation & Pre-Treatment Instructions',
+    delay: 'Post Booking',
+    text: `Dear {{name}},\n\nYour Hair Makeover appointment at *{{salon}}* is confirmed! 🎉\n\n📋 Booking Details:\n• Service: Keratin & Hair Spa Combo\n• Date & Time: {{date}} at {{time}}\n• Stylist: Senior Hair Specialist {{stylist}}\n\nPlease refrain from oiling your hair on the day of treatment. Coffee/Tea lounge waiting for you!`,
+    variables: ['name', 'salon', 'date', 'time', 'stylist'],
+    buttons: [
+      { type: 'url' as const, text: '📍 Get Directions to Salon' },
+      { type: 'reply' as const, text: '🔄 Reschedule Slot' },
+    ],
+  },
+  {
+    step: 5,
+    title: 'Step 5: Post-Treatment 15-Day Free Hair Checkup & Maintenance Alert',
+    delay: '+15 Days Post Treatment',
+    text: `Hi {{name}}! 💇‍♀️✨\n\nAapke Hair Keratin treatment ko 15 days ho chuke hain! How is your hair feeling?\n\nAs part of our Hair Guarantee, we invite you for a **FREE 15-Day Hair Health Checkup & Wash** at *{{salon}}*.\n\nClick below to book your complimentary checkup slot!`,
+    variables: ['name', 'salon'],
+    buttons: [
+      { type: 'reply' as const, text: '✨ Book Free 15-Day Wash' },
+      { type: 'reply' as const, text: '💬 Ask Stylist A Question' },
+    ],
+  },
+];
+
+const bridalFlow = [
+  {
+    step: 1,
+    title: 'Step 1: Wedding Date Ingestion & Royal Bridal Lookbook',
+    delay: 'Day 1',
+    text: `Dearest Bride-to-be {{name}},\n\nCongratulations on your upcoming wedding! 👰👑\n\nLet *{{salon}}* craft your dream bridal look! Explore our HD Airbrush Bridal Makeup, Glass Skin Facials, and Royal Saree Draping styles in our digital lookbook.\n\nWould you like to schedule a private trial session with our Master Bridal Artist?`,
+    variables: ['name', 'salon'],
+    buttons: [
+      { type: 'url' as const, text: '🖼️ View Bridal Lookbook PDF' },
+      { type: 'reply' as const, text: '👑 Book Bridal Consultation' },
+    ],
+  },
+  {
+    step: 2,
+    title: 'Step 2: 3-Month Pre-Bridal Skincare & Body Polish Roadmap',
+    delay: 'Day 3',
+    text: `Hi {{name}}! 🌸\n\nFlawless bridal makeup starts with glowing skin! Our 3-Month Pre-Bridal Roadmap includes:\n\n✨ 6-Step Customized Skin Radiance Facials\n✨ Full Body Polish & Organic Detan Rituals\n✨ Hair Spa & Nail Extensions Package\n\n🎁 Special Offer: Book Pre-Bridal Package & get a **FREE Groom Pampering Voucher (worth ₹2,500)**!`,
+    variables: ['name'],
+    buttons: [
+      { type: 'reply' as const, text: '🎁 Claim Pre-Bridal Package' },
+      { type: 'phone' as const, text: '📞 Call Bridal Manager' },
+    ],
+  },
+  {
+    step: 3,
+    title: 'Step 3: Complimentary HD Airbrush Trial Session Booking',
+    delay: 'Day 5',
+    text: `Dear {{name}},\n\nExperience your wedding look before the big day! 👰✨\n\nReserve your **Complimentary HD Airbrush Trial Session** with Master Artist {{artist}} at *{{salon}}* this week.\n\nClick below to select your trial slot!`,
+    variables: ['name', 'artist', 'salon'],
+    buttons: [
+      { type: 'reply' as const, text: '🎟️ Reserve HD Trial Pass' },
+      { type: 'url' as const, text: '📍 Studio Google Location' },
+    ],
+  },
+  {
+    step: 4,
+    title: 'Step 4: Final Wedding Day Artist & Venue Allocation Confirmation',
+    delay: 'T-7 Days Before Wedding',
+    text: `Dearest Bride {{name}},\n\nYour Wedding Day Makeup Schedule is 100% locked! 👰💖\n\n📅 Date: {{wedding_date}}\n⏰ Call Time: {{call_time}}\n👤 Lead Artist: {{artist}} + 2 Assistant Stylists\n📍 Location: {{venue}}\n\nOur team will arrive at your venue fully equipped with ring lights and premium makeup kits.`,
+    variables: ['name', 'wedding_date', 'call_time', 'artist', 'venue'],
+    buttons: [
+      { type: 'phone' as const, text: '📞 Emergency Bridal Helpline' },
+      { type: 'reply' as const, text: '✅ Confirm Venue Address' },
+    ],
+  },
+  {
+    step: 5,
+    title: 'Step 5: Post-Wedding Glow Check-In & Photo Feature Request',
+    delay: '+14 Days Post Wedding',
+    text: `Congratulations {{name}}! 💍❤️\n\nWe hope your wedding was magical! We would love to feature your gorgeous bridal look in our "Real Brides of {{salon}}" gallery.\n\nPlease share your favorite wedding photos or leave a 5-star Google review!`,
+    variables: ['name', 'salon'],
+    buttons: [
+      { type: 'url' as const, text: '⭐ Share 5-Star Google Review' },
+      { type: 'reply' as const, text: '📸 Share Wedding Pictures' },
+    ],
+  },
+];
+
+const winbackFlow = [
+  {
+    step: 1,
+    title: 'Step 1: "We Miss You" Free ₹500 Gift Voucher',
+    delay: 'Day 1 (Inactive 60+ Days)',
+    text: `We miss you {{name}}! 💖💅\n\nBohot time ho gaya aapko *{{salon}}* mein dekhe hue! We want to welcome you back with a special gift.\n\n🎁 Here is your **₹500 Free Gift Voucher** valid on any haircut, facial, or hair spa!\n\nUse Code: WE-MISS-YOU`,
+    variables: ['name', 'salon'],
+    buttons: [
+      { type: 'reply' as const, text: '🎁 Claim ₹500 Free Voucher' },
+      { type: 'url' as const, text: '💅 Book Appointment' },
+    ],
+  },
+  {
+    step: 2,
+    title: 'Step 2: 48-Hour Voucher Expiry Warning & Free Hair Spa Add-on',
+    delay: '+48 Hours',
+    text: `Hey {{name}}! ⏰\n\nAapka ₹500 Free Salon Voucher for *{{salon}}* 48 hours mein expire hone wala hai!\n\nPlus: Book before tomorrow & get a **FREE L'Oreal Express Hair Spa** with your visit!`,
+    variables: ['name', 'salon'],
+    buttons: [
+      { type: 'reply' as const, text: '⚡ Redeem Voucher & Free Spa' },
+      { type: 'phone' as const, text: '📞 Call Salon Reception' },
+    ],
+  },
+  {
+    step: 3,
+    title: 'Step 3: VIP Membership Upgrade Offer',
+    delay: '+5 Days',
+    text: `Hi {{name}}! 👑\n\nUpgrade to *{{salon}}* VIP Beauty Club & enjoy **Flat 20% OFF on all services for 12 months** + Free Birthday Pampering Gifts!\n\nJoin today @ 50% OFF Membership Fee!`,
+    variables: ['name', 'salon'],
+    buttons: [
+      { type: 'url' as const, text: '💳 Join VIP Club @ 50% OFF' },
+      { type: 'reply' as const, text: '💬 Talk to VIP Manager' },
+    ],
+  },
+];
+
+const spaWellnessFlow = [
+  {
+    step: 1,
+    title: 'Step 1: Weekend Stress Relief & Massage Invite',
+    delay: 'Friday Morning',
+    text: `Dear {{name}},\n\nMelt away work fatigue and stress this weekend at *{{spa}}*. 🌿💆‍♀️\n\nExperience 60-Min Swedish / Deep Tissue Full Body Massage + Free Herbal Steam Bath for just ₹1,499 (MRP ₹2,500)!\n\nReserve your private suite now.`,
+    variables: ['name', 'spa'],
+    buttons: [
+      { type: 'reply' as const, text: '🧘 Reserve Spa Suite' },
+      { type: 'url' as const, text: '🌿 View Spa Therapy Menu' },
+    ],
+  },
+  {
+    step: 2,
+    title: 'Step 2: Custom Aromatherapy Oil & Massage Type Selection',
+    delay: 'Post Booking',
+    text: `Hi {{name}}!\n\nYour Spa Session at *{{spa}}* is booked! 🌸\n\nWhich therapeutic oil do you prefer?\n1. Lavender & Chamomile (Relaxation & Sleep)\n2. Eucalyptus & Peppermint (Muscle Relief)\n3. Jasmine & Rose (Skin Hydration)\n\nReply with your choice!`,
+    variables: ['name', 'spa'],
+    buttons: [
+      { type: 'reply' as const, text: '🌿 Lavender & Chamomile' },
+      { type: 'reply' as const, text: '🍃 Eucalyptus & Peppermint' },
+    ],
+  },
+  {
+    step: 3,
+    title: 'Step 3: Post-Spa Hydration & Monthly Wellness Pass Offer',
+    delay: '+2 Hours Post Spa',
+    text: `Dear {{name}},\n\nWe hope your body massage therapy at *{{spa}}* left you feeling deeply relaxed! 🍵✨\n\nStay well-hydrated today to flush out toxins. Enjoy 4 monthly spa sessions with our **Monthly Spa Wellness Pass** @ 40% OFF!`,
+    variables: ['name', 'spa'],
+    buttons: [
+      { type: 'url' as const, text: '💳 Get Monthly Spa Pass' },
+      { type: 'url' as const, text: '⭐ Leave 5-Star Review' },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Salon & Spa WhatsApp Message Automation Funnel Flows — ReplyFlow"
+  description="Complete multi-step WhatsApp sales & booking automation funnel flows for beauty salons, hair studios, spas, and makeup artists with interactive CTA buttons."
+  keywords="salon whatsapp flow, spa booking sequence, beauty parlour whatsapp automation, salon google review, keratin funnel, bridal whatsapp sequence"
+  canonicalUrl={pageUrl}
+  jsonLd={flowsJsonLd}
+>
+  <div class="max-w-5xl mx-auto space-y-12 pb-16">
+    <Breadcrumbs
+      items={[
+        { label: 'Industries', href: '/' },
+        { label: 'Salon & Spa', href: '/industry/salon' },
+        { label: 'WhatsApp Automation Message Flows' },
+      ]}
+    />
+
+    <!-- Header Banner -->
+    <div class="bg-gradient-to-r from-pink-600 via-rose-600 to-purple-600 rounded-3xl p-8 sm:p-12 text-white shadow-xl space-y-4">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-xs font-semibold uppercase tracking-wider">
+        ⚡ Proven Salon Client Booking Funnels
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight">
+        Salon & Spa WhatsApp Message Automation Flows
+      </h1>
+      <p class="text-sm sm:text-base text-pink-100 max-w-3xl leading-relaxed">
+        Complete multi-step WhatsApp sales sequences designed for salons, spas, hair studios, and bridal makeup artists to increase booking fill rates, keratin package upsells, and 5-star Google reviews.
+      </p>
+    </div>
+
+    <!-- Funnel 1: High-Ticket Hair Transformation & Keratin Funnel -->
+    <section class="space-y-6">
+      <div class="border-b border-border dark:border-slate-800 pb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-pink-600 dark:text-pink-400">
+          Flow 1 (5-Step Hair Transformation Sequence)
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white">
+          💇‍♀️ Hair Keratin, Botox & Makeover Sales Funnel
+        </h2>
+        <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 mt-1">
+          Guides frizzy hair lead inquiries from 3D video proof to booking, post-care shampoo perk, and 15-day free checkup.
+        </p>
+      </div>
+
+      <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 sm:before:left-8 before:w-0.5 before:bg-pink-200 dark:before:bg-slate-800 before:z-0">
+        {hairTransformationFlow.map((item) => (
+          <div class="relative z-10 flex items-start gap-4 sm:gap-6">
+            <div class="w-8 h-8 sm:w-16 sm:h-16 rounded-2xl bg-pink-600 text-white font-extrabold text-sm sm:text-xl flex items-center justify-center shrink-0 shadow-md">
+              {item.step}
+            </div>
+            <div class="flex-grow space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-text dark:text-white">
+                  {item.title}
+                </h3>
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-pink-100 dark:bg-pink-950/80 text-pink-800 dark:text-pink-300 border border-pink-200 dark:border-pink-800">
+                  ⏱️ {item.delay}
+                </span>
+              </div>
+
+              <ChatPreview
+                title={`Step ${item.step}: WhatsApp Message`}
+                text={item.text}
+                variables={item.variables}
+                whatsappApproved={true}
+                buttons={item.buttons}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Funnel 2: Royal Bridal & Pre-Bridal Pampering Sequence -->
+    <section class="space-y-6 pt-6 border-t border-border dark:border-slate-800">
+      <div class="border-b border-border dark:border-slate-800 pb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">
+          Flow 2 (5-Step Bridal Journey)
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white">
+          👰 Royal Bridal & Pre-Bridal Pampering Package Funnel
+        </h2>
+        <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 mt-1">
+          From wedding date ingestion to 3-month skincare roadmap, HD makeup trial, venue artist booking, and post-wedding photo sharing.
+        </p>
+      </div>
+
+      <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 sm:before:left-8 before:w-0.5 before:bg-rose-200 dark:before:bg-slate-800 before:z-0">
+        {bridalFlow.map((item) => (
+          <div class="relative z-10 flex items-start gap-4 sm:gap-6">
+            <div class="w-8 h-8 sm:w-16 sm:h-16 rounded-2xl bg-rose-600 text-white font-extrabold text-sm sm:text-xl flex items-center justify-center shrink-0 shadow-md">
+              {item.step}
+            </div>
+            <div class="flex-grow space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-text dark:text-white">
+                  {item.title}
+                </h3>
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+                  ⏱️ {item.delay}
+                </span>
+              </div>
+
+              <ChatPreview
+                title={`Step ${item.step}: WhatsApp Message`}
+                text={item.text}
+                variables={item.variables}
+                whatsappApproved={true}
+                buttons={item.buttons}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Funnel 3: Inactive Client Win-Back & Loyalty Funnel -->
+    <section class="space-y-6 pt-6 border-t border-border dark:border-slate-800">
+      <div class="border-b border-border dark:border-slate-800 pb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+          Flow 3 (3-Step Re-engagement Funnel)
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white">
+          🎁 Inactive Salon Client Win-Back & Voucher Funnel
+        </h2>
+        <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 mt-1">
+          Automatically triggers for clients inactive for 60+ days to bring them back into your salon.
+        </p>
+      </div>
+
+      <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 sm:before:left-8 before:w-0.5 before:bg-purple-200 dark:before:bg-slate-800 before:z-0">
+        {winbackFlow.map((item) => (
+          <div class="relative z-10 flex items-start gap-4 sm:gap-6">
+            <div class="w-8 h-8 sm:w-16 sm:h-16 rounded-2xl bg-purple-600 text-white font-extrabold text-sm sm:text-xl flex items-center justify-center shrink-0 shadow-md">
+              {item.step}
+            </div>
+            <div class="flex-grow space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-text dark:text-white">
+                  {item.title}
+                </h3>
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-purple-100 dark:bg-purple-950/80 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                  ⏱️ {item.delay}
+                </span>
+              </div>
+
+              <ChatPreview
+                title={`Step ${item.step}: WhatsApp Message`}
+                text={item.text}
+                variables={item.variables}
+                whatsappApproved={true}
+                buttons={item.buttons}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Funnel 4: Spa & Wellness Detox Sequence -->
+    <section class="space-y-6 pt-6 border-t border-border dark:border-slate-800">
+      <div class="border-b border-border dark:border-slate-800 pb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400">
+          Flow 4 (3-Step Wellness Detox Sequence)
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white">
+          🧘 Spa & Wellness Massage Relaxation Funnel
+        </h2>
+        <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 mt-1">
+          Drives weekend body massage bookings, essential oil customization, and monthly wellness pass subscriptions.
+        </p>
+      </div>
+
+      <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 sm:before:left-8 before:w-0.5 before:bg-teal-200 dark:before:bg-slate-800 before:z-0">
+        {spaWellnessFlow.map((item) => (
+          <div class="relative z-10 flex items-start gap-4 sm:gap-6">
+            <div class="w-8 h-8 sm:w-16 sm:h-16 rounded-2xl bg-teal-600 text-white font-extrabold text-sm sm:text-xl flex items-center justify-center shrink-0 shadow-md">
+              {item.step}
+            </div>
+            <div class="flex-grow space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-text dark:text-white">
+                  {item.title}
+                </h3>
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-teal-100 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                  ⏱️ {item.delay}
+                </span>
+              </div>
+
+              <ChatPreview
+                title={`Step ${item.step}: WhatsApp Message`}
+                text={item.text}
+                variables={item.variables}
+                whatsappApproved={true}
+                buttons={item.buttons}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Bottom CTA Card -->
+    <div class="bg-surface dark:bg-slate-800 p-8 rounded-3xl border border-border dark:border-slate-700 text-center space-y-4">
+      <h3 class="text-2xl font-bold text-text dark:text-white">
+        Explore All Salon & Spa Templates with Multiple Copy Variations
+      </h3>
+      <p class="text-xs sm:text-sm text-text-muted dark:text-slate-400 max-w-xl mx-auto">
+        Browse individual templates for haircuts, Keratin, HydraFacial, Bridal lookbooks, and VIP memberships.
+      </p>
+      <a
+        href="/industry/salon"
+        class="inline-block px-6 py-3.5 bg-primary text-white font-extrabold rounded-2xl shadow-lg hover:bg-pink-700 transition-all text-sm"
+      >
+        View All Salon Templates →
+      </a>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,95 @@
+---
+import ChannelBadge from './ChannelBadge.astro';
+import ToneTag from './ToneTag.astro';
+import CopyButton from './CopyButton.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  template: CollectionEntry<'templates'>;
+}
+
+const { template } = Astro.props;
+const { data, body, slug } = template;
+
+const langLabels: Record<string, string> = {
+  hi: 'Hindi 🇮🇳',
+  en: 'English 🌐',
+  hinglish: 'Hinglish 🗣️',
+};
+
+const fallbackImage = `/images/templates/default-${data.channel || 'whatsapp'}.webp`;
+const thumbnailSrc = data.thumbnail || `/images/templates/${data.id || slug}.webp`;
+const snippet = data.preview_snippet || body;
+const langBadge = langLabels[data.language] || data.language;
+const href = `/template/${data.id || slug}`;
+---
+
+<div class="template-card group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-border/80 dark:border-slate-700/70 bg-white dark:bg-slate-800/80 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_6px_20px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_8px_30px_rgba(37,99,235,0.12)] dark:hover:border-primary/50">
+  <!-- Full-card clickable overlay (keeps buttons on top) -->
+  <a href={href} class="absolute inset-0 z-0" aria-label={data.title}></a>
+
+  <!-- Card Header Thumbnail -->
+  <div class="relative h-36 w-full overflow-hidden bg-slate-100 dark:bg-slate-900">
+    <img
+      src={thumbnailSrc}
+      alt={data.title}
+      loading="lazy"
+      class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06]"
+      onerror={`this.onerror=null; this.src='${fallbackImage}';`}
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/10 to-transparent"></div>
+    <div class="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 p-3">
+      <ChannelBadge channel={data.channel} size="sm" />
+      <span class="rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur dark:bg-slate-800/90 dark:text-slate-200">
+        {langBadge}
+      </span>
+    </div>
+  </div>
+
+  <div class="flex flex-1 flex-col justify-between gap-4 p-5">
+    <div class="space-y-3">
+      <!-- Tone + Objective -->
+      <div class="flex items-center gap-2">
+        <ToneTag tone={data.tone} size="sm" />
+      </div>
+
+      <!-- Template Title -->
+      <h3 class="line-clamp-2 text-[17px] font-bold leading-snug tracking-tight text-text transition-colors group-hover:text-primary dark:text-white dark:group-hover:text-blue-400">
+        {data.title}
+      </h3>
+
+      <!-- Preview Snippet -->
+      <p class="line-clamp-2 rounded-2xl border border-border/60 bg-surface/70 px-3.5 py-3 text-sm leading-relaxed text-slate-600 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-300">
+        {snippet}
+      </p>
+    </div>
+
+    <!-- Meta row -->
+    <div class="flex items-center justify-between gap-2 text-xs text-text-muted dark:text-slate-400">
+      <span class="truncate">
+        <span class="text-slate-400 dark:text-slate-500">Goal:</span>
+        <span class="font-semibold capitalize text-slate-700 dark:text-slate-300">{data.objective.replace(/-/g, ' ')}</span>
+      </span>
+      {data.variables.length > 0 && (
+        <span class="shrink-0 rounded-full bg-blue-50 px-2 py-0.5 font-mono font-semibold text-blue-700 dark:bg-slate-700/70 dark:text-blue-300">
+          {data.variables.length} var{data.variables.length > 1 ? 's' : ''}
+        </span>
+      )}
+    </div>
+
+    <!-- Card Action Footer -->
+    <div class="relative z-10 flex items-center justify-between gap-2 border-t border-border/60 pt-4 dark:border-slate-700/60">
+      <a
+        href={href}
+        class="inline-flex items-center gap-1 text-sm font-semibold text-primary transition-all hover:gap-1.5 dark:text-blue-400"
+      >
+        View details
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+
+      <CopyButton text={body} variables={data.variables} buttonText="Copy" variant="outline" />
+    </div>
+  </div>
+</div>

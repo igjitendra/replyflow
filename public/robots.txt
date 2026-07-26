@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /settings
+Disallow: /components-preview
+
+Sitemap: https://replyflow.procsctools.in/sitemap.xml
