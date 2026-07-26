@@ -1,18 +1,150 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
-export async function getStaticPaths() { const posts = await getCollection('blog', ({ data }) => !data.draft); return posts.map((post) => ({ params: { slug: post.slug }, props: { post } })); }
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
 const { post } = Astro.props as { post: CollectionEntry<'blog'> };
-const { Content } = await post.render();
+const { Content, headings } = await post.render();
 const siteOrigin = 'https:' + '//' + 'replyflow.procsctools.in';
 const pageUrl = `${siteOrigin}/blog/${post.slug}`;
-const articleSchema = { '@context':'https://schema.org', '@type':'BlogPosting', headline:post.data.title, description:post.data.excerpt, datePublished:post.data.published_at.toISOString(), dateModified:(post.data.updated_at || post.data.published_at).toISOString(), author:{'@type':'Person',name:post.data.author}, mainEntityOfPage:pageUrl };
+const readingMinutes = Math.max(1, Math.ceil(post.body.trim().split(/\s+/).length / 220));
+const tocHeadings = headings.filter((heading) => heading.depth === 2);
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.excerpt,
+  datePublished: post.data.published_at.toISOString(),
+  dateModified: (post.data.updated_at || post.data.published_at).toISOString(),
+  wordCount: post.body.trim().split(/\s+/).length,
+  inLanguage: 'en-IN',
+  author: { '@type': 'Organization', name: post.data.author },
+  publisher: { '@type': 'Organization', name: 'ReplyFlow', url: siteOrigin },
+  mainEntityOfPage: pageUrl,
+};
 ---
-<BaseLayout title={post.data.meta_title || `${post.data.title} — ReplyFlow Blog`} description={post.data.meta_description || post.data.excerpt} canonicalUrl={pageUrl} type="article" jsonLd={articleSchema}>
-  <article class="mx-auto max-w-3xl pb-20" data-pagefind-body>
-    <a href="/blog" class="text-sm font-bold text-blue-600">← Back to Blog</a>
-    <header class="mt-8 border-b border-slate-200 pb-8 dark:border-white/10"><span class="text-xs font-bold uppercase tracking-wider text-blue-600">{post.data.category.replace(/-/g,' ')}</span><h1 class="mt-3 font-outfit text-4xl font-extrabold leading-tight tracking-tight text-slate-950 dark:text-white sm:text-6xl">{post.data.title}</h1><p class="mt-5 text-lg leading-8 text-slate-600 dark:text-slate-300">{post.data.excerpt}</p><div class="mt-5 text-sm text-slate-500">{post.data.author} · {post.data.published_at.toLocaleDateString('en-IN',{dateStyle:'long'})}</div></header>
-    {post.data.cover && <img src={post.data.cover} alt={post.data.title} class="mt-8 aspect-[16/9] w-full rounded-2xl object-cover" />}
-    <div class="prose prose-slate mt-10 max-w-none dark:prose-invert"><Content /></div>
+
+<BaseLayout
+  title={post.data.meta_title || `${post.data.title} — ReplyFlow Blog`}
+  description={post.data.meta_description || post.data.excerpt}
+  canonicalUrl={pageUrl}
+  type="article"
+  jsonLd={articleSchema}
+>
+  <article class="mx-auto max-w-6xl pb-20" data-pagefind-body>
+    <nav aria-label="Breadcrumb" class="mb-7 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+      <a href="/" class="hover:text-blue-600">Home</a>
+      <span aria-hidden="true">/</span>
+      <a href="/blog" class="hover:text-blue-600">Blog</a>
+      <span aria-hidden="true">/</span>
+      <span class="truncate text-slate-700 dark:text-slate-300">{post.data.title}</span>
+    </nav>
+
+    <header class="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 px-6 py-10 dark:border-white/10 dark:bg-slate-900 sm:px-10 sm:py-14 lg:px-14">
+      <div class="max-w-4xl">
+        <a href={`/blog/category/${post.data.category}`} class="text-xs font-extrabold uppercase tracking-[.14em] text-blue-600 dark:text-blue-400">
+          {post.data.category.replace(/-/g, ' ')}
+        </a>
+        <h1 class="mt-4 font-outfit text-4xl font-extrabold leading-[1.08] tracking-[-.035em] text-slate-950 dark:text-white sm:text-5xl lg:text-6xl">
+          {post.data.title}
+        </h1>
+        <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600 dark:text-slate-300">
+          {post.data.excerpt}
+        </p>
+        <div class="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-500 dark:text-slate-400">
+          <span class="font-semibold text-slate-700 dark:text-slate-200">{post.data.author}</span>
+          <span>{post.data.published_at.toLocaleDateString('en-IN', { dateStyle: 'long' })}</span>
+          <span>{readingMinutes} min read</span>
+        </div>
+      </div>
+    </header>
+
+    {post.data.cover && (
+      <img src={post.data.cover} alt={post.data.title} width="1200" height="675" loading="eager" class="mt-8 aspect-[16/9] w-full rounded-3xl object-cover" />
+    )}
+
+    <div class="mt-10 grid gap-10 lg:grid-cols-[220px_minmax(0,760px)] lg:justify-center lg:gap-14">
+      {tocHeadings.length > 0 && (
+        <aside class="hidden lg:block">
+          <div class="sticky top-24 rounded-2xl border border-slate-200 bg-white p-5 dark:border-white/10 dark:bg-slate-900">
+            <p class="text-xs font-extrabold uppercase tracking-[.14em] text-slate-400">In this guide</p>
+            <nav aria-label="Table of contents" class="mt-4 space-y-3">
+              {tocHeadings.map((heading) => (
+                <a href={`#${heading.slug}`} class="block text-sm leading-5 text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">
+                  {heading.text}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </aside>
+      )}
+
+      <div class="min-w-0">
+        {tocHeadings.length > 0 && (
+          <details class="mb-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-white/10 dark:bg-slate-900 lg:hidden">
+            <summary class="cursor-pointer font-bold text-slate-900 dark:text-white">Table of contents</summary>
+            <nav class="mt-4 grid gap-3">
+              {tocHeadings.map((heading) => <a href={`#${heading.slug}`} class="text-sm text-slate-600 dark:text-slate-300">{heading.text}</a>)}
+            </nav>
+          </details>
+        )}
+
+        <div class="article-copy"><Content /></div>
+
+        <div class="mt-12 flex flex-wrap gap-2 border-t border-slate-200 pt-6 dark:border-white/10">
+          {post.data.tags.map((tag) => (
+            <span class="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:bg-white/10 dark:text-slate-300">#{tag}</span>
+          ))}
+        </div>
+
+        <section class="mt-10 rounded-3xl bg-slate-950 p-7 text-white sm:p-9">
+          <p class="text-xs font-extrabold uppercase tracking-[.14em] text-blue-300">Try ReplyFlow</p>
+          <h2 class="mt-3 font-outfit text-2xl font-extrabold sm:text-3xl">अपना अगला business message seconds में तैयार करें</h2>
+          <p class="mt-3 max-w-xl text-sm leading-6 text-slate-300">Template चुनें, details भरें, preview देखें और final message copy करें.</p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="/search" class="rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-950">Browse templates</a>
+            <a href="/ai" class="rounded-xl border border-white/20 px-5 py-3 text-sm font-bold text-white">Use AI Generator</a>
+          </div>
+        </section>
+      </div>
+    </div>
   </article>
 </BaseLayout>
+
+<style is:global>
+  .article-copy { color: #334155; font-size: 1.0625rem; line-height: 1.85; }
+  .dark .article-copy { color: #cbd5e1; }
+  .article-copy > :first-child { margin-top: 0; }
+  .article-copy h2 { scroll-margin-top: 6rem; margin: 3.25rem 0 1rem; font-family: 'Outfit', 'Inter', sans-serif; font-size: clamp(1.65rem, 3vw, 2.15rem); line-height: 1.2; font-weight: 800; letter-spacing: -.025em; color: #0f172a; }
+  .article-copy h3 { scroll-margin-top: 6rem; margin: 2.2rem 0 .8rem; font-size: 1.25rem; line-height: 1.35; font-weight: 800; color: #0f172a; }
+  .dark .article-copy h2, .dark .article-copy h3 { color: #fff; }
+  .article-copy p { margin: 1.15rem 0; }
+  .article-copy strong { color: #0f172a; font-weight: 700; }
+  .dark .article-copy strong { color: #fff; }
+  .article-copy a { color: #2563eb; font-weight: 650; text-decoration: underline; text-decoration-color: #bfdbfe; text-underline-offset: 3px; }
+  .dark .article-copy a { color: #60a5fa; text-decoration-color: #1e3a8a; }
+  .article-copy ul, .article-copy ol { margin: 1.2rem 0; padding-left: 1.4rem; }
+  .article-copy ul { list-style: disc; }
+  .article-copy ol { list-style: decimal; }
+  .article-copy li { margin: .55rem 0; padding-left: .25rem; }
+  .article-copy li::marker { color: #2563eb; font-weight: 700; }
+  .article-copy blockquote { margin: 1.8rem 0; border-left: 4px solid #2563eb; border-radius: 0 12px 12px 0; background: #eff6ff; padding: 1.1rem 1.25rem; color: #1e3a8a; }
+  .dark .article-copy blockquote { background: rgba(37,99,235,.12); color: #bfdbfe; }
+  .article-copy code { border-radius: 6px; background: #f1f5f9; padding: .15rem .4rem; color: #be123c; font-size: .9em; }
+  .dark .article-copy code { background: rgba(255,255,255,.1); color: #fda4af; }
+  .article-copy pre { margin: 1.6rem 0; overflow-x: auto; border-radius: 14px; background: #0f172a; padding: 1.25rem; color: #e2e8f0; }
+  .article-copy pre code { background: transparent; padding: 0; color: inherit; }
+  .article-copy table { margin: 1.75rem 0; width: 100%; border-collapse: collapse; font-size: .95rem; }
+  .article-copy th, .article-copy td { border: 1px solid #e2e8f0; padding: .8rem; text-align: left; vertical-align: top; }
+  .article-copy th { background: #f8fafc; color: #0f172a; font-weight: 800; }
+  .dark .article-copy th, .dark .article-copy td { border-color: rgba(255,255,255,.12); }
+  .dark .article-copy th { background: rgba(255,255,255,.06); color: #fff; }
+  .article-copy hr { margin: 3rem 0; border: 0; border-top: 1px solid #e2e8f0; }
+  .dark .article-copy hr { border-color: rgba(255,255,255,.12); }
+  @media (max-width: 640px) { .article-copy { font-size: 1rem; line-height: 1.75; } .article-copy table { display: block; overflow-x: auto; } }
+</style>
