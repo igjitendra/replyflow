@@ -1,312 +1,92 @@
 ---
-import channelsData from '../data/channels.json';
-import { getCollection } from 'astro:content';
-const industryEntries = await getCollection('industries');
-const industriesData = industryEntries.map((entry) => ({ ...entry.data, slug: entry.slug })).sort((a, b) => a.order - b.order);
 ---
 
-<header class="sticky top-0 z-50 w-full border-b border-border/80 dark:border-slate-800 bg-white/85 dark:bg-slate-900/85 backdrop-blur-xl transition-colors duration-200">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-    
-    <!-- Brand Logo & Tagline -->
-    <div class="flex items-center gap-6">
-      <a href="/" class="flex items-center gap-2.5 group">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 p-0.5 shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-          <div class="w-full h-full bg-primary rounded-[10px] flex items-center justify-center text-white font-extrabold text-lg">
-            R
-          </div>
-        </div>
-        <div class="flex flex-col">
-          <span class="font-syne font-extrabold text-xl tracking-tight text-text dark:text-white leading-none">
-            Reply<span class="bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">Flow</span>
-          </span>
-          <span class="text-[10px] font-semibold text-text-muted dark:text-slate-400 tracking-wider uppercase mt-0.5 hidden sm:block">
-            Message Library
-          </span>
-        </div>
+<header class="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/90">
+  <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+    <a href="/" class="flex shrink-0 items-center gap-2.5" aria-label="ReplyFlow home">
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-lg font-extrabold text-white">R</span>
+      <span class="font-outfit text-xl font-extrabold tracking-tight text-slate-950 dark:text-white">Reply<span class="text-blue-600 dark:text-blue-400">Flow</span></span>
+    </a>
+
+    <nav aria-label="Main navigation" class="hidden items-center gap-1 lg:flex">
+      <a href="/" class="header-link">Home</a>
+      <a href="/search" class="header-link">Templates</a>
+      <a href="/#industries" class="header-link">Industries</a>
+      <a href="/channel/whatsapp" class="header-link">Channels</a>
+      <a href="/blog" class="header-link">Blog</a>
+    </nav>
+
+    <div class="flex items-center gap-1.5">
+      <a href="/search" class="header-icon" aria-label="Search templates">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       </a>
-
-      <!-- Desktop Nav Links -->
-      <nav aria-label="Main Navigation" class="hidden md:flex items-center gap-1 text-xs font-semibold">
-        <a href="/" class="px-3 py-2 rounded-lg text-text dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary dark:hover:text-blue-400 transition-colors">
-          Home
-        </a>
-
-        <!-- Industries Dropdown -->
-        <div class="relative group/ind">
-          <a href="/#industries" class="px-3 py-2 rounded-lg text-text dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary dark:hover:text-blue-400 flex items-center gap-1 transition-colors">
-            Industries
-            <svg class="w-3.5 h-3.5 text-slate-400 group-hover/ind:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </a>
-          <!-- Dropdown Menu -->
-          <div class="absolute left-0 top-full pt-1 opacity-0 translate-y-1 pointer-events-none group-hover/ind:opacity-100 group-hover/ind:translate-y-0 group-hover/ind:pointer-events-auto transition-all duration-200 z-50">
-            <div class="w-64 bg-white dark:bg-slate-800 rounded-2xl border border-border dark:border-slate-700 shadow-xl p-2 grid grid-cols-1 gap-0.5 max-h-80 overflow-y-auto">
-              {industriesData.slice(0, 8).map((ind) => (
-                <a href={`/industry/${ind.slug}`} class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-text dark:text-slate-200 hover:bg-surface dark:hover:bg-slate-700/60 transition-colors">
-                  <span>{ind.emoji}</span>
-                  <span class="font-medium truncate">{ind.name}</span>
-                </a>
-              ))}
-              <a href="/" class="text-center text-xs font-semibold text-primary dark:text-blue-400 py-2 border-t border-border dark:border-slate-700 mt-1 hover:underline">
-                View All Industries →
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Channels Dropdown -->
-        <div class="relative group/chan">
-          <a href="/channel/whatsapp" class="px-3 py-2 rounded-lg text-text dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary dark:hover:text-blue-400 flex items-center gap-1 transition-colors">
-            Channels
-            <svg class="w-3.5 h-3.5 text-slate-400 group-hover/chan:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </a>
-          <div class="absolute left-0 top-full pt-1 opacity-0 translate-y-1 pointer-events-none group-hover/chan:opacity-100 group-hover/chan:translate-y-0 group-hover/chan:pointer-events-auto transition-all duration-200 z-50">
-            <div class="w-52 bg-white dark:bg-slate-800 rounded-2xl border border-border dark:border-slate-700 shadow-xl p-2 space-y-0.5">
-              {channelsData.map((c) => (
-                <a href={`/channel/${c.slug}`} class="block px-3 py-2 rounded-xl text-xs text-text dark:text-slate-200 hover:bg-surface dark:hover:bg-slate-700/60 transition-colors font-medium">
-                  {c.name}
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <a href="/festivals/diwali" class="px-3 py-2 rounded-lg text-text dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary dark:hover:text-blue-400 transition-colors">
-          Festivals 🎉
-        </a>
-
-        <a href="/blog" class="px-3 py-2 rounded-lg text-text dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary dark:hover:text-blue-400 transition-colors">Blog</a>
-
-        <!-- WhatsApp Automation Flows Dropdown -->
-        <div class="relative group/flow">
-          <a href="/industry/salon/flows" class="px-3 py-2 rounded-lg text-pink-600 dark:text-pink-400 font-bold bg-pink-50 dark:bg-pink-950/60 hover:bg-pink-100 flex items-center gap-1 transition-colors">
-            WhatsApp Flows ⚡
-            <svg class="w-3.5 h-3.5 text-pink-500 group-hover/flow:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </a>
-          <div class="absolute left-0 top-full pt-1 opacity-0 translate-y-1 pointer-events-none group-hover/flow:opacity-100 group-hover/flow:translate-y-0 group-hover/flow:pointer-events-auto transition-all duration-200 z-50">
-            <div class="w-64 bg-white dark:bg-slate-800 rounded-2xl border border-border dark:border-slate-700 shadow-xl p-2 space-y-1">
-              <a href="/industry/restaurant/flows" class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-slate-700/60 transition-colors">
-                <span>🍕 Restaurant & Cafe Flows</span>
-              </a>
-              <a href="/industry/salon/flows" class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-pink-600 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-slate-700/60 transition-colors">
-                <span>💅 Salon & Spa Flows</span>
-              </a>
-              <a href="/industry/clinic/flows" class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-slate-700/60 transition-colors">
-                <span>🏥 Clinic & Healthcare Flows</span>
-              </a>
-              <a href="/industry/real-estate/flows" class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-700/60 transition-colors">
-                <span>🏢 Real Estate Flows</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
-
-    <!-- Actions: Search, AI Generator, Theme Toggle & Mobile Menu -->
-    <div class="flex items-center gap-2 sm:gap-3">
-      <!-- Search Quick Button -->
-      <a
-        href="/search"
-        class="p-2 text-slate-500 hover:text-text dark:text-slate-400 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-        aria-label="Search Templates"
-        title="Search Templates (/)"
-      >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-      </a>
-
-      <!-- Pro AI Generator Link Button -->
-      <a
-        href="/ai"
-        class="inline-flex items-center justify-center gap-0 sm:gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold shadow-sm hover:shadow-purple-500/25 hover:opacity-95 transition-all"
-        aria-label="AI Generator"
-        title="AI Generator & Rewriter"
-      >
-        <svg class="w-5 h-5 sm:w-3.5 sm:h-3.5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-        </svg>
+      <a href="/ai" class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-blue-600 px-3 text-sm font-bold text-white hover:bg-blue-700 sm:px-4">
+        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m10 2 1.4 4.1 4.1 1.4-4.1 1.4L10 13l-1.4-4.1-4.1-1.4 4.1-1.4L10 2Z"/></svg>
         <span class="hidden sm:inline">AI Generator</span>
       </a>
-
-      <!-- Theme Switcher (System Auto / Light / Dark) -->
-      <div class="relative group/theme">
-        <button
-          type="button"
-          id="theme-toggle-btn"
-          class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors flex items-center justify-center"
-          aria-label="Toggle Color Theme"
-          title="Theme Selector (System Auto / Light / Dark)"
-        >
-          <!-- Auto System Icon -->
-          <svg class="theme-icon-system w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-          </svg>
-          <!-- Light Icon -->
-          <svg class="theme-icon-light hidden w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-          </svg>
-          <!-- Dark Icon -->
-          <svg class="theme-icon-dark hidden w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-          </svg>
-        </button>
-
-        <!-- Theme Selector Menu -->
-        <div class="absolute right-0 top-full pt-1 opacity-0 translate-y-1 pointer-events-none group-hover/theme:opacity-100 group-hover/theme:translate-y-0 group-hover/theme:pointer-events-auto transition-all duration-200 z-50">
-          <div class="w-40 bg-white dark:bg-slate-800 rounded-2xl border border-border dark:border-slate-700 shadow-xl p-1.5 space-y-0.5 text-xs font-semibold">
-            <button type="button" data-theme-val="system" class="theme-opt-btn w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left hover:bg-surface dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200">
-              💻 System Auto
-            </button>
-            <button type="button" data-theme-val="light" class="theme-opt-btn w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left hover:bg-surface dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200">
-              ☀️ Light Mode
-            </button>
-            <button type="button" data-theme-val="dark" class="theme-opt-btn w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left hover:bg-surface dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200">
-              🌙 Dark Mode
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mobile Hamburger Button -->
-      <button
-        type="button"
-        id="mobile-menu-btn"
-        class="md:hidden p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
-        aria-label="Toggle Mobile Navigation Menu"
-      >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
+      <button id="theme-toggle-btn" type="button" class="header-icon" aria-label="Switch color theme">
+        <svg class="theme-icon-light hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="theme-icon-dark h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"/></svg>
+      </button>
+      <button id="mobile-menu-btn" type="button" class="header-icon lg:hidden" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg class="menu-open-icon h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="menu-close-icon hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
       </button>
     </div>
   </div>
 
-  <!-- Mobile Navigation Drawer -->
-  <div id="mobile-drawer" class="hidden md:hidden border-t border-border dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-6 space-y-4 shadow-2xl">
-    <div class="flex flex-col gap-1 text-sm font-semibold">
-      <a href="/" class="px-3 py-2.5 rounded-xl hover:bg-surface dark:hover:bg-slate-800 text-text dark:text-white">
-        🏠 Home
-      </a>
-      <a href="/search" class="px-3 py-2.5 rounded-xl hover:bg-surface dark:hover:bg-slate-800 text-text dark:text-white">
-        🔍 Search Templates
-      </a>
-      <a href="/ai" class="px-3 py-2.5 rounded-xl hover:bg-surface dark:hover:bg-slate-800 text-purple-600 dark:text-purple-400 font-bold">
-        ✨ AI Generator & Rewriter
-      </a>
-      <a href="/channel/whatsapp" class="px-3 py-2.5 rounded-xl hover:bg-surface dark:hover:bg-slate-800 text-text dark:text-white">
-        📱 WhatsApp Templates
-      </a>
-      <a href="/industry/restaurant/flows" class="px-3 py-2.5 rounded-xl hover:bg-surface dark:hover:bg-slate-800 text-amber-600 dark:text-amber-400 font-bold">
-        ⚡ Restaurant WhatsApp Flows
-      </a>
-      <a href="/industry/salon/flows" class="px-3 py-2.5 rounded-xl hover:bg-surface dark:hover:bg-slate-800 text-pink-600 dark:text-pink-400 font-bold">
-        ⚡ Salon WhatsApp Flows
-      </a>
-      <a href="/industry/clinic/flows" class="px-3 py-2.5 rounded-xl hover:bg-surface dark:hover:bg-slate-800 text-cyan-600 dark:text-cyan-400 font-bold">
-        ⚡ Clinic WhatsApp Flows
-      </a>
-      <a href="/industry/real-estate/flows" class="px-3 py-2.5 rounded-xl hover:bg-surface dark:hover:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-bold">
-        ⚡ Real Estate WhatsApp Flows
-      </a>
-      <a href="/festivals/diwali" class="px-3 py-2.5 rounded-xl hover:bg-surface dark:hover:bg-slate-800 text-text dark:text-white">🎉 Festival Wishes</a>
-      <a href="/blog" class="px-3 py-2.5 rounded-xl hover:bg-surface dark:hover:bg-slate-800 text-text dark:text-white">📝 Blog</a>
-      <a href="/settings" class="px-3 py-2.5 rounded-xl hover:bg-surface dark:hover:bg-slate-800 text-primary dark:text-blue-400 font-bold">
-        ⚙️ Site & Ads Settings
-      </a>
-      <a href="/admin" class="px-3 py-2.5 rounded-xl hover:bg-surface dark:hover:bg-slate-800 text-text dark:text-white">
-        ✏️ CMS Admin
-      </a>
-
+  <nav id="mobile-menu" aria-label="Mobile navigation" class="hidden border-t border-slate-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-slate-950 lg:hidden">
+    <div class="mx-auto grid max-w-7xl gap-1">
+      <a href="/" class="mobile-header-link">Home</a>
+      <a href="/search" class="mobile-header-link">Templates</a>
+      <a href="/#industries" class="mobile-header-link">Industries</a>
+      <a href="/channel/whatsapp" class="mobile-header-link">Channels</a>
+      <a href="/blog" class="mobile-header-link">Blog</a>
     </div>
-
-    <!-- Mobile Theme Selector Bar -->
-    <div class="pt-4 border-t border-border dark:border-slate-800 space-y-2">
-      <span class="text-xs font-semibold text-text-muted dark:text-slate-400 uppercase tracking-wider block">
-        Appearance / Theme
-      </span>
-      <div class="grid grid-cols-3 gap-2">
-        <button type="button" data-theme-val="system" class="theme-opt-btn py-2 text-xs font-semibold rounded-xl bg-surface dark:bg-slate-800 text-text dark:text-slate-200 border border-border dark:border-slate-700">
-          💻 Auto
-        </button>
-        <button type="button" data-theme-val="light" class="theme-opt-btn py-2 text-xs font-semibold rounded-xl bg-surface dark:bg-slate-800 text-text dark:text-slate-200 border border-border dark:border-slate-700">
-          ☀️ Light
-        </button>
-        <button type="button" data-theme-val="dark" class="theme-opt-btn py-2 text-xs font-semibold rounded-xl bg-surface dark:bg-slate-800 text-text dark:text-slate-200 border border-border dark:border-slate-700">
-          🌙 Dark
-        </button>
-      </div>
-    </div>
-  </div>
+  </nav>
 </header>
 
+<style>
+  .header-link { @apply rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white; }
+  .header-icon { @apply flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white; }
+  .mobile-header-link { @apply rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/10; }
+</style>
+
 <script>
-  function setupHeaderInteractivity() {
-    // Theme Management Engine
-    const updateThemeUI = (theme: string) => {
-      const iconSystem = document.querySelector('.theme-icon-system');
-      const iconLight = document.querySelector('.theme-icon-light');
-      const iconDark = document.querySelector('.theme-icon-dark');
+  function setupHeader() {
+    const menuButton = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    const themeButton = document.getElementById('theme-toggle-btn');
 
-      iconSystem?.classList.add('hidden');
-      iconLight?.classList.add('hidden');
-      iconDark?.classList.add('hidden');
-
-      if (theme === 'light') {
-        iconLight?.classList.remove('hidden');
-      } else if (theme === 'dark') {
-        iconDark?.classList.remove('hidden');
-      } else {
-        iconSystem?.classList.remove('hidden');
-      }
-
-      // Apply theme class to <html>
-      const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    };
-
-    const currentSavedTheme = localStorage.getItem('rf_theme') || 'system';
-    updateThemeUI(currentSavedTheme);
-
-    // Watch System Preference Changes
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-      const activeTheme = localStorage.getItem('rf_theme') || 'system';
-      if (activeTheme === 'system') {
-        updateThemeUI('system');
-      }
-    });
-
-    // Handle Theme Button Clicks
-    const themeButtons = document.querySelectorAll('.theme-opt-btn');
-    themeButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const val = btn.getAttribute('data-theme-val') || 'system';
-        localStorage.setItem('rf_theme', val);
-        updateThemeUI(val);
-      });
-    });
-
-    // Mobile Hamburger Drawer Toggle
-    const mobileBtn = document.getElementById('mobile-menu-btn');
-    const drawer = document.getElementById('mobile-drawer');
-    if (mobileBtn && drawer) {
-      mobileBtn.addEventListener('click', () => {
-        drawer.classList.toggle('hidden');
+    if (menuButton && menu && !menuButton.dataset.bound) {
+      menuButton.dataset.bound = 'true';
+      menuButton.addEventListener('click', () => {
+        const open = menu.classList.contains('hidden');
+        menu.classList.toggle('hidden');
+        menuButton.setAttribute('aria-expanded', String(open));
+        menuButton.querySelector('.menu-open-icon')?.classList.toggle('hidden', open);
+        menuButton.querySelector('.menu-close-icon')?.classList.toggle('hidden', !open);
       });
     }
+
+    const updateThemeIcon = () => {
+      const dark = document.documentElement.classList.contains('dark');
+      themeButton?.querySelector('.theme-icon-light')?.classList.toggle('hidden', !dark);
+      themeButton?.querySelector('.theme-icon-dark')?.classList.toggle('hidden', dark);
+    };
+
+    if (themeButton && !themeButton.dataset.bound) {
+      themeButton.dataset.bound = 'true';
+      themeButton.addEventListener('click', () => {
+        const dark = !document.documentElement.classList.contains('dark');
+        document.documentElement.classList.toggle('dark', dark);
+        localStorage.setItem('rf_theme', dark ? 'dark' : 'light');
+        updateThemeIcon();
+      });
+    }
+    updateThemeIcon();
   }
 
-  setupHeaderInteractivity();
-  document.addEventListener('astro:page-load', setupHeaderInteractivity);
+  setupHeader();
+  document.addEventListener('astro:page-load', setupHeader);
 </script>
