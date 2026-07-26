@@ -23,13 +23,12 @@ const templatesCollection = defineCollection({
   schema: z.object({
     id: z.string(), title: z.string(), industry: z.string(),
     category: z.string().optional(), channel: z.string(), purpose: z.string(), objective: z.string(),
-    tone: z.string(), language: z.string(), best_time: z.string().optional(),
+    tone: z.string(), language: z.string(),
     whatsapp_approved: z.boolean().default(false), draft: z.boolean().default(false),
     variables: z.array(z.string()).default([]), tags: z.array(z.string()).default([]),
     buttons: z.array(z.object({ type: z.enum(['url', 'phone', 'reply']), text: z.string() })).optional(),
     variations: z.array(z.object({ title: z.string(), text: z.string(), tone: z.string().optional(), language: z.string().optional() })).optional(),
     thumbnail: z.string().optional(), meta_title: z.string().optional(), meta_description: z.string().optional(), preview_snippet: z.string().optional(),
-    context_section: z.object({ when_to_use: z.string(), target_audience: z.string(), customization_tip: z.string() }).optional(),
     related: z.array(z.string()).optional(), published_at: z.coerce.date().optional(), updated_at: z.coerce.date().optional(),
   }),
 });

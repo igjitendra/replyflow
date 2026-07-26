@@ -104,7 +104,6 @@ collections:
         options: [{label: English, value: en}, {label: Hindi, value: hi}, {label: Hinglish, value: hinglish}]
       - { label: Draft, name: draft, widget: boolean, default: true, hint: 'Turn OFF to publish on the website.' }
       - { label: Publish Date, name: published_at, widget: datetime, required: false }
-      - { label: Best Send Time, name: best_time, widget: string, required: false }
       - { label: WhatsApp Approved, name: whatsapp_approved, widget: boolean, default: false }
       - { label: Variables, name: variables, widget: list, required: false, field: {label: Variable, name: variable, widget: string} }
       - { label: Tags, name: tags, widget: list, required: false, field: {label: Tag, name: tag, widget: string} }
@@ -112,6 +111,21 @@ collections:
       - { label: SEO Title, name: meta_title, widget: string, required: false }
       - { label: SEO Description, name: meta_description, widget: text, required: false }
       - { label: Thumbnail, name: thumbnail, widget: image, required: false }
+      - label: Message Variations
+        name: variations
+        widget: list
+        required: false
+        summary: "{{fields.title}}"
+        hint: "Add multiple alternative versions of the same message. Each variation appears as a selectable, copyable option on the template page."
+        fields:
+          - { label: Variation Title, name: title, widget: string, hint: "Example: Short & Direct, Soft Reminder, Professional Version" }
+          - { label: Message Text, name: text, widget: text }
+          - { label: Tone, name: tone, widget: select, required: false, options: [friendly, professional, luxury] }
+          - label: Language
+            name: language
+            widget: select
+            required: false
+            options: [{label: English, value: en}, {label: Hindi, value: hi}, {label: Hinglish, value: hinglish}]
       - label: Buttons
         name: buttons
         widget: list

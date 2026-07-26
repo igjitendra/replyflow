@@ -146,7 +146,7 @@ const pageDesc = data.meta_description || `Ready-to-use ${data.channel.toUpperCa
 
 
       <!-- Metadata Grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-5 border-t border-border dark:border-slate-700 text-sm">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-5 border-t border-border dark:border-slate-700 text-sm">
         <div>
           <span class="text-text-muted dark:text-slate-400 block">Industry</span>
           <a href={`/industry/${data.industry}`} class="font-semibold text-primary dark:text-blue-400 hover:underline">
@@ -157,12 +157,6 @@ const pageDesc = data.meta_description || `Ready-to-use ${data.channel.toUpperCa
           <span class="text-text-muted dark:text-slate-400 block">Objective</span>
           <span class="font-semibold text-text dark:text-slate-200 capitalize">
             {data.objective.replace(/-/g, ' ')}
-          </span>
-        </div>
-        <div>
-          <span class="text-text-muted dark:text-slate-400 block">Best Send Time</span>
-          <span class="font-semibold text-text dark:text-slate-200">
-            {data.best_time || 'Anytime'}
           </span>
         </div>
         <div>
@@ -177,23 +171,23 @@ const pageDesc = data.meta_description || `Ready-to-use ${data.channel.toUpperCa
     <!-- Google AdSense In-Content Slot -->
     <AdSlot slotType="inContent" />
 
-    <!-- Live Interactive Chat Preview & Multi-Language Switcher -->
+    <!-- Live Message Preview & Variations -->
     <section class="space-y-6">
       <div class="space-y-3">
         <div class="flex items-center justify-between flex-wrap gap-2">
           <h2 class="text-lg font-bold text-text dark:text-white flex items-center gap-2">
-            <span>💬 Live Interactive Preview & Language Switcher</span>
+            <span>💬 Live Message Preview & Variations</span>
           </h2>
           <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
-            🌐 3 Languages Available (Hinglish, Hindi, English)
+            {1 + (data.variations?.length || 0)} message option{(data.variations?.length || 0) === 0 ? '' : 's'}
           </span>
         </div>
 
-        <!-- Language Selector Tabs -->
+        <!-- Variation Selector Tabs -->
         {data.variations && data.variations.length > 0 && (
           <div class="p-3 bg-surface dark:bg-slate-800/80 rounded-2xl border border-border dark:border-slate-700/80 flex items-center gap-2 overflow-x-auto">
             <span class="text-xs font-bold text-text-muted dark:text-slate-400 whitespace-nowrap shrink-0">
-              Select Language:
+              Choose Version:
             </span>
             <div class="flex items-center gap-2 flex-wrap" id="language-tabs-container">
               <button
@@ -202,7 +196,7 @@ const pageDesc = data.meta_description || `Ready-to-use ${data.channel.toUpperCa
                 data-lang-text={body}
                 class="lang-tab-btn active px-3.5 py-2 rounded-xl text-xs font-bold bg-primary text-white shadow-sm transition-all flex items-center gap-1.5"
               >
-                <span>💬 Hinglish (Default)</span>
+                <span>Original</span>
               </button>
               {data.variations.map((v, idx) => (
                 <button
@@ -212,7 +206,7 @@ const pageDesc = data.meta_description || `Ready-to-use ${data.channel.toUpperCa
                   class="lang-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-700 text-text dark:text-slate-200 border border-border dark:border-slate-600 hover:border-primary transition-all flex items-center gap-1.5"
                 >
                   <span>
-                    {v.language === 'hi' ? '🇮🇳 Hindi (हिंदी)' : v.language === 'en' ? '🇬🇧 English' : `✨ ${v.title}`}
+                    {v.title}
                   </span>
                 </button>
               ))}
@@ -229,39 +223,39 @@ const pageDesc = data.meta_description || `Ready-to-use ${data.channel.toUpperCa
         />
       </div>
 
-      <!-- Dedicated Language Copy Cards for All Versions -->
+      <!-- Copy Cards for All Variations -->
       <div class="space-y-4 pt-6 border-t border-border dark:border-slate-800">
         <div class="flex items-center justify-between flex-wrap gap-2">
           <h3 class="text-xl font-extrabold text-text dark:text-white flex items-center gap-2">
-            <span>📋 All Language Copy Versions (1-Click Copy)</span>
+            <span>📋 Choose Your Preferred Message</span>
           </h3>
           <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 dark:bg-slate-700 text-primary dark:text-blue-400">
-            Hinglish + Hindi + English
+            {1 + (data.variations?.length || 0)} ready-to-copy versions
           </span>
         </div>
 
         <div class="grid grid-cols-1 gap-6">
-          <!-- 1. Primary Hinglish Version -->
+          <!-- Original Version -->
           <div class="bg-white dark:bg-slate-800/80 rounded-2xl border border-border dark:border-slate-700 p-5 space-y-3 shadow-sm">
             <div class="flex items-center justify-between pb-3 border-b border-border dark:border-slate-700">
               <span class="px-3 py-1 text-xs font-bold rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800 flex items-center gap-1.5">
-                <span>💬 Hinglish Version</span>
+                <span>Original Version</span>
               </span>
-              <CopyButton text={body} variables={data.variables} buttonText="Copy Hinglish Copy" variant="primary" />
+              <CopyButton text={body} variables={data.variables} buttonText="Copy Original" variant="primary" />
             </div>
             <pre class="text-sm sm:text-base font-sans whitespace-pre-line text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/60 leading-relaxed">{body}</pre>
           </div>
 
-          <!-- 2. Additional Language Variations -->
+          <!-- Additional Message Variations -->
           {data.variations && data.variations.map((v) => (
             <div class="bg-white dark:bg-slate-800/80 rounded-2xl border border-border dark:border-slate-700 p-5 space-y-3 shadow-sm">
               <div class="flex items-center justify-between pb-3 border-b border-border dark:border-slate-700">
                 <span class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 flex items-center gap-1.5">
                   <span>
-                    {v.language === 'hi' ? '🇮🇳 Hindi (हिंदी) Version' : v.language === 'en' ? '🇬🇧 English Version' : `✨ ${v.title}`}
+                    {v.title}
                   </span>
                 </span>
-                <CopyButton text={v.text} variables={data.variables} buttonText={`Copy ${v.language === 'hi' ? 'Hindi' : v.language === 'en' ? 'English' : 'Variation'} Copy`} variant="secondary" />
+                <CopyButton text={v.text} variables={data.variables} buttonText={`Copy ${v.title}`} variant="secondary" />
               </div>
               <pre class="text-sm sm:text-base font-sans whitespace-pre-line text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/60 leading-relaxed">{v.text}</pre>
             </div>
@@ -297,169 +291,6 @@ const pageDesc = data.meta_description || `Ready-to-use ${data.channel.toUpperCa
         Share Template
       </button>
     </div>
-
-    <!-- Unique Context & Implementation Strategy -->
-    {data.context_section && (
-      <section class="bg-blue-50/70 dark:bg-slate-800/90 border border-blue-200/80 dark:border-slate-700 p-6 sm:p-8 rounded-3xl space-y-4 shadow-sm" data-pagefind-body>
-        <div class="flex items-center gap-2">
-          <span class="text-xl">💡</span>
-          <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">
-            When to Use & Practical Customization Tip
-          </h2>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2 text-xs sm:text-sm">
-          <div class="space-y-1.5 p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-blue-100 dark:border-slate-700/60 shadow-xs">
-            <span class="font-bold text-primary dark:text-blue-400 block text-xs uppercase tracking-wider">
-              🚀 Trigger & Scenario
-            </span>
-            <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
-              {data.context_section.when_to_use}
-            </p>
-          </div>
-
-          <div class="space-y-1.5 p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-blue-100 dark:border-slate-700/60 shadow-xs">
-            <span class="font-bold text-emerald-600 dark:text-emerald-400 block text-xs uppercase tracking-wider">
-              👥 Target Audience
-            </span>
-            <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
-              {data.context_section.target_audience}
-            </p>
-          </div>
-
-          <div class="space-y-1.5 p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-blue-100 dark:border-slate-700/60 shadow-xs">
-            <span class="font-bold text-purple-600 dark:text-purple-400 block text-xs uppercase tracking-wider">
-              ⚡ Customization Tip
-            </span>
-            <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
-              {data.context_section.customization_tip}
-            </p>
-          </div>
-        </div>
-      </section>
-    )}
-
-    <!-- SEO Content & Marketing Guide Section -->
-    <section class="space-y-6 pt-8 border-t border-border dark:border-slate-800" data-pagefind-body>
-      <div class="bg-gradient-to-br from-slate-50 to-white dark:from-slate-800/90 dark:to-slate-800/40 p-6 sm:p-8 rounded-3xl border border-border dark:border-slate-700 space-y-6 shadow-sm">
-        
-        <div class="space-y-2">
-          <span class="text-xs font-extrabold uppercase tracking-wider text-primary dark:text-blue-400">
-            📖 Complete Usage & Optimization Guide
-          </span>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-text dark:text-white tracking-tight">
-            How to Use the "{data.title}" WhatsApp Template for Maximum Conversion
-          </h2>
-          <p class="text-sm text-text-muted dark:text-slate-300 leading-relaxed">
-            This pre-approved, high-converting WhatsApp message template is specifically crafted for {industryObj.name} businesses to drive instant customer engagement, high open rates, and direct replies.
-          </p>
-        </div>
-
-        <!-- 3 Feature Pillars -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/70 space-y-2">
-            <div class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-950 text-primary dark:text-blue-400 flex items-center justify-center font-bold text-sm">
-              🎯
-            </div>
-            <h3 class="font-bold text-sm text-text dark:text-white">High Open & Reply Rates</h3>
-            <p class="text-xs text-text-muted dark:text-slate-400">
-              Formatted with attention-grabbing headline emojis, clear value bullets, and dynamic variables to avoid feeling like generic bulk spam.
-            </p>
-          </div>
-
-          <div class="p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/70 space-y-2">
-            <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-sm">
-              ⚡
-            </div>
-            <h3 class="font-bold text-sm text-text dark:text-white">1-Click CTA Buttons</h3>
-            <p class="text-xs text-text-muted dark:text-slate-400">
-              Includes pre-configured Quick Reply (`reply`), Website/Catalog Link (`url`), and Direct Phone Call (`phone`) interactive buttons.
-            </p>
-          </div>
-
-          <div class="p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/70 space-y-2">
-            <div class="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-sm">
-              🌐
-            </div>
-            <h3 class="font-bold text-sm text-text dark:text-white">3 Language Options</h3>
-            <p class="text-xs text-text-muted dark:text-slate-400">
-              Easily toggle between Hinglish, Hindi (हिंदी), and English versions on this single clean page to target your exact demographic.
-            </p>
-          </div>
-        </div>
-
-        <!-- Dynamic Variables Breakdown -->
-        {data.variables && data.variables.length > 0 && (
-          <div class="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-700">
-            <h3 class="text-lg font-extrabold text-text dark:text-white flex items-center gap-2">
-              <span>🔤 Variables Customization Guide</span>
-            </h3>
-            <p class="text-xs text-text-muted dark:text-slate-300">
-              Replace the following curly brace placeholder tags in your CRM or WhatsApp sender tool before broadcasting:
-            </p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {data.variables.map((varName) => (
-                <div class="flex items-center gap-3 p-3 bg-white dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700/60">
-                  <code class="px-2 py-1 text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 text-primary dark:text-blue-400 rounded-md">
-                    {`{{${varName}}}`}
-                  </code>
-                  <span class="text-xs font-medium text-slate-700 dark:text-slate-300 capitalize">
-                    {varName.replace(/_/g, ' ')}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <!-- Best Practices & Timing Strategy -->
-        <div class="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-700">
-          <h3 class="text-lg font-extrabold text-text dark:text-white flex items-center gap-2">
-            <span>📊 Broadcast & Best Timing Strategy</span>
-          </h3>
-          <ul class="space-y-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc list-inside leading-relaxed">
-            <li>
-              <strong>Optimal Send Window:</strong> Best delivered between <span class="font-bold text-primary dark:text-blue-400">{data.best_time || '10:00 - 18:00'}</span> for highest response rates.
-            </li>
-            <li>
-              <strong>Personalization Impact:</strong> Always address the lead or customer by name (<code class="text-xs">&#123;&#123;customer_name&#125;&#125;</code> or <code class="text-xs">&#123;&#123;name&#125;&#125;</code>) to improve trust.
-            </li>
-            <li>
-              <strong>WhatsApp Compliance:</strong> Ensure users have opted in to receive updates on WhatsApp to maintain high quality rating on Meta API.
-            </li>
-          </ul>
-        </div>
-
-        <!-- Frequently Asked Questions (FAQ) Accordion/Block -->
-        <div class="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-700">
-          <h3 class="text-lg font-extrabold text-text dark:text-white flex items-center gap-2">
-            <span>❓ Frequently Asked Questions (FAQ)</span>
-          </h3>
-          <div class="space-y-3 text-xs sm:text-sm">
-            <details class="group p-4 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700/60">
-              <summary class="font-bold cursor-pointer text-slate-900 dark:text-white flex items-center justify-between">
-                <span>Can I use this template on Meta WhatsApp Business API & WhatsApp Web?</span>
-                <span class="transition group-open:rotate-180 text-primary">▼</span>
-              </summary>
-              <p class="mt-2 text-slate-600 dark:text-slate-400 leading-relaxed">
-                Yes! This message template is 100% compatible with official Meta WhatsApp Business API partners (WATI, Interakt, Aisensy, etc.) as well as manual copy-paste for standard WhatsApp Business app.
-              </p>
-            </details>
-
-            <details class="group p-4 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700/60">
-              <summary class="font-bold cursor-pointer text-slate-900 dark:text-white flex items-center justify-between">
-                <span>How do I switch the language between Hinglish, Hindi, and English?</span>
-                <span class="transition group-open:rotate-180 text-primary">▼</span>
-              </summary>
-              <p class="mt-2 text-slate-600 dark:text-slate-400 leading-relaxed">
-                Simply click on the language tabs at the top of the Live Simulator on this page. You can also scroll to the "All Language Copy Versions" section to copy Hinglish, Hindi (हिंदी), or English text directly with a single click.
-              </p>
-            </details>
-          </div>
-        </div>
-
-      </div>
-    </section>
 
     <!-- Related Templates -->
     {relatedTemplates.length > 0 && (
