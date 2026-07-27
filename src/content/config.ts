@@ -29,6 +29,7 @@ const templatesCollection = defineCollection({
     buttons: z.array(z.object({ type: z.enum(['url', 'phone', 'reply']), text: z.string() })).optional(),
     variations: z.array(z.object({ title: z.string(), text: z.string(), tone: z.string().optional(), language: z.string().optional() })).optional(),
     thumbnail: z.string().optional(), meta_title: z.string().optional(), meta_description: z.string().optional(), preview_snippet: z.string().optional(),
+    guide_markdown: z.string().optional(),
     related: z.array(z.string()).optional(), published_at: z.coerce.date().optional(), updated_at: z.coerce.date().optional(),
   }),
 });

@@ -22,6 +22,38 @@ tags:
   - invoice
   - outstanding-payment
   - hinglish
+guide_markdown: |-
+  ## इस template को कब use करें?
+
+  यह message invoice की due date निकलने के बाद **पहले या दूसरे polite follow-up** के लिए use करें। Customer को pressure देने के बजाय payment status confirm करने का clear option दें।
+
+  ## सही variation कैसे चुनें?
+
+  | Situation | Recommended version |
+  | --- | --- |
+  | Due date अभी निकली है | Soft Reminder |
+  | Regular customer है | Original Version |
+  | Message छोटा रखना है | Short & Direct |
+  | Formal client या company है | Professional Version |
+  | पहले reminder का reply नहीं आया | Second Follow-up |
+
+  ## Send करने से पहले customize करें
+
+  - `{{name}}` में customer का सही नाम भरें।
+  - `{{invoice_number}}` को invoice से verify करें।
+  - `{{amount}}` और `{{due_date}}` दोबारा check करें।
+  - `{{business_name}}` में अपना registered या customer-facing name लिखें।
+  - Payment link केवल verified link होने पर add करें।
+
+  > Payment already receive हो गया हो तो customer को तुरंत confirmation भेजें और reminder दोबारा न भेजें।
+
+  ## Final checklist
+
+  - [ ] Name और invoice number सही है
+  - [ ] Amount और due date verify की है
+  - [ ] Tone customer relationship के अनुसार है
+  - [ ] Clear reply या payment action दिया है
+  - [ ] Message send करने के लिए consent और applicable rules follow हो रहे हैं
 variations:
   - title: "Short & Direct"
     tone: friendly

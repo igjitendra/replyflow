@@ -9,6 +9,8 @@ import TemplateCard from '../../components/TemplateCard.astro';
 import AdSlot from '../../components/AdSlot.astro';
 
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { micromark } from 'micromark';
+import { gfm, gfmHtml } from 'micromark-extension-gfm';
 
 interface Props {
   template: CollectionEntry<'templates'>;
@@ -30,6 +32,9 @@ export async function getStaticPaths() {
 
 const { template, allTemplates } = Astro.props;
 const { data, body } = template;
+const guideHtml = data.guide_markdown
+  ? micromark(data.guide_markdown, { extensions: [gfm()], htmlExtensions: [gfmHtml()] })
+  : '';
 const industryEntries = await getCollection('industries');
 const industryObj = industryEntries.map((entry) => ({ ...entry.data, slug: entry.slug })).find((i) => i.slug === data.industry) || {
   name: data.industry,
@@ -292,6 +297,18 @@ const pageDesc = data.meta_description || `Ready-to-use ${data.channel.toUpperCa
       </button>
     </div>
 
+
+    <!-- Optional Markdown Guide: shown only when guide_markdown is filled in Admin -->
+    {guideHtml && (
+      <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-slate-900 sm:p-9" data-pagefind-body>
+        <div class="mb-7 border-b border-slate-200 pb-5 dark:border-white/10">
+          <span class="text-xs font-extrabold uppercase tracking-[.14em] text-blue-600 dark:text-blue-400">Practical Guide</span>
+          <h2 class="mt-2 font-outfit text-2xl font-extrabold tracking-tight text-slate-950 dark:text-white sm:text-3xl">How to use this template</h2>
+        </div>
+        <div class="template-guide" set:html={guideHtml} />
+      </section>
+    )}
+
     <!-- Related Templates -->
     {relatedTemplates.length > 0 && (
       <section class="space-y-4 pt-6 border-t border-border dark:border-slate-800">
@@ -307,6 +324,40 @@ const pageDesc = data.meta_description || `Ready-to-use ${data.channel.toUpperCa
     )}
   </div>
 </BaseLayout>
+
+
+<style is:global>
+  .template-guide { color: #334155; font-size: 1rem; line-height: 1.8; }
+  .dark .template-guide { color: #cbd5e1; }
+  .template-guide > :first-child { margin-top: 0; }
+  .template-guide > :last-child { margin-bottom: 0; }
+  .template-guide h2 { margin: 2.5rem 0 .85rem; scroll-margin-top: 6rem; font-family: 'Outfit', 'Inter', sans-serif; font-size: 1.65rem; line-height: 1.25; font-weight: 800; letter-spacing: -.02em; color: #0f172a; }
+  .template-guide h3 { margin: 1.9rem 0 .7rem; scroll-margin-top: 6rem; font-size: 1.2rem; line-height: 1.35; font-weight: 800; color: #0f172a; }
+  .dark .template-guide h2, .dark .template-guide h3 { color: #fff; }
+  .template-guide p { margin: 1rem 0; }
+  .template-guide strong { color: #0f172a; font-weight: 750; }
+  .dark .template-guide strong { color: #fff; }
+  .template-guide a { color: #2563eb; font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
+  .dark .template-guide a { color: #60a5fa; }
+  .template-guide ul, .template-guide ol { margin: 1rem 0; padding-left: 1.4rem; }
+  .template-guide ul { list-style: disc; }
+  .template-guide ol { list-style: decimal; }
+  .template-guide li { margin: .45rem 0; padding-left: .2rem; }
+  .template-guide li::marker { color: #2563eb; font-weight: 700; }
+  .template-guide blockquote { margin: 1.5rem 0; border-left: 4px solid #2563eb; border-radius: 0 12px 12px 0; background: #eff6ff; padding: 1rem 1.2rem; color: #1e3a8a; }
+  .dark .template-guide blockquote { background: rgba(37,99,235,.12); color: #bfdbfe; }
+  .template-guide code { border-radius: 6px; background: #f1f5f9; padding: .15rem .4rem; color: #be123c; font-size: .9em; }
+  .dark .template-guide code { background: rgba(255,255,255,.1); color: #fda4af; }
+  .template-guide pre { margin: 1.4rem 0; overflow-x: auto; border-radius: 14px; background: #0f172a; padding: 1.15rem; color: #e2e8f0; }
+  .template-guide pre code { background: transparent; padding: 0; color: inherit; }
+  .template-guide table { margin: 1.5rem 0; width: 100%; border-collapse: collapse; font-size: .92rem; }
+  .template-guide th, .template-guide td { border: 1px solid #e2e8f0; padding: .75rem; text-align: left; vertical-align: top; }
+  .template-guide th { background: #f8fafc; color: #0f172a; font-weight: 800; }
+  .dark .template-guide th, .dark .template-guide td { border-color: rgba(255,255,255,.12); }
+  .dark .template-guide th { background: rgba(255,255,255,.06); color: #fff; }
+  .template-guide input[type='checkbox'] { margin-right: .45rem; accent-color: #2563eb; }
+  @media (max-width: 640px) { .template-guide { font-size: .97rem; line-height: 1.75; } .template-guide table { display: block; overflow-x: auto; } }
+</style>
 
 <script>
   function setupPageScripts() {

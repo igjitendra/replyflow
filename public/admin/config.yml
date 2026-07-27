@@ -126,6 +126,12 @@ collections:
             widget: select
             required: false
             options: [{label: English, value: en}, {label: Hindi, value: hi}, {label: Hinglish, value: hinglish}]
+      - label: Template Guide (Markdown)
+        name: guide_markdown
+        widget: markdown
+        modes: [raw, rich_text]
+        required: false
+        hint: "Paste optional .md guide content here. Headings, lists, tables, links, code blocks, quotes and checklists are supported. Leave empty to hide the Guide section."
       - label: Buttons
         name: buttons
         widget: list
